@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/questionLabel"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:layout_marginTop="48dp"
+        android:minHeight="48dp"
+        android:text="Which animal is the cuter one?"
+        android:textStyle="normal|bold" 
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/answer1Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/questionLabel"
+        android:layout_alignRight="@+id/questionLabel"
+        android:layout_below="@+id/questionLabel"
+        android:layout_marginTop="24dp"
+        android:text="Dog" />
+
+    <Button
+        android:id="@+id/answer2Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/answer1Button"
+        android:layout_alignRight="@+id/answer1Button"
+        android:layout_below="@+id/answer1Button"
+        android:layout_marginTop="0dp"
+        android:text="Cat" />
+
+    <Button
+        android:id="@+id/skipQuestionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/answer1Button"
+        android:layout_alignRight="@+id/answer1Button"
+        android:layout_below="@+id/answer2Button"
+        android:layout_marginTop="0dp"
+        android:text="Skip question" />
+
+</RelativeLayout>
