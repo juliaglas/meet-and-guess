@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/question_label"
+        style="@android:style/TextAppearance.Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="48dp"
+        android:layout_marginRight="48dp"
+        android:layout_marginTop="48dp"
+        android:minHeight="48dp"
+        android:text="Which animal is the cuter one?"
+        android:textStyle="normal|bold" 
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/answer1_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/question_label"
+        android:layout_alignRight="@+id/question_label"
+        android:layout_below="@+id/question_label"
+        android:layout_marginTop="24dp"
+        android:text="Dog" 
+        android:onClick="answer1Selected"/>
+
+    <Button
+        android:id="@+id/answer2_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/answer1_button"
+        android:layout_alignRight="@+id/answer1_button"
+        android:layout_below="@+id/answer1_button"
+        android:layout_marginTop="0dp"
+        android:text="Cat" 
+        android:onClick="answer2Selected"/>
+
+    <Button
+        android:id="@+id/skip_question_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/answer1_button"
+        android:layout_alignRight="@+id/answer1_button"
+        android:layout_below="@+id/answer2_button"
+        android:layout_marginTop="0dp"
+        android:text="Skip question" 
+        android:onClick="skipQuestion"/>
+
+</RelativeLayout>
