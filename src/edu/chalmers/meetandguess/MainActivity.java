@@ -126,4 +126,9 @@ public class MainActivity extends ActionBarActivity {
 		Intent intent = new Intent(this, QuestionActivity.class);
 		this.startActivityForResult(intent, 0);
 	}
+	
+	public void loadGuessActivity(View view) {
+		Intent intent = new Intent(this, GuessActivity.class);
+		this.startActivityForResult(intent, 0);
+	}
 }
