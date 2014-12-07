@@ -1,18 +1,41 @@
 package edu.chalmers.meetandguess;
 
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 public class MainActivity extends ActionBarActivity {
 
+	private DrawerLayout drawer;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		
+		 // Set an OnMenuItemClickListener to handle menu item clicks
+	    toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+	        @Override
+	        public boolean onMenuItemClick(MenuItem item) {
+	            // Handle the menu item
+	            return true;
+	        }
+	    });
+
+	    // Inflate a menu to be displayed in the toolbar
+	    toolbar.inflateMenu(R.menu.main);
+	    
+	    drawer = (DrawerLayout) findViewById(R.id.drawer);
+
 	}
 
 	@Override
