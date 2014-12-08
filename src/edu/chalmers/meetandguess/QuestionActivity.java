@@ -1,19 +1,25 @@
 package edu.chalmers.meetandguess;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class QuestionActivity extends Activity {
+public class QuestionActivity extends ActionBarActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.question);
 		
+		// Toolbar Layout
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
+		getSupportActionBar().setTitle("Question 1");
+				
 		Question currentQuestion = new Question("Have you been to Asia?", "Yes", "No"); // TODO replace this with a question from the server
 		
 		TextView questionLabel = (TextView) findViewById(R.id.question_label);
