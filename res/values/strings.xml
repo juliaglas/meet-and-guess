@@ -6,6 +6,8 @@
     <string name="action_settings">Settings</string>
     <string name="action_createGame">New Game</string>
     <string name="action_joinGame">Join Game</string>
+    <string name="profile">Profile</string>
+    <string name="done">Done</string>
     <string name="skip_question">Skip question</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
