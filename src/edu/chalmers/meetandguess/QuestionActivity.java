@@ -12,7 +12,6 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -43,9 +42,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setTitle("Question 1");
-				
-		Question currentQuestion = new Question("Have you been to Asia?", "Yes", "No"); // TODO replace this with a question from the server
-
+		
 		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
 		this.userName = sharedPref.getString("username", "");
 		this.owner = sharedPref.getBoolean("owner", false);
