@@ -214,4 +214,9 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		Intent intent = new Intent(this, GuessActivity.class);
 		this.startActivityForResult(intent, 0);
 	}
+	
+	public void loadProfileActivity(View view) {
+		Intent intent = new Intent(this, ProfileActivity.class);
+		this.startActivityForResult(intent, 0);
+	}
 }
