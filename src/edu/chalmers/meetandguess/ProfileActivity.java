@@ -1,23 +1,24 @@
 package edu.chalmers.meetandguess;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.InputStream;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 public class ProfileActivity extends ActionBarActivity {
+	
+	private static final int SELECT_IMAGE = 1;
+	private byte[] imgData;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,51 +33,39 @@ public class ProfileActivity extends ActionBarActivity {
 	}
 
 	public void selectImage(View view) {
-		Intent select = new Intent(Intent.ACTION_GET_CONTENT, null);
-		select.setType("image/*");
-		select.putExtra("return-data", true);
-		startActivityForResult(select, 1);
+		Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE);
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
-		case 1:
-			Uri uri;
-			if (requestCode == 1 && data != null && (uri = data.getData()) != null) { // TODO handle else
-				
-				Cursor cursor = getContentResolver()
-						.query(uri,
-								new String[] { android.provider.MediaStore.Images.ImageColumns.DATA },
-								null, null, null);
-				cursor.moveToFirst();
-
-				// Link to the image
-				final String imageFilePath = cursor.getString(0);
-				Log.v("imageFilePath", imageFilePath);
-				File photo = new File(imageFilePath);
-
-				byte[] imgData = new byte[(int) photo.length()];
-				FileInputStream pdata = null;
+		case SELECT_IMAGE:
+			if (resultCode == RESULT_OK && data != null) { // TODO handle else		
 				try {
-					pdata = new FileInputStream(photo);
-					pdata.read(imgData); // save image data in a byte array
-				} catch (FileNotFoundException exception) {
+					// Read image
+					Uri uri = data.getData();
+					InputStream input = getContentResolver().openInputStream(uri);
+					Bitmap bm = BitmapFactory.decodeStream(input);
+					// Set image in view
+					ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
+					profilePicture.setImageBitmap(bm);
+					// Convert to byte array for sending it to the server
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					bm.compress(CompressFormat.JPEG, 10, bos);
+					this.imgData = bos.toByteArray();
+				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
-					exception.printStackTrace();
-				} catch (IOException exception) {
-					// TODO Auto-generated catch block
-					exception.printStackTrace();
+					e.printStackTrace();
 				}
-
-				cursor.close();
-				
-				// Display the new image
-				ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
-				Bitmap bm = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
-				profilePicture.setImageBitmap(bm);
 			}
 		}
+	}
+	
+	public void saveUser(View view) {
+		
 	}
 }
