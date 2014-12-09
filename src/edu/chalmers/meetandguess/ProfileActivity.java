@@ -65,7 +65,7 @@ public class ProfileActivity extends ActionBarActivity {
 		}
 	}
 	
-	public void saveUser(View view) {
+	public void buttonClicked(View view) {
 		
 	}
 }

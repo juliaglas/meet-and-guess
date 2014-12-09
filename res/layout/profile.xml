@@ -5,8 +5,8 @@
     android:background="@android:color/white" >
 
     <include
-		android:id="@+id/toolbar"
-		layout="@layout/toolbar"/>
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
     <ImageButton
         android:id="@+id/profile_picture"
@@ -16,61 +16,93 @@
         android:layout_below="@+id/toolbar"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="24dp"
-        android:background="@color/Green"
-        android:src="@android:drawable/ic_menu_crop" 
-        android:onClick="selectImage"/>
+        android:onClick="selectImage"
+        android:padding="0dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_contact_picture" />
 
     <TextView
-        android:id="@+id/info_text"
+        android:id="@+id/score_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/profile_picture"
-        android:layout_marginLeft="24dp"
-        android:layout_toRightOf="@+id/profile_picture"
+        android:layout_alignBottom="@+id/score_display"
+        android:layout_toLeftOf="@+id/score_display"
+        android:layout_marginRight="10dp"
+        android:text="@string/score_label"
+        android:textColor="@color/Green" />
+    
+    <TextView
+        android:id="@+id/score_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/profile_picture"
         android:layout_alignParentRight="true"
         android:layout_marginRight="24dp"
-        android:textColor="@color/Black87"
-        android:text="Please provide your user name and an optional profile photo" />
-    
+        android:background="@color/Green"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="17"
+        android:textSize="48sp" />
+
     <TextView
         android:id="@+id/username_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_picture"
-        android:layout_marginTop="24dp"
         android:layout_alignLeft="@+id/profile_picture"
-        android:textColor="@color/Black87"
-        android:text="User name:" 
-	/>
+        android:layout_below="@+id/profile_picture"
+        android:layout_marginTop="48dp"
+        android:text="@string/username_label"
+        android:textColor="@color/Black87" />
 
     <EditText
         android:id="@+id/username_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/username_label"
-        android:layout_alignRight="@+id/info_text"
         android:layout_toRightOf="@+id/username_label"
-        android:layout_marginLeft="24dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="24dp"
         android:ems="10"
-        android:text="Andreas"
-        android:textColor="@color/Black87" 
-        android:enabled="false"
-        android:focusable="false">
+        android:hint="Unique user name"
+        android:textColor="@color/Black87" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/firstname_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/username_label"
+        android:layout_below="@+id/username_label"
+        android:layout_marginTop="24dp"
+        android:text="@string/firstname_label"
+        android:textColor="@color/Black87" />
+
+    <EditText
+        android:id="@+id/firstname_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/firstname_label"
+        android:layout_alignLeft="@+id/username_edit"
+        android:layout_alignRight="@+id/username_edit"
+        android:ems="10"
+        android:hint="Your real name"
+        android:textColor="@color/Black87" >
     </EditText>
 
     <Button
         android:id="@+id/done_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:layout_marginBottom="24dp"
         android:background="@color/Green"
-        android:text="@string/done" 
-        android:onClick="saveUser" />
+        android:onClick="buttonClicked"
+        android:text="@string/edit" />
 
 </RelativeLayout>
