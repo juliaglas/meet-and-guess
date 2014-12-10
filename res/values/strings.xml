@@ -9,7 +9,8 @@
     <string name="profile">Profile</string>
     <string name="score_label">Score:</string>
     <string name="username_label">User name:</string>
-    <string name="firstname_label">First name:</string>        
+    <string name="firstname_label">First name:</string>    
+    <string name="country_label">Country</string>    
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="skip_question">Skip question</string>

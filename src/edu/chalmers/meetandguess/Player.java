@@ -4,15 +4,17 @@ public class Player {
 
 	private String username;
 	private String firstname;
-	private String imageUrl;
+	private String country;
+	private byte[] image;
 	private int score;
 	private Answer answer;	
 	
-	public Player(String username, String firstname, String imageUrl) {
+	public Player(String username, String firstname, String country, byte[] image) {
 		super();
 		this.username = username;
 		this.firstname = firstname;
-		this.imageUrl = imageUrl;
+		this.country = country;
+		this.image = image;
 	}
 	
 	public String getUsername() {
@@ -27,11 +29,17 @@ public class Player {
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
-	public String getImageUrl() {
-		return imageUrl;
+	public String getCountry() {
+		return country;
 	}
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public byte[] getImage() {
+		return image;
+	}
+	public void setImageUrl(byte[] image) {
+		this.image = image;
 	}
 	public int getScore() {
 		return score;
