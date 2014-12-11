@@ -5,11 +5,11 @@ public class Player {
 	private String username;
 	private String firstname;
 	private String country;
-	private byte[] image;
+	private String image;
 	private int score;
 	private Answer answer;	
 	
-	public Player(String username, String firstname, String country, byte[] image) {
+	public Player(String username, String firstname, String country, String image) {
 		super();
 		this.username = username;
 		this.firstname = firstname;
@@ -35,10 +35,10 @@ public class Player {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	public byte[] getImage() {
+	public String getImage() {
 		return image;
 	}
-	public void setImageUrl(byte[] image) {
+	public void setImage(String image) {
 		this.image = image;
 	}
 	public int getScore() {
