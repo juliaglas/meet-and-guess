@@ -7,7 +7,6 @@ public class Player {
 	private String country;
 	private String image;
 	private int score;
-	private Answer answer;	
 	
 	public Player(String username, String firstname, String country, String image) {
 		super();
@@ -46,12 +45,6 @@ public class Player {
 	}
 	public void setScore(int score) {
 		this.score = score;
-	}
-	public Answer getAnswer() {
-		return answer;
-	}
-	public void setAnswer(Answer answer) {
-		this.answer = answer;
 	}
 	
 }

@@ -65,9 +65,6 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="24dp"
         android:ems="10"
-        android:editable="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
         android:hint="Unique user name"
         android:textColor="@color/Black87">
     </EditText>

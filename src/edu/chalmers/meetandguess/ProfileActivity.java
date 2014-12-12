@@ -12,7 +12,6 @@ import com.google.gson.JsonSyntaxException;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -24,6 +23,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -32,12 +32,13 @@ import android.widget.ImageButton;
 public class ProfileActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
 
+	private static final String TAG_ERROR = "ERROR";
 	private static final int SELECT_IMAGE = 1;
-	private String imgData;
+	
 	private Player player;
+	private String imgData;
 	private NetworkingManager manager;
 
-	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,12 +51,24 @@ public class ProfileActivity extends ActionBarActivity implements
 				.setTitle(getResources().getText(R.string.profile));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		SharedPreferences sharedPref = getSharedPreferences(
-				"edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
-		String userName = sharedPref.getString("username", "");
-
-		this.manager = new NetworkingManager(this, "G9", userName);
-		this.manager.loadValueForKeyOfUser("profile", userName);
+		// Access the user name
+		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+		String userName = sharedPref.getString("username", null);
+		if(userName != null) {
+			// Create network manager if user already exists
+			this.manager = new NetworkingManager(this, "G9", userName);
+			this.manager.loadValueForKeyOfUser("profile", userName);		
+			EditText userNameValue = (EditText) findViewById(R.id.username_edit);
+			userNameValue.setEnabled(false);
+			userNameValue.setFocusable(false);
+			userNameValue.setFocusableInTouchMode(false);
+		} else {
+			EditText userNameValue = (EditText) findViewById(R.id.username_edit);
+			userNameValue.setEnabled(true);
+			userNameValue.setFocusable(true);
+			userNameValue.setFocusableInTouchMode(true);
+			userNameValue.requestFocus();
+		}
 	}
 
 	public void selectImage(View view) {
@@ -71,7 +84,7 @@ public class ProfileActivity extends ActionBarActivity implements
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
 		case SELECT_IMAGE:
-			if (resultCode == RESULT_OK && data != null) { // TODO handle else
+			if (resultCode == RESULT_OK && data != null) {
 				try {
 					// Read image
 					Uri uri = data.getData();
@@ -84,13 +97,14 @@ public class ProfileActivity extends ActionBarActivity implements
 					
 					// Compress it for sending it to the server
 					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					bm.compress(CompressFormat.JPEG, 10, bos);
+					bm.compress(CompressFormat.JPEG, 100, bos);
 					byte[] byteImageData = bos.toByteArray();
 					this.imgData = Base64.encodeToString(byteImageData, Base64.DEFAULT);
 				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.d(TAG_ERROR, "Could not read input stream of selected profile image");
 				}
+			} else {
+				Log.d(TAG_ERROR, "Could not read input stream of selected profile image");
 			}
 		}
 	}
@@ -119,55 +133,41 @@ public class ProfileActivity extends ActionBarActivity implements
 			try {
 				Gson gson = new Gson();
 				player = gson.fromJson(json.getString("value"), Player.class);
-				if(player != null) {
+				if(player != null) { // TODO should not be necessary if every existing user MUST have a profile picture
 					imgData = player.getImage();
 					displayProfileData();
 				}
 			} catch (JsonSyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
 			}
 		}
 	}
 
 	@Override
 	public void deletedKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void monitoringKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void ignoringKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
 	}
 	
 	private void displayProfileData() {
@@ -202,18 +202,27 @@ public class ProfileActivity extends ActionBarActivity implements
 		String firstName = firstNameValue.getText().toString();
 		EditText countryValue = (EditText) findViewById(R.id.country_edit);
 		String country = countryValue.getText().toString();
-		if (this.player == null) {
-			this.player = new Player(userName, firstName, country, this.imgData);
-		} else {
-			this.player.setUsername(userName);
-			this.player.setFirstname(firstName);
-			this.player.setCountry(country);
-			this.player.setImage(this.imgData);
+		if(userName.equals("") || imgData == null) {
+		// TODO alert: username and profile picture must exist
+		} else { // if everything is okay save the user data
+			if (this.player == null) { // new user
+				this.manager = new NetworkingManager(this, "G9", userName);
+				this.player = new Player(userName, firstName, country, this.imgData);
+				SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+				SharedPreferences.Editor editor = sharedPref.edit();
+				editor.putString("username", "Julia");
+				editor.commit();
+			} else {
+				this.player.setUsername(userName);
+				this.player.setFirstname(firstName);
+				this.player.setCountry(country);
+				this.player.setImage(this.imgData);
+			}
+			Gson gson = new Gson();
+			String playerJson = gson.toJson(this.player);
+			manager.saveValueForKeyOfUser("profile", this.player.getUsername(),
+					playerJson);
 		}
-		Gson gson = new Gson();
-		String playerJson = gson.toJson(this.player);
-		manager.saveValueForKeyOfUser("profile", this.player.getUsername(),
-				playerJson);
 	}
 
 	private void enableEditing() {
