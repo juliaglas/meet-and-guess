@@ -31,7 +31,6 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	private List<Question> questionList;
 	private int questionNumber;
 
-
 	@Override
 	// TODO only start this activity if the questionNumber was changed before!
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +40,14 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		// Toolbar Layout
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setTitle("Question 1");
+		getSupportActionBar().setTitle(getResources().getText(R.string.question));
 		
 		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
 		this.userName = sharedPref.getString("username", "");
 		this.owner = sharedPref.getBoolean("owner", false);
 		
 		this.manager = new NetworkingManager(this, "G9", this.userName);
-		this.manager.loadValueForKeyOfUser("questionList", "gameLogic");
+		this.manager.loadValueForKeyOfUser("questionList", "gamaData");
 	}
 	
 	public void displayQuestion() {

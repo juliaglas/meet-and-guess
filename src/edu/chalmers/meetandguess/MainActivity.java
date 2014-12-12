@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 
 
 		this.manager = new NetworkingManager(this, "G9", "Julia");
-
+		setUp();
 	}
 
 	@Override
@@ -138,35 +138,20 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	}
 	
 	public void loadQuestionActivity(View view) {
-		// TODO replace username=Julia and owner=true by something meaningfull
-		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putString("username", "Julia");
-		editor.putBoolean("owner", true);
-		editor.commit();
-		
-		// TODO this is what should be done when creating a new game: create list of questions, set current question to 0
-		Question firstQuestion = new Question("Which animal is the cuter one?", "Dog", "Cat");
-		Question secondQuestion = new Question("Have you been to Australia?", "Yes", "No");
-		Question thirdQuestion = new Question("Have you been to Asia?", "Yes", "No");
-		List<Question> questionList = new ArrayList<Question>();
-		questionList.add(firstQuestion);
-		questionList.add(secondQuestion);
-		questionList.add(thirdQuestion);
-		Gson gson = new Gson();
-		String questionJson = gson.toJson(questionList);
-		manager.saveValueForKeyOfUser("questionList", "gameLogic", questionJson);
+		Intent intent = new Intent(this, QuestionActivity.class);
+		this.startActivityForResult(intent, 0);
 	}
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if(key.equals("questionList")) {
 			Gson gson = new Gson();
+			String groupIdJson = gson.toJson("M0");
+			manager.saveValueForKeyOfUser("gameId", "gameManager", groupIdJson);
+		} else if(key.equals("gameId")) {
+			Gson gson = new Gson();
 			String questionNumberJson = gson.toJson(0);
 			manager.saveValueForKeyOfUser("questionNumber", "gameLogic", questionNumberJson);
-		} else if(key.equals("questionNumber")) {
-			Intent intent = new Intent(this, QuestionActivity.class);
-			this.startActivityForResult(intent, 0);
 		}
 	}
 
@@ -221,6 +206,20 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	public void loadProfileActivity(View view) {
 		Intent intent = new Intent(this, ProfileActivity.class);
 		this.startActivityForResult(intent, 0);
+	}
+	
+	private void setUp() {
+		// TODO this is what should already be on the server: a list of questions
+		Question firstQuestion = new Question("Which animal is the cuter one?", "Dog", "Cat");
+		Question secondQuestion = new Question("Have you been to Australia?", "Yes", "No");
+		Question thirdQuestion = new Question("Have you been to Asia?", "Yes", "No");
+		List<Question> questionList = new ArrayList<Question>();
+		questionList.add(firstQuestion);
+		questionList.add(secondQuestion);
+		questionList.add(thirdQuestion);
+		Gson gson = new Gson();
+		String questionJson = gson.toJson(questionList);
+		manager.saveValueForKeyOfUser("questionList", "gameData", questionJson);
 	}
 	
 }

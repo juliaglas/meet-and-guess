@@ -133,6 +133,9 @@ public class CreateGameActivity extends ActionBarActivity implements NetworkingE
 			Gson gson = new Gson();
 			try {
 				Map<String, Game> gameMap = gson.fromJson(json.getString("value"), new TypeToken<HashMap<String, Game>>(){}.getType());
+				if(gameMap == null) {
+					gameMap = new HashMap<String, Game>();
+				}
 				gameMap.put(gameId, game);
 				String gameMapString = gson.toJson(gameMap);
 				manager.saveValueForKeyOfUser(key, user, gameMapString);
