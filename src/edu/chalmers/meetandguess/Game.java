@@ -13,6 +13,7 @@ public class Game {
 	private int currentQuestionNumber;
 	private String owner;
 	private Map<String, Integer> user2totalScore;
+	// TODO add location
 	
 	public Game(String gameId, String locationDescription, String detailedDescription, List<Question> questionList, String owner) {
 		super();

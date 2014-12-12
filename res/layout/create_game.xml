@@ -57,7 +57,7 @@
     </EditText>
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/create_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/location_label"
