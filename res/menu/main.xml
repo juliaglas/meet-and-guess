@@ -14,7 +14,7 @@
     	android:id="@+id/action_joinGame"
 	    android:orderInCategory="100"
 	    android:title="@string/action_joinGame"
-	     android:icon ="@drawable/ic_media_play"
+	    android:icon ="@drawable/ic_media_play"
 	    app:showAsAction="always"/>
     
    <!--  Overflow icon not needed for now  
