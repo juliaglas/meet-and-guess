@@ -7,14 +7,18 @@ import java.util.Map;
 public class Game {
 
 	private final String gameId;
+	private final String locationDescription;
+	private final String detailedDescription;
 	private List<Question> questionList;
 	private int currentQuestionNumber;
 	private String owner;
 	private Map<String, Integer> user2totalScore;
 	
-	public Game(String gameId, List<Question> questionList, String owner) {
+	public Game(String gameId, String locationDescription, String detailedDescription, List<Question> questionList, String owner) {
 		super();
 		this.gameId = gameId;
+		this.locationDescription = locationDescription;
+		this.detailedDescription = detailedDescription;
 		this.questionList = questionList;
 		this.currentQuestionNumber = 0;
 		this.owner = owner;
@@ -23,6 +27,14 @@ public class Game {
 
 	public String getGameId() {
 		return gameId;
+	}
+
+	public String getLocationDescription() {
+		return locationDescription;
+	}
+
+	public Map<String, Integer> getUser2totalScore() {
+		return user2totalScore;
 	}
 
 	public List<Question> getQuestionList() {
@@ -47,6 +59,10 @@ public class Game {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+	
+	public String getDetailedDescription() {
+		return detailedDescription;
 	}
 	
 	public boolean updateCurrentQuestionNumber() {

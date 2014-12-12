@@ -128,7 +128,10 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		
 		switch(id)
 		{
-			case R.id.action_createGame: return true;
+			case R.id.action_createGame: 
+				Intent intent = new Intent(this, CreateGameActivity.class);
+				this.startActivityForResult(intent, 0);
+				return true;
 			case R.id.action_joinGame:	 return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -219,4 +222,5 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		Intent intent = new Intent(this, ProfileActivity.class);
 		this.startActivityForResult(intent, 0);
 	}
+	
 }
