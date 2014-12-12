@@ -7,13 +7,17 @@ import java.io.InputStream;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class BitmapDecoder {
+	
+	private static final String ERROR_TAG = "BITMAP";
 
 	public static Bitmap decodeSampledBitmapFromInputStream(InputStream input,
 			Rect outPadding, int reqWidth, int reqHeight) {
 		input = new BufferedInputStream(input);
-		// First decode with inJustDecodeBounds=true to check dimensions
+		
+		// Decode with inJustDecodeBounds=true to check dimensions
 		final BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
 		input.mark(Integer.MAX_VALUE);
@@ -21,8 +25,7 @@ public class BitmapDecoder {
 		try {
 			input.reset();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.d(ERROR_TAG, "Could not reset input stream!");
 		}
 
 		// Calculate inSampleSize
@@ -34,8 +37,9 @@ public class BitmapDecoder {
 		return BitmapFactory.decodeStream(input, outPadding, options);
 	}
 
-	public static int calculateInSampleSize(BitmapFactory.Options options,
+	private static int calculateInSampleSize(BitmapFactory.Options options,
 			int reqWidth, int reqHeight) {
+		
 		// Raw height and width of image
 		final int height = options.outHeight;
 		final int width = options.outWidth;
@@ -46,8 +50,7 @@ public class BitmapDecoder {
 			final int halfHeight = height / 2;
 			final int halfWidth = width / 2;
 
-			// Calculate the largest inSampleSize value that is a power of 2 and
-			// keeps both
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
 			// height and width larger than the requested height and width.
 			while ((halfHeight / inSampleSize) > reqHeight
 					&& (halfWidth / inSampleSize) > reqWidth) {
