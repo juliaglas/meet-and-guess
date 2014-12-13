@@ -6,7 +6,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
@@ -26,6 +31,7 @@ import android.graphics.RectF;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -38,17 +44,26 @@ import android.widget.*;
 
 public class GuessActivity extends ActionBarActivity implements NetworkingEventHandler { 
     
+	private static final String TAG_ERROR = "ERROR";
+	
 	private static final String GROUP = "G9";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String USER_TO_SCORE = "userToScore";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 	private String userName;
+	private String imgData;
 	private NetworkingManager manager;
 	private Game game;
+	private Player player;
+	private Answer answer;
+	private boolean endOfGuess = false;
+	private Map<String, Answer> userToAnswer;
+	private int id;
 	
     private GestureDetectorCompat mDetector; 
     View.OnTouchListener mListener;
     private ImageView mImage;
-    private int numOfPlayers = 4; // TODO: Get number of players, draw slots for swiping icons
+    private int numOfPlayers = 4; // TODO: Get number of players from server
     private static final int SWIPE_THRESHOLD= 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
     private enum Pos {UP, MIDDLE, DOWN};
@@ -76,15 +91,7 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
                 return mDetector.onTouchEvent(event);
             }
         };
-     
-        // Create Slots for the Answers and User Images
-        guessSlot = new HashMap<Integer, Boolean>(numOfPlayers-1);
-        playerGuess = new HashMap<Integer, Pos>(numOfPlayers-1);
-        LinearLayout firstAnswer = (LinearLayout) findViewById(R.id.First_Answer_Slot);
-        LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot);
-        LinearLayout players = (LinearLayout) findViewById(R.id.Players);
-        createSlots(firstAnswer, secondAnswer, players);
-        
+      
     	SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 		this.userName = sharedPref.getString("username", null);
 		
@@ -92,19 +99,18 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 		
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
+		
+		// Load Profile Images 
+		if (userName!=null)
+			this.manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	
     }
     
-    // Creates Profile Slots and Images
-    private void createSlots(LinearLayout firstAnswer, LinearLayout secondAnswer, LinearLayout players)
+    // Creates Profile Empty Slots
+    private void createSlots(LinearLayout firstAnswer, LinearLayout secondAnswer)
     {  
-        for(int i=0; i< numOfPlayers -1 ; i++)
-        {
-        	// Fill them with views 
-        	fillSlots(firstAnswer, i+11);  
-        	fillSlots(secondAnswer, i+21);
-        	fillPlayerIcons(players, i+1);
-        }
+        	fillSlots(firstAnswer, id+10);  
+        	fillSlots(secondAnswer, id+20);
     }
     
     // Fills an answer with profile slots
@@ -139,12 +145,22 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     	// ImageView for images 
     	ImageView profileSlot = new ImageView(this);
     	
+    	Bitmap bm;
+    
+    	if(imgData!=null)
+    	{
+    		byte[] bitmapData = Base64.decode(imgData, Base64.DEFAULT);
+    		bm = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+    	}
+    	else
+    	{
     	// Create bitmap from resource TODO: It will fetch images from server
-        Bitmap bm = BitmapFactory.decodeResource(this.getResources(),
-        R.drawable.profile); 
+    	    bm = BitmapFactory.decodeResource(this.getResources(),
+    		R.drawable.profile); 
+    	}
         
     	profileSlot.setId(id); // 1, 2 ,3 ,4
-    	profileSlot.setImageBitmap(getCircleBitmap(bm));
+    	profileSlot.setImageBitmap(BitmapDecoder.getCircleBitmap(bm));
     	profileSlot.setOnTouchListener(mListener);
     	profileSlot.setLayoutParams(new FrameLayout.LayoutParams(dimen, dimen, Gravity.CENTER_HORIZONTAL));
     	players.addView(slot);
@@ -247,6 +263,18 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
         return 0;
     }
     
+    // User Pressed Done button
+    private void guessResults()
+    {
+    	// Compare Answers to User Guesses
+    	for (Map.Entry<String, Answer> entry : userToAnswer.entrySet()) 
+    	{
+    	
+    	}
+    	
+    	// Move Views to Correct Positions, Feedback and Score counting
+    
+    }
     // Animating swiping
     private class MyAnimationListener implements AnimationListener{
 
@@ -268,31 +296,6 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 
     }
     
-    // Creates Circular Picture
-    private Bitmap getCircleBitmap(Bitmap bitmap) 
-    {
-    	 final Bitmap output = Bitmap.createBitmap(bitmap.getWidth(),
-    	  bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-    	 final Canvas canvas = new Canvas(output);
-
-    	 final int color = Color.RED;
-    	 final Paint paint = new Paint();
-    	 final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-    	 final RectF rectF = new RectF(rect);
-
-    	 paint.setAntiAlias(true);
-    	 canvas.drawARGB(0, 0, 0, 0);
-    	 paint.setColor(color);
-    	 canvas.drawOval(rectF, paint);
-
-    	 paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-    	 canvas.drawBitmap(bitmap, rect, rect, paint);
-
-    	 bitmap.recycle();
-
-    	 return output;
-    }
-
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
@@ -301,7 +304,60 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
+		// Load images of other players and <User, Answer> Map
+		if(key.equals(USER_TO_ANSWER_KEY))
+		{
+			try {
+				Gson gson = new Gson();
+				userToAnswer = gson.fromJson(json.getString("value"), new TypeToken<Map<String, Answer>>(){}.getType());
+				if(userToAnswer == null) 
+				{
+					userToAnswer = new HashMap<String, Answer>();
+					Log.d(TAG_ERROR,"No Answers");
+				}
+				// Load images of other players and Answers
+				else 
+				{
+					// Create Slots for the Answers 
+			        guessSlot = new HashMap<Integer, Boolean>();
+			        playerGuess = new HashMap<Integer, Pos>();
+			        
+					// Load Images (TODO 1: Only from other players
+					//  			TODO 2: Fetch them internally if no new players)
+					for (Map.Entry<String, Answer> entry : userToAnswer.entrySet()) 
+						manager.loadValueForKeyOfUser("profile", entry.getKey());
+					
+					manager.unlockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+					
+				}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		// Load Player Image
+		else if (key.equals("profile")) {
+			try {
+				Gson gson = new Gson();
+				player = gson.fromJson(json.getString("value"), Player.class);
+				// TODO Load only other player's images
+				if(player != null ) { //player.getUsername()!= this.userName
+					imgData = player.getImage();
+					LinearLayout players = (LinearLayout) findViewById(R.id.Players);
+					fillPlayerIcons(players, id);
+					
+			        LinearLayout firstAnswer = (LinearLayout) findViewById(R.id.First_Answer_Slot);
+			        LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot); 
+			        createSlots(firstAnswer, secondAnswer);
+			        id++;
+				}
+			
+			} catch (JsonSyntaxException e) {
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+			} catch (JSONException e) {
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+			}
+		}
 		
 	}
 
@@ -332,7 +388,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
+		// User locks in the beginning to fetch images from server, and after is done guessing
+		this.manager.loadValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 		
 	}
 
