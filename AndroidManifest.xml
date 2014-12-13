@@ -3,7 +3,7 @@
     package="edu.chalmers.meetandguess"
     android:versionCode="1"
     android:versionName="1.0"
-    android:installLocation="internalOnly" >
+    android:installLocation="preferExternal" >
 
     <uses-sdk
         android:minSdkVersion="8"
