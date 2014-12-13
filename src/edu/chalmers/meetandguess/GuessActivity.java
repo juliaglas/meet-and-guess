@@ -37,7 +37,7 @@ public class GuessActivity extends ActionBarActivity {
     private GestureDetectorCompat mDetector; 
     View.OnTouchListener mListener;
     private ImageView mImage;
-    private int numOfPlayers = 5; // TODO: Get number of players, draw slots for swiping icons
+    private int numOfPlayers = 4; // TODO: Get number of players, draw slots for swiping icons
     private static final int SWIPE_THRESHOLD= 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
     private enum Pos {UP, MIDDLE, DOWN};
@@ -151,63 +151,18 @@ public class GuessActivity extends ActionBarActivity {
                 float velocityX, float velocityY) {
         
            final float yDistance = event1.getY() - event2.getY();
-           mImage = new ImageView(GuessActivity.this);
-    	   mImage = (ImageView)findViewById(viewTouched);
            // Swipe Up or Down
            if(Math.abs(yDistance) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD)
-           {
-        	   // Get Parent of Image
-    		   ViewGroup oldParent = (ViewGroup) mImage.getParent();
-    		   // Get Current Position of player image
-    		   Pos pos = playerGuess.get(viewTouched);
-    		   
+           {   
         	   // Swipe Up
         	   if(yDistance > 0 && pos!=Pos.UP )
         	   {			   
-        		   // Remove it from the Viewgroup
-                   if(oldParent!=null)
-                	  oldParent.removeView(mImage);
-        		   // TODO Get the correct overlay view (slot)
-                   int emptySlot = findEmptySlot(Pos.UP);
-            	   ImageView profileUp = (ImageView) findViewById(emptySlot);
-        		   ViewGroup newParent = (ViewGroup) profileUp.getParent();
-                   
-                   FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)profileUp.getLayoutParams();
-                   
-                  /* TranslateAnimation animation = new TranslateAnimation(0, profileUp.getTranslationX() - mImage.getTranslationX(), 0, profileUp.getTranslationY() - mImage.getTranslationY());
-        	       animation.setDuration(1000);
-        	       animation.setFillAfter(false);
-        	       animation.setAnimationListener((AnimationListener) new MyAnimationListener()); */
-        	      // mImage.startAnimation(animation);
-                   mImage.setLayoutParams(layoutParams);
-                  
-                   newParent.addView(mImage);
-                   mImage.setVisibility(View.VISIBLE);
-                   guessSlot.put(emptySlot, true);
-                   if(pos != Pos.MIDDLE)
-                	   guessSlot.put(oldParent.getChildAt(0).getId(), false);
-                   playerGuess.put(viewTouched, Pos.UP);
+        		   movePlayer(Pos.UP);
         	   }
         	   // Swipe Down
-        	   else if(yDistance < 0 && playerGuess.get(viewTouched)!= Pos.DOWN)
+        	   else if(yDistance < 0 && pos != Pos.DOWN)
         	   {
-        		   // Remove it from the Viewgroup
-                   if(oldParent!=null)
-                	  oldParent.removeView(mImage);
-                   int emptySlot = findEmptySlot(Pos.DOWN);
-            	   ImageView profileDown = (ImageView) findViewById(emptySlot);
-        		   ViewGroup newParent = (ViewGroup) profileDown.getParent();
-                   
-                   FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)profileDown.getLayoutParams();
-                               
-                   mImage.setLayoutParams(layoutParams);
-                  
-                   newParent.addView(mImage);
-                   mImage.setVisibility(View.VISIBLE); 
-                   guessSlot.put(emptySlot, true);
-                   if(pos != Pos.MIDDLE)
-                	   guessSlot.put(oldParent.getChildAt(0).getId(), false);
-                   playerGuess.put(viewTouched, Pos.DOWN);
+        		   movePlayer(Pos.DOWN);
         	   }
            }
             
@@ -217,6 +172,37 @@ public class GuessActivity extends ActionBarActivity {
        
     }
     
+    // Moves a player Icon to an Empty Slot depending on the choice of the user
+    private void movePlayer(Pos choice)
+    {
+    	// Find The Image that is swiped by the User
+	    mImage = new ImageView(GuessActivity.this);
+	    mImage = (ImageView)findViewById(viewTouched);
+    	// Get Parent of Image
+		ViewGroup oldParent = (ViewGroup) mImage.getParent();
+		// Get Current Position of player image
+		Pos imagePos = playerGuess.get(viewTouched);
+		
+		// Remove it from the Viewgroup
+        if(oldParent!=null)
+     	  oldParent.removeView(mImage);
+	
+        int emptySlot = findEmptySlot(choice);
+ 	    ImageView profile = (ImageView) findViewById(emptySlot);
+		ViewGroup newParent = (ViewGroup) profile.getParent();
+        
+        FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams)profile.getLayoutParams();
+        
+        mImage.setLayoutParams(layoutParams);
+       
+        newParent.addView(mImage);
+        mImage.setVisibility(View.VISIBLE);
+        guessSlot.put(emptySlot, true);
+        if(imagePos != Pos.MIDDLE)
+     	   guessSlot.put(oldParent.getChildAt(0).getId(), false);
+        playerGuess.put(viewTouched, choice);
+    
+    }
     // Finds empty slot depending on the answer that the user picked
     private int findEmptySlot(Pos pos)
     {

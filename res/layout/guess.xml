@@ -63,8 +63,6 @@
         android:layout_below="@+id/First_Answer"
         android:gravity="center_vertical"
         android:orientation="horizontal" >
-
-       
         
     </LinearLayout>
   
@@ -88,17 +86,25 @@
            android:layout_marginTop="10dp"
            android:text="Cat" />
    	
-	  <LinearLayout
+	  	<LinearLayout
 	        android:id="@+id/Second_Answer_Slot"
 	        android:layout_width="fill_parent"
 	        android:layout_height="78dp"
 	        android:layout_below="@+id/guess_label"
 	        android:layout_marginTop="30dp"
 	        android:gravity="center_vertical"
-	        android:orientation="horizontal" >       
-	
-	    </LinearLayout>
+	        android:orientation="horizontal" >
+	   	</LinearLayout>
     </LinearLayout>
 
+    <ToggleButton 
+        android:id="@+id/Done"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textOn="DONE"
+    	android:textOff="DONE"
+    	android:onClick="onToggleClicked"/>
    
 </RelativeLayout>
