@@ -58,7 +58,7 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 	private Answer answer;
 	private boolean endOfGuess = false;
 	private Map<String, Answer> userToAnswer;
-	private int id;
+	private int id = 1;
 	
     private GestureDetectorCompat mDetector; 
     View.OnTouchListener mListener;
