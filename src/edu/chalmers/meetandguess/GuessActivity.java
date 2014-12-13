@@ -1,13 +1,19 @@
 package edu.chalmers.meetandguess;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.json.JSONObject;
+
+import edu.chalmers.qdnetworking.NetworkingEventHandler;
+import edu.chalmers.qdnetworking.NetworkingManager;
+
 import android.os.Bundle;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -26,14 +32,19 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
-import android.view.animation.TranslateAnimation;
 import android.widget.*;
 
-public class GuessActivity extends ActionBarActivity { 
+public class GuessActivity extends ActionBarActivity implements NetworkingEventHandler { 
     
+	private static final String GROUP = "G9";
+	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
+	private String userName;
+	private NetworkingManager manager;
+	private Game game;
+	
     private GestureDetectorCompat mDetector; 
     View.OnTouchListener mListener;
     private ImageView mImage;
@@ -73,8 +84,15 @@ public class GuessActivity extends ActionBarActivity {
         LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot);
         LinearLayout players = (LinearLayout) findViewById(R.id.Players);
         createSlots(firstAnswer, secondAnswer, players);
- 
         
+    	SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+		this.userName = sharedPref.getString("username", null);
+		
+		this.manager = new NetworkingManager(this, GROUP, this.userName);
+		
+		Intent intent = getIntent();
+		game = (Game) intent.getParcelableExtra("game");
+	
     }
     
     // Creates Profile Slots and Images
@@ -274,4 +292,53 @@ public class GuessActivity extends ActionBarActivity {
 
     	 return output;
     }
+
+	@Override
+	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deletedKeyOfUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void monitoringKeyOfUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void ignoringKeyOfUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void valueChangedForKeyOfUser(JSONObject json, String key,
+			String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void lockedKeyofUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
+		// TODO Auto-generated method stub
+		
+	}
 }
