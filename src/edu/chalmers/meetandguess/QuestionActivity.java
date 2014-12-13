@@ -1,6 +1,13 @@
 package edu.chalmers.meetandguess;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
@@ -9,16 +16,20 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 public class QuestionActivity extends ActionBarActivity implements NetworkingEventHandler{
+	
+	private static final String GROUP = "G9";
+	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
 	private String userName;
 	private NetworkingManager manager;
 	private Game game;
+	private Answer answer;
 
 	@Override
 	// TODO everybody has to update the current question number on his own
@@ -31,10 +42,10 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		setSupportActionBar(toolbar);
 		getSupportActionBar().setTitle(getResources().getText(R.string.question));
 		
-		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
-		this.userName = sharedPref.getString("username", "");
+		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+		this.userName = sharedPref.getString("username", null);
 		
-		this.manager = new NetworkingManager(this, "G9", this.userName);
+		this.manager = new NetworkingManager(this, GROUP, this.userName);
 		
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
@@ -54,29 +65,40 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	}
 	
 	public void answer1Selected(View view) {
-		// TODO pass answer to server
-		Log.d("QuestionActivity Test", "User selected answer 1");
+		answer = Answer.ANSWER1;
+		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	}
 	
 	public void answer2Selected(View view) {
-		// TODO pass answer to server
-		Log.d("QuestionActivity Test", "User selected answer 2");
+		answer = Answer.ANSWER2;
+		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	}
 	
 	public void skipQuestion(View view) {
-		// TODO handle skipping the question
-		Log.d("QuestionActivity Test", "User wants to skip question");
+		answer = Answer.SKIPQUESTION;
+		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	}
-
+	
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
+		manager.unlockKeyOfUser(key, user);
 	}
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
+		try {
+				Gson gson = new Gson();
+				Map<String, Answer> userToAnswer = gson.fromJson(json.getString("value"), new TypeToken<Map<String, Answer>>(){}.getType());
+				if(userToAnswer == null) {
+					userToAnswer = new HashMap<String, Answer>();
+				}
+				userToAnswer.put(userName, answer);
+				String userToAnswerJson = gson.toJson(userToAnswer);
+				manager.saveValueForKeyOfUser(key, user, userToAnswerJson);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -106,13 +128,22 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		try {
+			if(json.getString("code").equals("1")) {
+				manager.loadValueForKeyOfUser(key, user);
+			} else {
+				manager.lockKeyOfUser(key, user);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		Intent intent = new Intent(this, GuessActivity.class);
+		intent.putExtra("game", game);
+		this.startActivityForResult(intent, 0);
 	}
 }
