@@ -4,5 +4,6 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="drawer_width">320dp</dimen>
+    <dimen name="image_dimen">68dp</dimen> 
 
 </resources>
