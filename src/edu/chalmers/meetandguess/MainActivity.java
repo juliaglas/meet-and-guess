@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		String userName = sharedPref.getString("username", null);
 
 		this.manager = new NetworkingManager(this, "G9", userName);
-		setUp();
+		//setUp();
 		
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
