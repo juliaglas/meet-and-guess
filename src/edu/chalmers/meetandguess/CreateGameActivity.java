@@ -15,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -24,35 +25,45 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-public class CreateGameActivity extends ActionBarActivity implements NetworkingEventHandler {
+public class CreateGameActivity extends ActionBarActivity implements
+		NetworkingEventHandler {
 	
+	private static final String GROUP = "G9";
+	private static final String GAME_MANAGER_USER = "gameManager";
+	private static final String GAME_DATA_USER = "gameData";
+	private static final String GAME_ID_KEY = "gameId";
+	private static final String QUESTION_LIST_KEY = "questionList";
+	private static final String GAME_MAP_KEY = "gameMap";
+	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
+
 	private String userName;
 	private NetworkingManager manager;
-	
+
 	private String gameId;
 	private String locationDescription;
 	private String detailDescription;
 	private List<Question> questionList;
-	
+
 	private Game game;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_game);
-	
+
 		// Toolbar Layout
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar().setTitle(getResources().getText(R.string.create_game));
+		getSupportActionBar().setTitle(
+				getResources().getText(R.string.create_game));
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	
+
 		// Access the user name
-		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 		userName = sharedPref.getString("username", null);
-		manager = new NetworkingManager(this, "G9", userName);
+		manager = new NetworkingManager(this, GROUP, userName);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -63,14 +74,14 @@ public class CreateGameActivity extends ActionBarActivity implements NetworkingE
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void createGame(View view) {
 		EditText locationEdit = (EditText) findViewById(R.id.location_edit);
 		locationDescription = locationEdit.getText().toString();
-		if(locationDescription != null) {
+		if (locationDescription != null) {
 			EditText detailEdit = (EditText) findViewById(R.id.detail_edit);
 			detailDescription = detailEdit.getText().toString();
-			manager.loadValueForKeyOfUser("gameId", "gameManager");
+			manager.loadValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER);
 		} else {
 			// TODO Alert: you need to provide a location
 		}
@@ -78,24 +89,29 @@ public class CreateGameActivity extends ActionBarActivity implements NetworkingE
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals("gameId")) {
-			manager.loadValueForKeyOfUser("questionList", "gameData");
-		} else if(key.equals("questionList")) {
-			game = new Game(gameId, locationDescription, detailDescription, questionList, userName);
-			manager.loadValueForKeyOfUser("gameMap", "gameManager");
-		} else if(key.equals("gameMap")) {
-			NavUtils.navigateUpFromSameTask(this);
+		if (key.equals(GAME_ID_KEY)) { // after increasing gameId on the server
+			manager.loadValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER);
+		} else if (key.equals(QUESTION_LIST_KEY)) {
+			game = new Game(gameId, locationDescription, detailDescription,
+					questionList, userName);
+			game.addUser(userName);
+			manager.loadValueForKeyOfUser(GAME_MAP_KEY, GAME_MANAGER_USER);
+		} else if (key.equals(GAME_MAP_KEY)) {
+			Intent intent = NavUtils.getParentActivityIntent(this);
+			intent.putExtra("game", game);
+			NavUtils.navigateUpTo(this, intent);
 		}
 	}
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals("gameId")) {
+		if (key.equals(GAME_ID_KEY)) { // get the id of the new game
 			Gson gson = new Gson();
 			try {
 				gameId = gson.fromJson(json.getString("value"), String.class);
 				String copyOfGameId = new String(gameId);
-				int nextGameId = Integer.parseInt(copyOfGameId.replaceAll("[^\\d.]",""));
+				int nextGameId = Integer.parseInt(copyOfGameId.replaceAll(
+						"[^\\d.]", ""));
 				nextGameId++;
 				String nextGameIdString = "M" + nextGameId;
 				manager.saveValueForKeyOfUser(key, user, nextGameIdString);
@@ -106,18 +122,23 @@ public class CreateGameActivity extends ActionBarActivity implements NetworkingE
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if(key.equals("questionList")) {
+		} else if (key.equals(QUESTION_LIST_KEY)) { 
 			Gson gson = new Gson();
 			try {
 				// obtain complete questionList
-				List<Question> completeQuestionList = gson.fromJson(json.getString("value"), new TypeToken<ArrayList<Question>>(){}.getType());
+				List<Question> completeQuestionList = gson.fromJson(
+						json.getString("value"),
+						new TypeToken<ArrayList<Question>>() {
+						}.getType());
 				// set questionList for current game
-				if(completeQuestionList.size() < 15) {
+				if (completeQuestionList.size() < 15) {
 					questionList = completeQuestionList;
 				} else {
 					Random r = new Random();
-					int firstQuestion = r.nextInt(completeQuestionList.size() - 15 + 1);
-					questionList = completeQuestionList.subList(firstQuestion, firstQuestion + 15);
+					int firstQuestion = r
+							.nextInt(completeQuestionList.size() - 15 + 1);
+					questionList = completeQuestionList.subList(firstQuestion,
+							firstQuestion + 15);
 				}
 				// save new questionList on the server
 				String questionListString = gson.toJson(questionList);
@@ -129,11 +150,14 @@ public class CreateGameActivity extends ActionBarActivity implements NetworkingE
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if(key.equals("gameMap")) {
+		} else if (key.equals(GAME_MAP_KEY)) {
 			Gson gson = new Gson();
 			try {
-				Map<String, Game> gameMap = gson.fromJson(json.getString("value"), new TypeToken<HashMap<String, Game>>(){}.getType());
-				if(gameMap == null) {
+				Map<String, Game> gameMap = gson.fromJson(
+						json.getString("value"),
+						new TypeToken<HashMap<String, Game>>() {
+						}.getType());
+				if (gameMap == null) {
 					gameMap = new HashMap<String, Game>();
 				}
 				gameMap.put(gameId, game);
@@ -152,38 +176,37 @@ public class CreateGameActivity extends ActionBarActivity implements NetworkingE
 	@Override
 	public void deletedKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void monitoringKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void ignoringKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
-	}
 
+	}
 }

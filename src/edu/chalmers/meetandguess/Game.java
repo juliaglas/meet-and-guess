@@ -1,23 +1,30 @@
 package edu.chalmers.meetandguess;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class Game {
+
+//import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Game implements Parcelable {
 
 	private final String gameId;
+	//private final Location location;
 	private final String locationDescription;
 	private final String detailedDescription;
 	private List<Question> questionList;
 	private int currentQuestionNumber;
 	private String owner;
 	private Map<String, Integer> user2totalScore;
-	// TODO add location
 	
-	public Game(String gameId, String locationDescription, String detailedDescription, List<Question> questionList, String owner) {
+	public Game(String gameId, /*Location location, */String locationDescription, String detailedDescription, List<Question> questionList, String owner) {
 		super();
 		this.gameId = gameId;
+		//this.location = location;
 		this.locationDescription = locationDescription;
 		this.detailedDescription = detailedDescription;
 		this.questionList = questionList;
@@ -29,6 +36,10 @@ public class Game {
 	public String getGameId() {
 		return gameId;
 	}
+	
+	//public Location getLocation() {
+	//	return location;
+	//}
 
 	public String getLocationDescription() {
 		return locationDescription;
@@ -75,9 +86,67 @@ public class Game {
 		}
 	}
 	
+	public Question getCurrentQuestion() {
+		return this.questionList.get(this.currentQuestionNumber);
+	}
+	
+	public void addUser(String user) {
+		user2totalScore.put(user, 0);
+	}
+	
 	public void increaseScoreForUser(String user, int currentScoreToAdd) {
 		int oldScore = user2totalScore.get(user);
 		user2totalScore.put(user, oldScore + currentScoreToAdd);
 	}
+
+	@Override
+	public int describeContents() {
+		return hashCode();
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(gameId);
+		//location.writeToParcel(dest, flags);
+		dest.writeString(locationDescription);
+		dest.writeString(detailedDescription);
+		dest.writeTypedList(questionList);
+		dest.writeInt(currentQuestionNumber);
+		dest.writeString(owner);
+		final int mapSize = user2totalScore.size();
+        dest.writeInt(mapSize);
+        for (Map.Entry<String, Integer> entry : user2totalScore.entrySet()) {
+        	dest.writeString(entry.getKey());
+        	dest.writeInt(entry.getValue());
+        }
+	}
 	
+	public Game(Parcel parcel) {
+		gameId = parcel.readString();
+		//location = Location.CREATOR.createFromParcel(parcel);
+		locationDescription = parcel.readString();
+		detailedDescription = parcel.readString();
+		questionList = new LinkedList<Question>();
+		parcel.readTypedList(questionList, Question.CREATOR);
+		currentQuestionNumber = parcel.readInt();
+		owner = parcel.readString();
+		int mapSize = parcel.readInt();
+		user2totalScore = new HashMap<String, Integer>();
+		for (int i=0; i<mapSize; i++) {
+            String user = parcel.readString();
+            int score = parcel.readInt(); 
+            user2totalScore.put(user, score);
+        }
+	}
+	
+	public static final Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
+		@Override
+		public Game createFromParcel(Parcel parcel) {
+			return new Game(parcel);
+		}
+		@Override
+		public Game[] newArray(int size) {
+			return new Game[size];
+		}
+	};
 }

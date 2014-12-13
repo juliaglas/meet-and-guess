@@ -14,8 +14,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -32,6 +32,8 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	private Navigation navigation;
 
 	private NetworkingManager manager;
+	
+	private Game game;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,16 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		setContentView(R.layout.activity_main);
 		
 		InitViews();
+		
+		// Access the user name
+		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+		String userName = sharedPref.getString("username", null);
+
+		this.manager = new NetworkingManager(this, "G9", userName);
+		setUp();
+		
+		Intent intent = getIntent();
+		game = (Game) intent.getParcelableExtra("game");
 	}
 	
 	public void InitViews(){
@@ -86,10 +98,6 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
         		android.R.layout.simple_list_item_1, navigation.getNavList()));
         // Set the list's click listener
         //drawerList.setOnItemClickListener(new DrawerItemClickListener());
-
-
-		this.manager = new NetworkingManager(this, "G9", "Julia");
-		setUp();
 	}
 
 	@Override
@@ -139,7 +147,12 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	
 	public void loadQuestionActivity(View view) {
 		Intent intent = new Intent(this, QuestionActivity.class);
-		this.startActivityForResult(intent, 0);
+		if(game != null) {
+			intent.putExtra("game", game);
+			this.startActivityForResult(intent, 0);
+		} else {
+			// TODO: Alert that there is no game
+		}
 	}
 
 	@Override
