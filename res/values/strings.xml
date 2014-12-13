@@ -10,9 +10,14 @@
     <string name="score_label">Score:</string>
     <string name="username_label">User name:</string>
     <string name="firstname_label">First name:</string>    
-    <string name="country_label">Country:</string>    
+    <string name="country_label">Country:</string>
+    <string name="create_game">Create Game</string>
+    <string name="location_label">Location:</string>
+    <string name="detail_label">Details:</string>
+    <string name="create">Create</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
+    <string name="question">Question</string>
     <string name="skip_question">Skip question</string>
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
