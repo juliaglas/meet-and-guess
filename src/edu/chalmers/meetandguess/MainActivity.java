@@ -210,12 +210,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		// TODO Auto-generated method stub
 		
 	}
-	
-	public void loadGuessActivity(View view) {
-		Intent intent = new Intent(this, GuessActivity.class);
-		this.startActivityForResult(intent, 0);
-	}
-	
+
 	public void loadProfileActivity(View view) {
 		Intent intent = new Intent(this, ProfileActivity.class);
 		this.startActivityForResult(intent, 0);
