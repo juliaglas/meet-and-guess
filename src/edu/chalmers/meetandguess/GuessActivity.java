@@ -127,8 +127,7 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     	slot.setLayoutParams(new LinearLayout.LayoutParams(0, dimen, 1f));
     	
     	// ImageView for images 
-    	ImageView profileSlot = new ImageView(this);
-    	
+    	ImageView profileSlot = new ImageView(this); 	
     	Bitmap bm;
     
     	if(imgData!=null)
@@ -138,7 +137,7 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     	}
     	else
     	{
-    	// Create bitmap from resource TODO: It will fetch images from server
+    		// Create bitmap from resource TODO: It will fetch images from server
     	    bm = BitmapFactory.decodeResource(this.getResources(),
     		R.drawable.profile); 
     	}
@@ -153,6 +152,24 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     	// Player guesses are "Skip Question" in the beginning
     	playerGuess.put(idToUser.get(id), Answer.SKIPQUESTION);
    
+    }
+    
+    //OverLay Icon
+    private void overlayIcon(int id, boolean correct)
+    {
+    	// Get Image Dimensions (currently 68x68)
+    	int dimen = (int)getResources().getDimension(R.dimen.image_dimen);
+    	ImageView playerImage = (ImageView)findViewById(id);
+    	ViewGroup parent = (ViewGroup)playerImage.getParent();
+    	ImageView overlay = new ImageView(this) ;
+    	
+    	overlay.setLayoutParams(new FrameLayout.LayoutParams(dimen, dimen, Gravity.CENTER_HORIZONTAL));
+    	if(correct)
+    		overlay.setImageResource(R.drawable.correct);
+    	else
+    		overlay.setImageResource(R.drawable.incorrect);
+    	parent.addView(overlay);	
+    
     }
     
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -263,6 +280,16 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     		if(entry.getValue() == playerGuess.get(entry.getKey()))
     		{
     			// Overlay correct Feedback
+    			for (Map.Entry<Integer, String> idEntry : idToUser.entrySet())
+				{
+    				// Get The Id of the player image to overlay
+    				if(idEntry.getValue() == entry.getKey())
+    				{
+    					overlayIcon(idEntry.getKey(), true);
+    					break;
+    				}
+				}
+    			
     			// Add Score
     		}
     		// Incorrect Guess
@@ -272,12 +299,17 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     			for (Map.Entry<Integer, String> idEntry : idToUser.entrySet())
 				{
     				if(idEntry.getValue() == entry.getKey())
+    				{
     					viewTouched = idEntry.getKey();
+    					// Move view to correct spot
+    	    			movePlayer(entry.getValue());
+    	    			// Overlay incorrect Feedback
+    	    			overlayIcon(idEntry.getKey(), false);
+    				}
 				}
-    			// Move view to correct spot
-    			movePlayer(entry.getValue());
+
     			// Animate
-    			// Overlay incorrect Feedback
+    			
     		}
     	
     	}
@@ -352,7 +384,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 				}
 		}
 		// Load Player Image
-		else if (key.equals("profile")) {
+		else if (key.equals("profile"))
+		{
 			try {
 				Gson gson = new Gson();
 				player = gson.fromJson(json.getString("value"), Player.class);
@@ -360,8 +393,7 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 				if(player != null ) { //player.getUsername()!= this.userName
 					imgData = player.getImage();
 					LinearLayout players = (LinearLayout) findViewById(R.id.Players);
-					playerIcons(players, id);   // 1, 2, ...
-					
+					playerIcons(players, id);   // 1, 2, ...		
 			        LinearLayout firstAnswer = (LinearLayout) findViewById(R.id.First_Answer_Slot);
 			        emptySlots(firstAnswer, id+10);  // 11, 12, ...
 			        LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot); 
