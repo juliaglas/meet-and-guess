@@ -2,6 +2,7 @@ package edu.chalmers.meetandguess;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -21,13 +22,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
@@ -55,21 +49,18 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 	private NetworkingManager manager;
 	private Game game;
 	private Player player;
-	private Answer answer;
-	private boolean endOfGuess = false;
+	private Answer guess;
 	private Map<String, Answer> userToAnswer;
 	private int id = 1;
 	
     private GestureDetectorCompat mDetector; 
     View.OnTouchListener mListener;
     private ImageView mImage;
-    private int numOfPlayers = 4; // TODO: Get number of players from server
     private static final int SWIPE_THRESHOLD= 100;
     private static final int SWIPE_VELOCITY_THRESHOLD = 100;
-    private enum Pos {UP, MIDDLE, DOWN};
-    private Pos pos;
-    private HashMap<Integer, Boolean> guessSlot;  // Slots: <id, empty>
-    private HashMap<Integer, Pos> playerGuess;   // Player Guess: <id, pos>
+    private Map<Integer, Boolean> guessSlot;  // Slots: <id, empty>
+    private Map<String, Answer> playerGuess;   // Player Guess: <User, Answer>
+    private Map<Integer, String> idToUser;  // Id to User: <id, User>
     private int viewTouched;
     
     @Override
@@ -106,15 +97,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 	
     }
     
-    // Creates Profile Empty Slots
-    private void createSlots(LinearLayout firstAnswer, LinearLayout secondAnswer)
-    {  
-        	fillSlots(firstAnswer, id+10);  
-        	fillSlots(secondAnswer, id+20);
-    }
-    
-    // Fills an answer with profile slots
-    private void fillSlots(LinearLayout answer, int id)
+    // Create empty Slots for an Answer
+    private void emptySlots(LinearLayout answer, int id)
     {
     	// Get Image Dimensions (currently 68x68)
     	int dimen = (int)getResources().getDimension(R.dimen.image_dimen);
@@ -133,8 +117,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
   	
     }
     
-    // Fills with players Images 
-    private void fillPlayerIcons(LinearLayout players, int id)
+    // Create Player Icons
+    private void playerIcons(LinearLayout players, int id)
     {
     	// Get Image Dimensions (currently 68x68)
     	int dimen = (int)getResources().getDimension(R.dimen.image_dimen);
@@ -165,9 +149,10 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     	profileSlot.setLayoutParams(new FrameLayout.LayoutParams(dimen, dimen, Gravity.CENTER_HORIZONTAL));
     	players.addView(slot);
     	slot.addView(profileSlot);	
-    	// Player Image in the middle on Creation
-    	playerGuess.put(id, Pos.MIDDLE);
-    
+    	
+    	// Player guesses are "Skip Question" in the beginning
+    	playerGuess.put(idToUser.get(id), Answer.SKIPQUESTION);
+   
     }
     
     private class MyGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -188,15 +173,16 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
            // Swipe Up or Down
            if(Math.abs(yDistance) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD)
            {   
+        	   guess = playerGuess.get(idToUser.get(viewTouched));
         	   // Swipe Up
-        	   if(yDistance > 0 && pos!=Pos.UP )
+        	   if(yDistance > 0 && guess!=Answer.ANSWER1 )
         	   {			   
-        		   movePlayer(Pos.UP);
+        		   movePlayer(Answer.ANSWER1);
         	   }
         	   // Swipe Down
-        	   else if(yDistance < 0 && pos != Pos.DOWN)
+        	   else if(yDistance < 0 && guess!=Answer.ANSWER2)
         	   {
-        		   movePlayer(Pos.DOWN);
+        		   movePlayer(Answer.ANSWER2);
         	   }
            }
             
@@ -207,15 +193,15 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     }
     
     // Moves a player Icon to an Empty Slot depending on the choice of the user
-    private void movePlayer(Pos choice)
+    private void movePlayer(Answer choice)
     {
     	// Find The Image that is swiped by the User
 	    mImage = new ImageView(GuessActivity.this);
 	    mImage = (ImageView)findViewById(viewTouched);
     	// Get Parent of Image
 		ViewGroup oldParent = (ViewGroup) mImage.getParent();
-		// Get Current Position of player image
-		Pos imagePos = playerGuess.get(viewTouched);
+		// Get Answer that player image is placed
+		Answer guess = playerGuess.get(idToUser.get(viewTouched));
 		
 		// Remove it from the Viewgroup
         if(oldParent!=null)
@@ -231,14 +217,18 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
        
         newParent.addView(mImage);
         mImage.setVisibility(View.VISIBLE);
+        // Mark Slot full
         guessSlot.put(emptySlot, true);
-        if(imagePos != Pos.MIDDLE)
+        // Mark previous Slot as empty 
+        if(guess != Answer.SKIPQUESTION)
      	   guessSlot.put(oldParent.getChildAt(0).getId(), false);
-        playerGuess.put(viewTouched, choice);
+        
+        // Map player to answer that the user guesses
+    	playerGuess.put(idToUser.get(viewTouched), choice);
     
     }
     // Finds empty slot depending on the answer that the user picked
-    private int findEmptySlot(Pos pos)
+    private int findEmptySlot(Answer ans)
     {
     	Set<Entry<Integer, Boolean>> set = guessSlot.entrySet();
         Iterator<Entry<Integer, Boolean>> i = set.iterator();
@@ -248,12 +238,12 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
            Map.Entry<Integer, Boolean> me = (Map.Entry<Integer, Boolean>)i.next();
            // Empty Slot
     	   boolean empty = (Boolean) me.getValue();  
-           if(pos == Pos.UP)  
+           if(ans == Answer.ANSWER1)  
            {   
         	   if(empty == false && (Integer)me.getKey()<20)
         		   return (Integer) me.getKey(); 
            }
-           else if(pos == Pos.DOWN)
+           else if(ans == Answer.ANSWER2)
            {
         	   if(empty == false && (Integer)me.getKey()>20)
         		   return (Integer) me.getKey(); 
@@ -264,11 +254,31 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     }
     
     // User Pressed Done button
-    private void guessResults()
+    public void guessResults(View view)
     {
     	// Compare Answers to User Guesses
     	for (Map.Entry<String, Answer> entry : userToAnswer.entrySet()) 
     	{
+    		// Correct Guess
+    		if(entry.getValue() == playerGuess.get(entry.getKey()))
+    		{
+    			// Overlay correct Feedback
+    			// Add Score
+    		}
+    		// Incorrect Guess
+    		else
+    		{
+    			// Get The Id of the player image to move
+    			for (Map.Entry<Integer, String> idEntry : idToUser.entrySet())
+				{
+    				if(idEntry.getValue() == entry.getKey())
+    					viewTouched = idEntry.getKey();
+				}
+    			// Move view to correct spot
+    			movePlayer(entry.getValue());
+    			// Animate
+    			// Overlay incorrect Feedback
+    		}
     	
     	}
     	
@@ -319,13 +329,19 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 				else 
 				{
 					// Create Slots for the Answers 
-			        guessSlot = new HashMap<Integer, Boolean>();
-			        playerGuess = new HashMap<Integer, Pos>();
+			        guessSlot = new LinkedHashMap<Integer, Boolean>();
+			        // Map for id to image icons to Users
+			        idToUser = new HashMap<Integer, String>();
+			        // Player Guess 
+			        playerGuess = new HashMap<String, Answer>();
 			        
 					// Load Images (TODO 1: Only from other players
 					//  			TODO 2: Fetch them internally if no new players)
-					for (Map.Entry<String, Answer> entry : userToAnswer.entrySet()) 
+					for (Map.Entry<String, Answer> entry : userToAnswer.entrySet())
+					{
 						manager.loadValueForKeyOfUser("profile", entry.getKey());
+						idToUser.put(id, entry.getKey());
+					}
 					
 					manager.unlockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 					
@@ -344,11 +360,13 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 				if(player != null ) { //player.getUsername()!= this.userName
 					imgData = player.getImage();
 					LinearLayout players = (LinearLayout) findViewById(R.id.Players);
-					fillPlayerIcons(players, id);
+					playerIcons(players, id);   // 1, 2, ...
 					
 			        LinearLayout firstAnswer = (LinearLayout) findViewById(R.id.First_Answer_Slot);
+			        emptySlots(firstAnswer, id+10);  // 11, 12, ...
 			        LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot); 
-			        createSlots(firstAnswer, secondAnswer);
+		        	emptySlots(secondAnswer, id+20); // 21, 22, ...
+		        	// Next id
 			        id++;
 				}
 			
