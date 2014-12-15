@@ -32,6 +32,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements NetworkingEventHandler{
+	
+	private static final int PROFILE_ACTIVITY_REQUEST_CODE = 0;
+	private static final int CREATE_GAME_REQUEST_CODE = 1;
 
 	private DrawerLayout drawer;
 
@@ -53,15 +56,12 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
 		String userName = sharedPref.getString("username", null);
-
-		this.manager = new NetworkingManager(this, "G9", userName);
-		//setUp();
-		
-		Intent intent = getIntent();
-		game = (Game) intent.getParcelableExtra("game");
-		if(game != null) { // wait for another player
-			manager.monitorKeyOfUser("newUser", game.getGameId());
+		if(userName == null) {
+			loadProfileActivity(null);
+		} else {
+			this.manager = new NetworkingManager(this, "G9", userName);
 		}
+		//setUp();
 	}
 	
 	public void InitViews(){
@@ -149,7 +149,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		{
 			case R.id.action_createGame: 
 				Intent intent = new Intent(this, CreateGameActivity.class);
-				this.startActivityForResult(intent, 0);
+				this.startActivityForResult(intent, CREATE_GAME_REQUEST_CODE);
 				return true;
 			case R.id.action_joinGame:	 
 				displayJoinAlertDialog();
@@ -162,7 +162,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		Intent intent = new Intent(this, QuestionActivity.class);
 		if(game != null) {
 			intent.putExtra("game", game);
-			this.startActivityForResult(intent, 0);
+			this.startActivity(intent);
 		} else {
 			// TODO: Alert that there is no game
 		}
@@ -172,7 +172,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if(key.equals("questionList")) { // only setUp
 			Gson gson = new Gson();
-			String gameIdJson = gson.toJson("M0");
+			String gameIdJson = gson.toJson("M1");
 			manager.saveValueForKeyOfUser("gameId", "gameManager", gameIdJson);
 		} else if(key.equals("gameId")) { // only setUp
 			
@@ -204,6 +204,9 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 						json.getString("value"),
 						new TypeToken<HashMap<String, Integer>>() {
 						}.getType());
+				if(userToTotalScore == null) {
+					userToTotalScore = new HashMap<String, Integer>();
+				}
 				userToTotalScore.put(user, 0);
 				game.setUser2TotalScore(userToTotalScore);
 				manager.loadValueForKeyOfUser("currentQuestion", game.getGameId());
@@ -273,7 +276,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	
 	public void loadProfileActivity(View view) {
 		Intent intent = new Intent(this, ProfileActivity.class);
-		this.startActivityForResult(intent, 0);
+		this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
 	}
 	
 	private void displayJoinAlertDialog() {
@@ -308,6 +311,21 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		Gson gson = new Gson();
 		String questionJson = gson.toJson(questionList);
 		manager.saveValueForKeyOfUser("questionList", "gameData", questionJson);
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == PROFILE_ACTIVITY_REQUEST_CODE && manager == null) {
+			String userName = data.getStringExtra("userName");
+			this.manager = new NetworkingManager(this, "G9", userName);
+		} else if(requestCode == CREATE_GAME_REQUEST_CODE && game == null) {
+			game = (Game) data.getParcelableExtra("game");
+			if(game != null) { // wait for another player
+				manager.monitorKeyOfUser("newUser", game.getGameId());
+			}
+		}
 	}
 	
 }

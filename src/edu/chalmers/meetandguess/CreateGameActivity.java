@@ -110,6 +110,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if(key.equals(USER_TO_SCORE_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
+			setResult(RESULT_OK, intent);
 			NavUtils.navigateUpTo(this, intent);			
 		}
 	}

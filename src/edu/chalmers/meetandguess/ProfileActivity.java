@@ -123,7 +123,10 @@ public class ProfileActivity extends ActionBarActivity implements
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if (key.equals("profile")) {
-			NavUtils.navigateUpFromSameTask(this);
+			Intent intent = NavUtils.getParentActivityIntent(this);
+			intent.putExtra("userName", player.getUsername());
+			setResult(RESULT_OK, intent);
+			NavUtils.navigateUpTo(this, intent);	
 		}
 	}
 
