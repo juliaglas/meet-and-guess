@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.*;
 
 public class GuessActivity extends ActionBarActivity implements NetworkingEventHandler { 
@@ -42,7 +43,7 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 	
 	private static final String GROUP = "G9";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
-	private static final String USER_TO_SCORE = "userToScore";
+	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 	private String userName;
 	private String imgData;
@@ -51,7 +52,9 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 	private Player player;
 	private Answer guess;
 	private Map<String, Answer> userToAnswer;
+	private Map<String, Integer> userToScore;
 	private int id = 1;
+	private int score = 0;
 	
     private GestureDetectorCompat mDetector; 
     View.OnTouchListener mListener;
@@ -93,7 +96,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 		
 		// Load Profile Images 
 		if (userName!=null)
-			this.manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+			// User fetches images from server
+			this.manager.loadValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	
     }
     
@@ -220,6 +224,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 		// Get Answer that player image is placed
 		Answer guess = playerGuess.get(idToUser.get(viewTouched));
 		
+		float posX = mImage.getX();
+		float posY = mImage.getY();
 		// Remove it from the Viewgroup
         if(oldParent!=null)
      	  oldParent.removeView(mImage);
@@ -232,8 +238,15 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
         
         mImage.setLayoutParams(layoutParams);
        
+        // Animate movement to new position
+        /*TranslateAnimation anim = new TranslateAnimation( 0, profile.getX() - mImage.getX() , 0, profile.getY() - mImage.getY() );
+        anim.setDuration(500);
+        anim.setFillAfter( true );
+        anim.setAnimationListener(new MyAnimationListener(newParent));
+        mImage.startAnimation(anim);    */
+        
         newParent.addView(mImage);
-        mImage.setVisibility(View.VISIBLE);
+ 
         // Mark Slot full
         guessSlot.put(emptySlot, true);
         // Mark previous Slot as empty 
@@ -289,8 +302,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     					break;
     				}
 				}
-    			
-    			// Add Score
+    			// Increment score
+    			score++;
     		}
     		// Incorrect Guess
     		else
@@ -312,22 +325,30 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     			
     		}
     	
-    	}
-    	
-    	// Move Views to Correct Positions, Feedback and Score counting
+    	}	
+    	// Lock Score to Update User to Score Map (Current Score Map)
+    	manager.lockKeyOfUser(USER_TO_SCORE_KEY, game.getGameId());
     
     }
+    
     // Animating swiping
     private class MyAnimationListener implements AnimationListener{
 
+    	private ViewGroup parent;
+    	
+    	public MyAnimationListener(ViewGroup viewgroup)
+    	{
+    		this.parent = viewgroup;
+    	}
         @Override
         public void onAnimationEnd(Animation animation) {
             mImage.clearAnimation();
-           // LayoutParams lp = new LayoutParams(imageView.getWidth(), imageView.getHeight());
-          //  lp.setMargins(50, 100, 0, 0);
-         //   imageView.setLayoutParams(lp);
+            ViewGroup oldparent = (ViewGroup)mImage.getParent();
+            oldparent.removeView(mImage);
+            parent.addView(mImage);
+            mImage.setVisibility(View.VISIBLE);
         }
-
+        
         @Override
         public void onAnimationRepeat(Animation animation) {
         }
@@ -340,8 +361,8 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
     
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		// Unlock after updating score
+		manager.unlockKeyOfUser(key, user);
 	}
 
 	@Override
@@ -375,10 +396,9 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 						idToUser.put(id, entry.getKey());
 					}
 					
-					manager.unlockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
-					
 				}
-				} catch (JSONException e) {
+				} 
+			catch (JSONException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -405,8 +425,39 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 			} catch (JsonSyntaxException e) {
 				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
 			} catch (JSONException e) {
-				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
+		// Put User Current Score
+		else if(key.equals(USER_TO_SCORE_KEY))
+		{
+
+			try {
+				Gson gson = new Gson();
+				// Load current score map from server
+				userToScore = gson.fromJson(json.getString("value"), new TypeToken<Map<String, Integer>>(){}.getType());
+				if(userToScore == null) 
+				{
+					userToScore = new HashMap<String, Integer>();
+					Log.d(TAG_ERROR,"No Score");
+				}
+				// Put Current User score in the map
+				userToScore.put(userName, score);
+				
+				// Save User current score in the Server
+				String userToScoreJson = gson.toJson(userToScore);
+				manager.saveValueForKeyOfUser(key, user, userToScoreJson);
+			
+			}catch (JsonSyntaxException e) {
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		
 		}
 		
 	}
@@ -438,14 +489,27 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		// User locks in the beginning to fetch images from server, and after is done guessing
-		this.manager.loadValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
-		
+		// Load User to Score Map
+		try {
+			if(json.getString("code").equals("1")) {
+				manager.loadValueForKeyOfUser(key, user);
+			} else {
+				manager.lockKeyOfUser(key, user);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		// After All players have updated the current score map, transition to Score Activity
+		if(userToScore.size() == userToAnswer.size())
+		{
+			Intent intent = new Intent(this, ScoreActivity.class);
+			intent.putExtra("game", game);
+			this.startActivityForResult(intent, 0);
+		}
 	}
 }

@@ -55,16 +55,15 @@
     </LinearLayout>
     
    	<LinearLayout
-        android:id="@+id/Players"
-        android:layout_width="fill_parent"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/First_Answer"
-        android:gravity="center_vertical"
-        android:orientation="horizontal" >
-        
-    </LinearLayout>
-  
+   	    android:id="@+id/Players"
+   	    android:layout_width="fill_parent"
+   	    android:layout_height="100dp"
+   	    android:layout_alignParentLeft="true"
+   	    android:layout_below="@+id/First_Answer"
+   	    android:gravity="center_vertical"
+   	    android:orientation="horizontal" >
+
+   	</LinearLayout>
 	
     <LinearLayout
         android:id="@+id/Second_Answer"

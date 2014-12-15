@@ -35,6 +35,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String QUESTION_LIST_KEY = "questionList";
 	private static final String GAME_MAP_KEY = "gameMap";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
 	private String userName;
@@ -99,6 +100,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 			manager.loadValueForKeyOfUser(GAME_MAP_KEY, GAME_MANAGER_USER);
 		} else if (key.equals(GAME_MAP_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId(), null);
+			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_ANSWER_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
