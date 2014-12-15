@@ -1,9 +1,7 @@
 package edu.chalmers.meetandguess;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.json.JSONException;
@@ -33,7 +31,8 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String GAME_DATA_USER = "gameData";
 	private static final String GAME_ID_KEY = "gameId";
 	private static final String QUESTION_LIST_KEY = "questionList";
-	private static final String GAME_MAP_KEY = "gameMap";
+	private static final String CURRENT_QUESTION_KEY = "currentQuestion";
+	private static final String GAME_KEY = "game";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
@@ -93,18 +92,27 @@ public class CreateGameActivity extends ActionBarActivity implements
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if (key.equals(GAME_ID_KEY)) { // after increasing gameId on the server
 			manager.loadValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER);
-		} else if (key.equals(QUESTION_LIST_KEY)) {
+		} else if (key.equals(CURRENT_QUESTION_KEY)) {
 			game = new Game(gameId, locationDescription, detailDescription,
 					questionList, userName);
-			game.addUser(userName);
-			manager.loadValueForKeyOfUser(GAME_MAP_KEY, GAME_MANAGER_USER);
-		} else if (key.equals(GAME_MAP_KEY)) {
+			Gson gson = new Gson();
+			try {
+				String gameString = gson.toJson(game);
+				manager.saveValueForKeyOfUser(GAME_KEY, game.getGameId(), gameString);
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (key.equals(GAME_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId(), null);
 			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_ANSWER_KEY)) {
+			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
+		} else if(key.equals(USER_TO_SCORE_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
-			NavUtils.navigateUpTo(this, intent);
+			setResult(RESULT_OK, intent);
+			NavUtils.navigateUpTo(this, intent);			
 		}
 	}
 
@@ -127,7 +135,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (key.equals(QUESTION_LIST_KEY)) { 
+		} else if (key.equals(QUESTION_LIST_KEY)) { // select a part of the questions as the questions of the current game
 			Gson gson = new Gson();
 			try {
 				// obtain complete questionList
@@ -145,29 +153,9 @@ public class CreateGameActivity extends ActionBarActivity implements
 					questionList = completeQuestionList.subList(firstQuestion,
 							firstQuestion + 15);
 				}
-				// save new questionList on the server
-				String questionListString = gson.toJson(questionList);
-				manager.saveValueForKeyOfUser(key, gameId, questionListString);
-			} catch (JsonSyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		} else if (key.equals(GAME_MAP_KEY)) {
-			Gson gson = new Gson();
-			try {
-				Map<String, Game> gameMap = gson.fromJson(
-						json.getString("value"),
-						new TypeToken<HashMap<String, Game>>() {
-						}.getType());
-				if (gameMap == null) {
-					gameMap = new HashMap<String, Game>();
-				}
-				gameMap.put(gameId, game);
-				String gameMapString = gson.toJson(gameMap);
-				manager.saveValueForKeyOfUser(key, user, gameMapString);
+				// save current question number (=0) on the server
+				String currentQuestionString = gson.toJson(0);
+				manager.saveValueForKeyOfUser(CURRENT_QUESTION_KEY, gameId, currentQuestionString);
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

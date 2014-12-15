@@ -17,9 +17,9 @@ public class Game implements Parcelable {
 	private final String locationDescription;
 	private final String detailedDescription;
 	private List<Question> questionList;
-	private int currentQuestionNumber;
+	private transient int currentQuestionNumber;
 	private String owner;
-	private Map<String, Integer> user2totalScore;
+	private transient Map<String, Integer> user2totalScore;
 	
 	public Game(String gameId, /*Location location, */String locationDescription, String detailedDescription, List<Question> questionList, String owner) {
 		super();
@@ -71,6 +71,14 @@ public class Game implements Parcelable {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+	
+	public Map<String, Integer> getUser2TotalScore() {
+		return user2totalScore;
+	}
+	
+	public void setUser2TotalScore(Map<String, Integer> user2totalScore) {
+		this.user2totalScore = user2totalScore;
 	}
 	
 	public String getDetailedDescription() {

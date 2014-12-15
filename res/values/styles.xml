@@ -23,5 +23,7 @@
 		<item name="windowActionBar">false</item>
     
     </style>
+    
+    <style name="DialogBaseTheme" parent="Theme.AppCompat.Light.Dialog" />
 
 </resources>

@@ -15,6 +15,10 @@
     <string name="location_label">Location:</string>
     <string name="detail_label">Details:</string>
     <string name="create">Create</string>
+    <string name="join_game">Join Game</string>
+    <string name="join_game_description">Please enter the code of an existing game. You can obtain the code by finding another player.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="question">Question</string>
