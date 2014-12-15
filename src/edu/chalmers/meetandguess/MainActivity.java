@@ -1,11 +1,16 @@
 package edu.chalmers.meetandguess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
@@ -13,6 +18,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -21,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements NetworkingEventHandler{
@@ -140,11 +148,13 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 				Intent intent = new Intent(this, CreateGameActivity.class);
 				this.startActivityForResult(intent, 0);
 				return true;
-			case R.id.action_joinGame:	 return true;
+			case R.id.action_joinGame:	 
+				displayJoinAlertDialog();
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void loadQuestionActivity(View view) {
 		Intent intent = new Intent(this, QuestionActivity.class);
 		if(game != null) {
@@ -159,19 +169,60 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if(key.equals("questionList")) {
 			Gson gson = new Gson();
-			String groupIdJson = gson.toJson("M0");
-			manager.saveValueForKeyOfUser("gameId", "gameManager", groupIdJson);
+			String gameIdJson = gson.toJson("M0");
+			manager.saveValueForKeyOfUser("gameId", "gameManager", gameIdJson);
 		} else if(key.equals("gameId")) {
-			Gson gson = new Gson();
-			String questionNumberJson = gson.toJson(0);
-			manager.saveValueForKeyOfUser("questionNumber", "gameLogic", questionNumberJson);
+			
+		} else if(key.equals("userToTotalScore")) {
+			manager.unlockKeyOfUser(key, user);
 		}
 	}
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		if(key.equals("game")) {
+			  Gson gson = new Gson();
+			  try {
+				game = gson.fromJson(json.getString("value"), Game.class);
+				manager.lockKeyOfUser("userToTotalScore", game.getGameId());
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		} else if(key.equals("userToTotalScore")) {
+			Gson gson = new Gson();
+			try {
+				Map<String, Integer> userToTotalScore = gson.fromJson(
+						json.getString("value"),
+						new TypeToken<HashMap<String, Integer>>() {
+						}.getType());
+				userToTotalScore.put(user, 0);
+				game.setUser2TotalScore(userToTotalScore);
+				String userToTotalScoreString = gson.toJson(userToTotalScore);
+				manager.saveValueForKeyOfUser(key, user, userToTotalScoreString);
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if(key.equals("currentQuestion")) {
+			Gson gson = new Gson();
+			try {
+				int currentQuestion = gson.fromJson(json.getString("value"), Integer.class);
+				game.setCurrentQuestionNumber(currentQuestion);
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -201,14 +252,16 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		if(key.equals("userToTotalScore")) {
+			manager.loadValueForKeyOfUser("userToTotalScore", game.getGameId());
+		}
 	}
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-		
+		if(key.equals("userToTotalScore")) {
+			manager.loadValueForKeyOfUser("currentQuestion", game.getGameId());
+		}
 	}
 	
 	public void loadGuessActivity(View view) {
@@ -219,6 +272,26 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	public void loadProfileActivity(View view) {
 		Intent intent = new Intent(this, ProfileActivity.class);
 		this.startActivityForResult(intent, 0);
+	}
+	
+	private void displayJoinAlertDialog() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+		alert.setTitle(getResources().getText(R.string.join_game));
+		alert.setMessage(getResources().getText(R.string.join_game_description));
+
+		// Set an EditText view to get user input 
+		final EditText input = new EditText(this);
+		alert.setView(input);
+
+		alert.setPositiveButton(getResources().getText(R.string.ok), new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int whichButton) {
+		  String gameId = input.getText().toString();
+		  manager.loadValueForKeyOfUser("game", gameId);
+		  }
+		});
+
+		alert.setNegativeButton(getResources().getText(R.string.cancel), null);
+		alert.show();
 	}
 	
 	private void setUp() {
