@@ -59,6 +59,9 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
+		if(game != null) { // wait for another player
+			manager.monitorKeyOfUser("newUser", game.getGameId());
+		}
 	}
 	
 	public void InitViews(){
@@ -167,14 +170,14 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals("questionList")) {
+		if(key.equals("questionList")) { // only setUp
 			Gson gson = new Gson();
 			String gameIdJson = gson.toJson("M0");
 			manager.saveValueForKeyOfUser("gameId", "gameManager", gameIdJson);
-		} else if(key.equals("gameId")) {
+		} else if(key.equals("gameId")) { // only setUp
 			
 		} else if(key.equals("userToTotalScore")) {
-			manager.unlockKeyOfUser(key, user);
+			manager.saveValueForKeyOfUser("newUser", game.getGameId(), user);
 		}
 	}
 
@@ -184,7 +187,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 			  Gson gson = new Gson();
 			  try {
 				game = gson.fromJson(json.getString("value"), Game.class);
-				manager.lockKeyOfUser("userToTotalScore", game.getGameId());
+				manager.loadValueForKeyOfUser("userToTotalScore", game.getGameId());
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -201,8 +204,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 						}.getType());
 				userToTotalScore.put(user, 0);
 				game.setUser2TotalScore(userToTotalScore);
-				String userToTotalScoreString = gson.toJson(userToTotalScore);
-				manager.saveValueForKeyOfUser(key, user, userToTotalScoreString);
+				manager.loadValueForKeyOfUser("currentQuestion", game.getGameId());
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -215,6 +217,9 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 			try {
 				int currentQuestion = gson.fromJson(json.getString("value"), Integer.class);
 				game.setCurrentQuestionNumber(currentQuestion);
+				Intent intent = new Intent(this, QuestionActivity.class);
+				intent.putExtra("game", game);
+				this.startActivityForResult(intent, 0);
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -246,22 +251,19 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		// TODO Auto-generated method stub
-		
+		if(key.equals("newUser")) {
+			Intent intent = new Intent(this, QuestionActivity.class);
+			intent.putExtra("game", game);
+			this.startActivityForResult(intent, 0);
+		}
 	}
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		if(key.equals("userToTotalScore")) {
-			manager.loadValueForKeyOfUser("userToTotalScore", game.getGameId());
-		}
 	}
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals("userToTotalScore")) {
-			manager.loadValueForKeyOfUser("currentQuestion", game.getGameId());
-		}
 	}
 	
 	public void loadGuessActivity(View view) {
