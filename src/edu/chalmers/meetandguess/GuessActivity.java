@@ -323,9 +323,17 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 
     			// Animate
     			
-    		}
+    		}	
+    	}	 
     	
-    	}	
+    	// Remove Done Button
+    	ViewGroup parent = (ViewGroup)view.getParent();
+    	parent.removeView(view);
+    }
+
+	// User Pressed Continue button to proceed to Score Activity
+    public void goToScore(View view)
+    {
     	// Lock Score to Update User to Score Map (Current Score Map)
     	manager.lockKeyOfUser(USER_TO_SCORE_KEY, game.getGameId());
     
@@ -455,8 +463,6 @@ public class GuessActivity extends ActionBarActivity implements NetworkingEventH
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
 		
 		}
 		

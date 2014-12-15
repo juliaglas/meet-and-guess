@@ -22,5 +22,6 @@
     <string name="drawer_open">Drawer Open</string>
     <string name="drawer_close">Drawer Close</string>
     <string name="done">Done</string>
+    <string name="score">Continue</string>
 
 </resources>
