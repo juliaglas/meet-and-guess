@@ -34,6 +34,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String CURRENT_QUESTION_KEY = "currentQuestion";
 	private static final String GAME_KEY = "game";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
 	private String userName;
@@ -94,8 +95,6 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if (key.equals(CURRENT_QUESTION_KEY)) {
 			game = new Game(gameId, locationDescription, detailDescription,
 					questionList, userName);
-			game.addUser(userName); // TODO maybe this line is not necessary?
-			
 			Gson gson = new Gson();
 			try {
 				String gameString = gson.toJson(game);
@@ -107,9 +106,11 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if (key.equals(GAME_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_ANSWER_KEY)) {
+			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
+		} else if(key.equals(USER_TO_SCORE_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
-			NavUtils.navigateUpTo(this, intent);
+			NavUtils.navigateUpTo(this, intent);			
 		}
 	}
 
@@ -132,7 +133,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (key.equals(QUESTION_LIST_KEY)) { 
+		} else if (key.equals(QUESTION_LIST_KEY)) { // select a part of the questions as the questions of the current game
 			Gson gson = new Gson();
 			try {
 				// obtain complete questionList

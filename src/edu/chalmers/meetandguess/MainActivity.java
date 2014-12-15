@@ -176,8 +176,10 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 			manager.saveValueForKeyOfUser("gameId", "gameManager", gameIdJson);
 		} else if(key.equals("gameId")) { // only setUp
 			
-		} else if(key.equals("userToTotalScore")) {
-			manager.saveValueForKeyOfUser("newUser", game.getGameId(), user);
+		} else if(key.equals("newUser")) { // successfully notified to be a new user
+			Intent intent = new Intent(this, QuestionActivity.class);
+			intent.putExtra("game", game);
+			this.startActivityForResult(intent, 0);
 		}
 	}
 
@@ -217,9 +219,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 			try {
 				int currentQuestion = gson.fromJson(json.getString("value"), Integer.class);
 				game.setCurrentQuestionNumber(currentQuestion);
-				Intent intent = new Intent(this, QuestionActivity.class);
-				intent.putExtra("game", game);
-				this.startActivityForResult(intent, 0);
+				manager.saveValueForKeyOfUser("newUser", game.getGameId(), user);
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
