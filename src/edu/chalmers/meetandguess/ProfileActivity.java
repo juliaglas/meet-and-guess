@@ -135,7 +135,7 @@ public class ProfileActivity extends ActionBarActivity implements
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if(key.equals(USER_ID_KEY)) {
-			this.manager = new NetworkingManager(this, "G9", userId);
+			this.manager = new NetworkingManager(this, GROUP, userId);
 		} else if (key.equals(PROFILE_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("userName", player.getUsername());

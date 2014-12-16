@@ -118,22 +118,18 @@ public class CreateGameActivity extends ActionBarActivity implements
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if (key.equals(GAME_ID_KEY)) { // get the id of the new game
-			Gson gson = new Gson();
 			try {
-				gameId = gson.fromJson(json.getString("value"), String.class);
-				String copyOfGameId = new String(gameId);
-				int nextGameId = Integer.parseInt(copyOfGameId.replaceAll(
-						"[^\\d.]", ""));
-				nextGameId++;
-				String nextGameIdString = "M" + nextGameId;
-				manager.saveValueForKeyOfUser(key, user, nextGameIdString);
-			} catch (JsonSyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				gameId = json.getString("value");
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			String copyOfGameId = new String(gameId);
+			int nextGameId = Integer.parseInt(copyOfGameId.replaceAll(
+						"[^\\d.]", ""));
+			nextGameId++;
+			String nextGameIdString = "M" + nextGameId;
+			manager.saveValueForKeyOfUser(key, user, nextGameIdString);
 		} else if (key.equals(QUESTION_LIST_KEY)) { // select a part of the questions as the questions of the current game
 			Gson gson = new Gson();
 			try {
