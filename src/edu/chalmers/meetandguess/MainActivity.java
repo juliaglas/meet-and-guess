@@ -1,8 +1,6 @@
 package edu.chalmers.meetandguess;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -34,15 +32,12 @@ import android.widget.ListView;
 public class MainActivity extends ActionBarActivity implements NetworkingEventHandler{
 	
 	private static final String GROUP = "G9";
-	private static final String GAME_MANAGER_USER = "gameManager";
-	private static final String GAME_DATA_USER = "gameData";
-	private static final String USER_ID_KEY = "userId";
-	private static final String GAME_ID_KEY = "gameId";
 	private static final String GAME_KEY = "game";
-	private static final String QUESTION_LIST_KEY = "questionList";
 	private static final String CURRENT_QUESTION_NUMBER_KEY = "currentQuestion";
 	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
 	private static final String NEW_USER_KEY = "newUser";
+	
+	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 	
 	private static final int PROFILE_ACTIVITY_REQUEST_CODE = 0;
 	private static final int CREATE_GAME_REQUEST_CODE = 1;
@@ -64,15 +59,21 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		
 		initViews();
 		
+		// methods to reset the app/server
+		//resetApp();
+		//ServerReset resetter = new ServerReset();
+		//resetter.resetUsers();
+		//resetter.resetGames();
+		//resetter.resetQuestionList();
+		
 		// Access the user name
-		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 		String userName = sharedPref.getString("username", null);
 		if(userName == null) {
 			loadProfileActivity(null);
 		} else {
 			this.manager = new NetworkingManager(this, GROUP, userName);
 		}
-		//setUp();
 	}
 	
 	public void initViews(){
@@ -181,17 +182,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals(QUESTION_LIST_KEY)) { // only setUp
-			Gson gson = new Gson();
-			String gameIdJson = gson.toJson("M1");
-			manager.saveValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER, gameIdJson);
-		} else if(key.equals(GAME_ID_KEY)) { // only setUp
-			Gson gson = new Gson();
-			String userIdJson = gson.toJson("U1");
-			manager.saveValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER, userIdJson);
-		} else if(key.equals(USER_ID_KEY)) { // only setUp
-			
-		} else if(key.equals(NEW_USER_KEY)) { // successfully notified to be a new user
+		if(key.equals(NEW_USER_KEY)) { // successfully notified to be a new user
 			Intent intent = new Intent(this, QuestionActivity.class);
 			intent.putExtra("game", game);
 			this.startActivity(intent);
@@ -309,24 +300,6 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		alert.show();
 	}
 	
-	private void setUp() {
-		// TODO this is what should already be on the server: a list of questions
-		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putString("username", null);
-		editor.commit();
-		Question firstQuestion = new Question("Which animal is the cuter one?", "Dog", "Cat");
-		Question secondQuestion = new Question("Have you been to Australia?", "Yes", "No");
-		Question thirdQuestion = new Question("Have you been to Asia?", "Yes", "No");
-		List<Question> questionList = new ArrayList<Question>();
-		questionList.add(firstQuestion);
-		questionList.add(secondQuestion);
-		questionList.add(thirdQuestion);
-		Gson gson = new Gson();
-		String questionJson = gson.toJson(questionList);
-		manager.saveValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER, questionJson);
-	}
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -346,4 +319,10 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		}
 	}
 	
+	private void resetApp() {
+		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putString("username", null);
+		editor.commit();
+	}
 }
