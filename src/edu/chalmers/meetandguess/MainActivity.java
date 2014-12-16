@@ -33,6 +33,17 @@ import android.widget.ListView;
 
 public class MainActivity extends ActionBarActivity implements NetworkingEventHandler{
 	
+	private static final String GROUP = "G9";
+	private static final String GAME_MANAGER_USER = "gameManager";
+	private static final String GAME_DATA_USER = "gameData";
+	private static final String USER_ID_KEY = "userId";
+	private static final String GAME_ID_KEY = "gameId";
+	private static final String GAME_KEY = "game";
+	private static final String QUESTION_LIST_KEY = "questionList";
+	private static final String CURRENT_QUESTION_NUMBER_KEY = "currentQuestion";
+	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
+	private static final String NEW_USER_KEY = "newUser";
+	
 	private static final int PROFILE_ACTIVITY_REQUEST_CODE = 0;
 	private static final int CREATE_GAME_REQUEST_CODE = 1;
 
@@ -51,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		InitViews();
+		initViews();
 		
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
@@ -59,12 +70,12 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		if(userName == null) {
 			loadProfileActivity(null);
 		} else {
-			this.manager = new NetworkingManager(this, "G9", userName);
+			this.manager = new NetworkingManager(this, GROUP, userName);
 		}
 		//setUp();
 	}
 	
-	public void InitViews(){
+	public void initViews(){
 		
 		// Toolbar Layout
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -170,26 +181,30 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals("questionList")) { // only setUp
+		if(key.equals(QUESTION_LIST_KEY)) { // only setUp
 			Gson gson = new Gson();
 			String gameIdJson = gson.toJson("M1");
-			manager.saveValueForKeyOfUser("gameId", "gameManager", gameIdJson);
-		} else if(key.equals("gameId")) { // only setUp
+			manager.saveValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER, gameIdJson);
+		} else if(key.equals(GAME_ID_KEY)) { // only setUp
+			Gson gson = new Gson();
+			String userIdJson = gson.toJson("U1");
+			manager.saveValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER, userIdJson);
+		} else if(key.equals(USER_ID_KEY)) { // only setUp
 			
-		} else if(key.equals("newUser")) { // successfully notified to be a new user
+		} else if(key.equals(NEW_USER_KEY)) { // successfully notified to be a new user
 			Intent intent = new Intent(this, QuestionActivity.class);
 			intent.putExtra("game", game);
-			this.startActivityForResult(intent, 0);
+			this.startActivity(intent);
 		}
 	}
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals("game")) {
+		if(key.equals(GAME_KEY)) {
 			  Gson gson = new Gson();
 			  try {
 				game = gson.fromJson(json.getString("value"), Game.class);
-				manager.loadValueForKeyOfUser("userToTotalScore", game.getGameId());
+				manager.loadValueForKeyOfUser(USER_TO_TOTAL_SCORE_KEY, game.getGameId());
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -197,7 +212,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-		} else if(key.equals("userToTotalScore")) {
+		} else if(key.equals(USER_TO_TOTAL_SCORE_KEY)) {
 			Gson gson = new Gson();
 			try {
 				Map<String, Integer> userToTotalScore = gson.fromJson(
@@ -209,7 +224,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 				}
 				userToTotalScore.put(user, 0);
 				game.setUser2TotalScore(userToTotalScore);
-				manager.loadValueForKeyOfUser("currentQuestion", game.getGameId());
+				manager.loadValueForKeyOfUser(CURRENT_QUESTION_NUMBER_KEY, game.getGameId());
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -217,12 +232,12 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if(key.equals("currentQuestion")) {
+		} else if(key.equals(CURRENT_QUESTION_NUMBER_KEY)) {
 			Gson gson = new Gson();
 			try {
 				int currentQuestion = gson.fromJson(json.getString("value"), Integer.class);
 				game.setCurrentQuestionNumber(currentQuestion);
-				manager.saveValueForKeyOfUser("newUser", game.getGameId(), user);
+				manager.saveValueForKeyOfUser(NEW_USER_KEY, game.getGameId(), user);
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -254,7 +269,7 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		if(key.equals("newUser")) {
+		if(key.equals(NEW_USER_KEY)) {
 			Intent intent = new Intent(this, QuestionActivity.class);
 			intent.putExtra("game", game);
 			this.startActivityForResult(intent, 0);
@@ -296,6 +311,10 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 	
 	private void setUp() {
 		// TODO this is what should already be on the server: a list of questions
+		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putString("username", null);
+		editor.commit();
 		Question firstQuestion = new Question("Which animal is the cuter one?", "Dog", "Cat");
 		Question secondQuestion = new Question("Have you been to Australia?", "Yes", "No");
 		Question thirdQuestion = new Question("Have you been to Asia?", "Yes", "No");
@@ -305,20 +324,24 @@ public class MainActivity extends ActionBarActivity implements NetworkingEventHa
 		questionList.add(thirdQuestion);
 		Gson gson = new Gson();
 		String questionJson = gson.toJson(questionList);
-		manager.saveValueForKeyOfUser("questionList", "gameData", questionJson);
+		manager.saveValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER, questionJson);
 	}
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == PROFILE_ACTIVITY_REQUEST_CODE && manager == null) {
-			String userName = data.getStringExtra("userName");
-			this.manager = new NetworkingManager(this, "G9", userName);
-		} else if(requestCode == CREATE_GAME_REQUEST_CODE && game == null) {
-			game = (Game) data.getParcelableExtra("game");
-			if(game != null) { // wait for another player
-				manager.monitorKeyOfUser("newUser", game.getGameId());
+		switch(requestCode) {
+		case(PROFILE_ACTIVITY_REQUEST_CODE):
+			if(manager == null) {
+				String userName = data.getStringExtra("userName");
+				this.manager = new NetworkingManager(this, "G9", userName);
+			} 
+		case(CREATE_GAME_REQUEST_CODE):
+			if(game == null) {
+				game = (Game) data.getParcelableExtra("game");
+				if(game != null) { // wait for another player
+					manager.monitorKeyOfUser(NEW_USER_KEY, game.getGameId());
+				}
 			}
 		}
 	}
