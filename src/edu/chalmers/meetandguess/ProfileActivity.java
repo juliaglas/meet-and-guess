@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -26,18 +27,28 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 public class ProfileActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
+	
+	private static final String GROUP = "G9";
+	private static final String GAME_MANAGER_USER = "gameManager";
+	private static final String USER_ID_KEY = "userId";
+	private static final String PROFILE_KEY = "profile";
+	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
+	private static final int SELECT_IMAGE_REQUEST_CODE = 1;
 	private static final String TAG_ERROR = "ERROR";
-	private static final int SELECT_IMAGE = 1;
+	
+	private NetworkingManager manager;
+	private Gson gson = new Gson();
 	
 	private Player player;
+	private String userId;
 	private String imgData;
-	private NetworkingManager manager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,27 +58,23 @@ public class ProfileActivity extends ActionBarActivity implements
 		// Toolbar Layout
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-		getSupportActionBar()
-				.setTitle(getResources().getText(R.string.profile));
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setTitle(getResources().getText(R.string.profile));
 
 		// Access the user name
-		SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
-		String userName = sharedPref.getString("username", null);
-		if(userName != null) {
-			// Create network manager if user already exists
-			this.manager = new NetworkingManager(this, "G9", userName);
-			this.manager.loadValueForKeyOfUser("profile", userName);		
-			EditText userNameValue = (EditText) findViewById(R.id.username_edit);
-			userNameValue.setEnabled(false);
-			userNameValue.setFocusable(false);
-			userNameValue.setFocusableInTouchMode(false);
-		} else {
-			EditText userNameValue = (EditText) findViewById(R.id.username_edit);
-			userNameValue.setEnabled(true);
-			userNameValue.setFocusable(true);
-			userNameValue.setFocusableInTouchMode(true);
-			userNameValue.requestFocus();
+		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
+		userId = sharedPref.getString("username", null);
+		
+		if(userId != null) { // show profile of an existing user
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			Button createButton = (Button) findViewById(R.id.create_profile_button);
+			createButton.setVisibility(View.GONE);
+			createButton.setEnabled(false);
+			this.manager = new NetworkingManager(this, GROUP, userId);
+			this.manager.loadValueForKeyOfUser(PROFILE_KEY, userId);
+		} else { // create profile of a new user
+			getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Hide back button
+			this.manager = new NetworkingManager(this, GROUP, GAME_MANAGER_USER);
+			this.manager.loadValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER);
 		}
 	}
 
@@ -75,15 +82,14 @@ public class ProfileActivity extends ActionBarActivity implements
 		Intent intent = new Intent();
 		intent.setType("image/*");
 		intent.setAction(Intent.ACTION_GET_CONTENT);
-		startActivityForResult(Intent.createChooser(intent, "Select Picture"),
-				SELECT_IMAGE);
+		startActivityForResult(Intent.createChooser(intent, "Select Picture"), SELECT_IMAGE_REQUEST_CODE);
 	}
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		switch (requestCode) {
-		case SELECT_IMAGE:
+		case SELECT_IMAGE_REQUEST_CODE:
 			if (resultCode == RESULT_OK && data != null) {
 				try {
 					// Read image
@@ -106,6 +112,7 @@ public class ProfileActivity extends ActionBarActivity implements
 			} else {
 				Log.d(TAG_ERROR, "Could not read input stream of selected profile image");
 			}
+			break;
 		}
 	}
 
@@ -119,10 +126,17 @@ public class ProfileActivity extends ActionBarActivity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	public void createProfile(View view) {
+		// Respond to create profile button
+		savePlayer();
+	}
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if (key.equals("profile")) {
+		if(key.equals(USER_ID_KEY)) {
+			this.manager = new NetworkingManager(this, "G9", userId);
+		} else if (key.equals(PROFILE_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("userName", player.getUsername());
 			setResult(RESULT_OK, intent);
@@ -132,14 +146,25 @@ public class ProfileActivity extends ActionBarActivity implements
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if (key.equals("profile")) {
+		if(key.equals(USER_ID_KEY)) {
 			try {
-				Gson gson = new Gson();
+				userId = gson.fromJson(json.getString("value"), String.class);
+				String copyOfUserId = new String(userId);
+				int nextUserId = Integer.parseInt(copyOfUserId.replaceAll(
+						"[^\\d.]", ""));
+				nextUserId++;
+				String nextUserIdString = "U" + nextUserId;
+				manager.saveValueForKeyOfUser(key, user, nextUserIdString);
+			} catch (JsonSyntaxException e) {
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+			} catch (JSONException e) {
+				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+			}
+		} else if (key.equals(PROFILE_KEY)) {
+			try {
 				player = gson.fromJson(json.getString("value"), Player.class);
-				if(player != null) { // TODO should not be necessary if every existing user MUST have a profile picture
-					imgData = player.getImage();
-					displayProfileData();
-				}
+				imgData = player.getImage();
+				displayProfileData();
 			} catch (JsonSyntaxException e) {
 				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
 			} catch (JSONException e) {
@@ -181,11 +206,6 @@ public class ProfileActivity extends ActionBarActivity implements
 			ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 			profilePicture.setImageBitmap(bm);
 		}
-		// Display user name
-		if(player.getUsername() != null) {
-			EditText userNameValue = (EditText) findViewById(R.id.username_edit);
-			userNameValue.setText(player.getUsername());
-		}
 		// Display first name
 		if(player.getFirstname() != null) {
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
@@ -199,43 +219,36 @@ public class ProfileActivity extends ActionBarActivity implements
 	}
 	
 	private void savePlayer() {
-		EditText userNameValue = (EditText) findViewById(R.id.username_edit);
-		String userName = userNameValue.getText().toString();
-		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-		String firstName = firstNameValue.getText().toString();
-		EditText countryValue = (EditText) findViewById(R.id.country_edit);
-		String country = countryValue.getText().toString();
-		if(userName.equals("") || imgData == null) {
-		// TODO alert: username and profile picture must exist
-		} else { // if everything is okay save the user data
+		if(imgData != null) { // if everything is okay save the user data
+			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
+			String firstName = firstNameValue.getText().toString();
+			EditText countryValue = (EditText) findViewById(R.id.country_edit);
+			String country = countryValue.getText().toString();
 			if (this.player == null) { // new user
-				this.manager = new NetworkingManager(this, "G9", userName);
-				this.player = new Player(userName, firstName, country, this.imgData);
-				SharedPreferences sharedPref = getSharedPreferences("edu.chalmers.meetandguess.save_app_state", MODE_PRIVATE);
+				this.player = new Player(userId, firstName, country, this.imgData);
+				SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPref.edit();
-				editor.putString("username", "Julia");
+				editor.putString("username", userId);
 				editor.commit();
-			} else {
-				this.player.setUsername(userName);
+			} else { // existing user
 				this.player.setFirstname(firstName);
 				this.player.setCountry(country);
 				this.player.setImage(this.imgData);
 			}
-			Gson gson = new Gson();
 			String playerJson = gson.toJson(this.player);
-			manager.saveValueForKeyOfUser("profile", this.player.getUsername(),
-					playerJson);
+			manager.saveValueForKeyOfUser("profile", this.player.getUsername(), playerJson);
+		} else {
+			AlertDialog.Builder alert = new AlertDialog.Builder(this);
+			alert.setTitle(getResources().getText(R.string.create_profile_error));
+			alert.setMessage(getResources().getText(R.string.profile_picture_missing_description));
+			alert.setPositiveButton(getResources().getText(R.string.ok), null);
+			alert.show();
 		}
 	}
 
-	private void enableEditing() {
+	/*private void enableEditing() {
 		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 		profilePicture.setEnabled(true);
-		EditText userNameValue = (EditText) findViewById(R.id.username_edit);
-		userNameValue.setEnabled(true);
-		userNameValue.setFocusable(true);
-		userNameValue.setFocusableInTouchMode(true);
-		userNameValue.requestFocus();
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 		firstNameValue.setEnabled(true);
 		firstNameValue.setFocusable(true);
@@ -245,13 +258,9 @@ public class ProfileActivity extends ActionBarActivity implements
 	private void disableEditing() {
 		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 		profilePicture.setEnabled(false);
-		EditText userNameValue = (EditText) findViewById(R.id.username_edit);
-		userNameValue.setEnabled(false);
-		userNameValue.setFocusable(false);
-		userNameValue.setFocusableInTouchMode(false);
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 		firstNameValue.setEnabled(false);
 		firstNameValue.setFocusable(false);
 		firstNameValue.setFocusableInTouchMode(false);
-	}
+	}*/
 }

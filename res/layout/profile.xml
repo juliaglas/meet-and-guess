@@ -42,40 +42,16 @@
         android:background="@color/Green"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
-        android:text="17"
+        android:text="0"
         android:textSize="48sp" />
-
-    <TextView
-        android:id="@+id/username_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/profile_picture"
-        android:layout_below="@+id/profile_picture"
-        android:layout_marginTop="48dp"
-        android:text="@string/username_label"
-        android:textColor="@color/Black87" />
-
-    <EditText
-        android:id="@+id/username_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/username_label"
-        android:layout_toRightOf="@+id/username_label"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="24dp"
-        android:ems="10"
-        android:hint="Unique user name"
-        android:textColor="@color/Black87">
-    </EditText>
 
     <TextView
         android:id="@+id/firstname_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/username_label"
-        android:layout_below="@+id/username_label"
-        android:layout_marginTop="24dp"
+        android:layout_alignLeft="@+id/profile_picture"
+        android:layout_below="@+id/profile_picture"
+        android:layout_marginTop="48dp"
         android:text="@string/firstname_label"
         android:textColor="@color/Black87" />
 
@@ -84,18 +60,22 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/firstname_label"
-        android:layout_alignLeft="@+id/username_edit"
-        android:layout_alignRight="@+id/username_edit"
+        android:layout_toRightOf="@+id/firstname_label"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="24dp"
         android:ems="10"
-        android:hint="Your real name"
+        android:hint="Your name"
         android:textColor="@color/Black87">
     </EditText>
+
+    
     
     <TextView
         android:id="@+id/country_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/username_label"
+        android:layout_alignLeft="@+id/firstname_label"
         android:layout_below="@+id/firstname_label"
         android:layout_marginTop="24dp"
         android:text="@string/country_label"
@@ -106,11 +86,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/country_label"
-        android:layout_alignLeft="@+id/username_edit"
-        android:layout_alignRight="@+id/username_edit"
+        android:layout_alignLeft="@+id/firstname_edit"
+        android:layout_alignRight="@+id/firstname_edit"
         android:ems="10"
         android:hint="Your real name"
         android:textColor="@color/Black87" >
     </EditText>
+    
+        <Button
+        android:id="@+id/create_profile_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/firstname_label"
+        android:layout_alignRight="@+id/firstname_edit"
+        android:layout_below="@+id/country_label"
+        android:layout_marginTop="48dp"
+        android:background="@color/Green"
+        android:text="@string/create" 
+        android:onClick="createProfile"/>
 
 </RelativeLayout>

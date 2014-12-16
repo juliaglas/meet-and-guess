@@ -105,7 +105,6 @@ public class CreateGameActivity extends ActionBarActivity implements
 			}
 		} else if (key.equals(GAME_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId(), null);
-			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_ANSWER_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_SCORE_KEY)) {
