@@ -230,8 +230,8 @@ public class GuessActivity extends ActionBarActivity implements
 		// Get Answer that player image is placed
 		Answer guess = playerGuess.get(idToUser.get(viewTouched));
 
-		float posX = mImage.getX();
-		float posY = mImage.getY();
+		//float posX = mImage.getX();
+		//float posY = mImage.getY();
 		// Remove it from the Viewgroup
 		if (oldParent != null)
 			oldParent.removeView(mImage);
@@ -412,7 +412,7 @@ public class GuessActivity extends ActionBarActivity implements
 				Gson gson = new Gson();
 				player = gson.fromJson(json.getString("value"), Player.class);
 				// TODO Load only other player's images
-				if (player != null) { // player.getUsername()!= this.userName
+				if(player != null && player.getUsername()!= this.userName) {
 					imgData = player.getImage();
 					LinearLayout players = (LinearLayout) findViewById(R.id.Players);
 					playerIcons(players, id); // 1, 2, ...

@@ -111,7 +111,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
 			setResult(RESULT_OK, intent);
-			NavUtils.navigateUpTo(this, intent);			
+			NavUtils.navigateUpTo(this, intent);
 		}
 	}
 
