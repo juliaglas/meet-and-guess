@@ -135,9 +135,9 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					manager.saveValueForKeyOfUser(USER_TO_TOTAL_SCORE_KEY, user, userToTotalScoreJson);
 				}
 				
-				scoreList = (ListView) findViewById(R.id.score_list);
-		        scoreList.setAdapter(new ArrayAdapter<Integer>(this,
-		        		android.R.layout.simple_list_item_1,userToScore.get(userName) ));
+				//scoreList = (ListView) findViewById(R.id.score_list);
+		       // scoreList.setAdapter(new ArrayAdapter<Integer>(this,
+		        //		android.R.layout.simple_list_item_1,userToScore.get(userName) ));
 			
 			}catch (JsonSyntaxException e) {
 				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
@@ -184,6 +184,14 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	// User Pressed Continue button to proceed to Score Activity
+	public void goTonextQuestion(View view) {
+		Intent intent = new Intent(this, QuestionActivity.class);
+		intent.putExtra("game", game);
+		this.startActivityForResult(intent, 0);
+
 	}
 
 }
