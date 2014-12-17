@@ -10,15 +10,113 @@
         android:layout_width="wrap_content"
         android:layout_alignParentTop="true"
         layout="@layout/toolbar" />
-    
-    <ListView
-        android:id="@+id/score_list"
-        android:layout_width="@dimen/drawer_width"
-        android:layout_height="100dp"
-        android:layout_marginTop = "50dp"
-        android:background="@color/LightGreen"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0dp" />
+
+     <Button
+      	android:id="@+id/Continue"
+     	android:layout_width="120dp"
+      	android:layout_height="wrap_content"
+      	android:layout_alignParentBottom="true"
+      	android:layout_centerHorizontal="true"
+      	android:layout_marginBottom="48dp"
+      	android:background="@color/Green"
+      	android:onClick="goTonextQuestion"
+      	android:text="@string/score" />
+
+     <LinearLayout
+         android:id="@+id/Heading"
+         android:layout_width="wrap_content"
+         android:layout_height="48dp"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentRight="true"
+         android:layout_below="@+id/toolbar"
+         android:orientation="horizontal" >
+
+         <TextView
+             android:id="@+id/Players"
+             android:layout_width="0dp"
+             android:layout_height="wrap_content"
+             android:layout_weight="0.5"
+             android:layout_gravity="center_vertical"
+             android:text="@string/players"
+             android:textColor="@color/Black87"
+             android:textStyle="normal|bold" />
+         
+         <TextView
+             android:id="@+id/Score"
+             android:layout_width="0dp"
+             android:layout_weight="0.25"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_vertical"
+             android:textStyle="normal|bold" 
+        	 android:textColor="@color/Black87"
+             android:text="@string/current_score" />
+         
+         <TextView
+             android:id="@+id/TotalScore"
+             android:layout_width="0dp"
+             android:layout_weight="0.25"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center_vertical"
+             android:textStyle="normal|bold" 
+        	 android:textColor="@color/Black87"
+             android:text="@string/total_score" />
+
+     </LinearLayout>
+     
+     <LinearLayout
+         android:layout_width="wrap_content"
+         android:layout_height="72dp"
+         android:layout_alignParentLeft="true"
+         android:layout_alignParentRight="true"
+         android:layout_below="@+id/Heading"
+         android:background="@color/Green"
+         android:orientation="horizontal" >
+
+         <LinearLayout
+             android:id="@+id/Second_Slot"
+             android:layout_width="0dp"
+             android:layout_height="72dp"
+             android:layout_weight="0.5"
+             android:orientation="horizontal" >
+
+             <ImageView
+                 android:id="@+id/icon"
+                 android:layout_width="68dp"
+                 android:layout_height="68dp"
+                 android:layout_centerHorizontal="true"
+                 android:layout_gravity="center_vertical"
+                 android:src="@drawable/slot_shadow" />
+
+             <TextView
+                 android:id="@+id/Name"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center_vertical"
+                 android:text="Vasilis"
+                 android:textColor="@color/Black87"
+                 android:textStyle="normal|bold" />
+         </LinearLayout>
+
+	        <TextView
+	        android:id="@+id/userscore"
+	        android:layout_width="0dp"
+           	android:layout_weight="0.25"         
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+	        android:textStyle="normal|bold" 
+	   		android:textColor="@color/Black87"
+	        android:text="1" />
+	         
+	        <TextView
+	        android:id="@+id/usertotalscore"
+	        android:layout_width="0dp"
+           	android:layout_weight="0.2"         
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_vertical"
+	        android:layout_centerHorizontal="true"
+	        android:textStyle="normal|bold" 
+	   		android:textColor="@color/Black87"
+	        android:text="10" />
+     </LinearLayout>
 
 </RelativeLayout>
