@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/LightGreen" 
-    >
+    android:background="@color/LightGreen" >
 
     <include
         android:id="@+id/toolbar"
@@ -11,99 +10,133 @@
         android:layout_alignParentTop="true"
         layout="@layout/toolbar" />
     
-    <TextView
-        android:id="@+id/guess_label"
-        style="@android:style/TextAppearance.Medium"
-        android:layout_width="wrap_content"
-        android:layout_height="56dp"
-        android:layout_below="@+id/toolbar"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:minHeight="48dp"
-        android:text="Which animal is the cuter one?"
-        android:textStyle="normal|bold"
-        android:textColor="#000000" />
-  	
-   	<LinearLayout
-        android:id="@+id/First_Answer"
-        android:layout_width="fill_parent"
-        android:layout_height="148dp"
-        android:layout_below="@+id/guess_label"
-        android:layout_marginTop="0dp"
-        android:background="@color/DarkGreen"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
-        
-   	    <TextView
-           android:id="@+id/Answer1"
-           style="@android:style/TextAppearance.Medium"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_centerHorizontal="true"
-           android:layout_marginTop="10dp"
-           android:text="Dog" />
-   	
-	    <LinearLayout
-	        android:id="@+id/First_Answer_Slot"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:background="@color/LightGreen" 
+	    android:layout_below="@+id/toolbar"
+	    android:layout_alignParentTop="@+id/toolbar"
+	    >
+	    
+	     <TextView
+	        android:id="@+id/guess_label"
+	        style="@android:style/TextAppearance.Medium"
+	        android:layout_width="wrap_content"
+	        android:layout_height="56dp"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentRight="true"
+	        android:layout_gravity="center"
+	        android:layout_marginLeft="48dp"
+	        android:layout_marginRight="48dp"
+	        android:layout_marginTop="0dp"
+	        android:minHeight="48dp"
+	        android:text="Which animal is the cuter one?"
+	        android:textStyle="normal|bold" 
+	        android:textColor="@color/Black87"
+	        android:gravity="center"/>
+	  	
+	   	<LinearLayout
+	        android:id="@+id/First_Answer"
 	        android:layout_width="fill_parent"
-	        android:layout_height="78dp"
+	        android:layout_height="120dp"
 	        android:layout_below="@+id/guess_label"
-	        android:layout_marginTop="30dp"
-	        android:gravity="center_vertical"
-	        android:orientation="horizontal" >
+	        android:background="@color/DarkGreen"
+	        android:gravity="center_horizontal"
+	        android:orientation="vertical" >
+	        
+	   	    <TextView
+	           android:id="@+id/Answer1"
+	           style="@android:style/TextAppearance.Medium"
+	           android:layout_width="wrap_content"
+	           android:layout_height="0dp"
+	           android:layout_weight="0.3"
+	           android:layout_marginTop="3dp"
+	           android:layout_centerHorizontal="true"
+	           android:text="Dog" />
+	   	
+		    <LinearLayout
+		        android:id="@+id/First_Answer_Slot"
+		        android:layout_width="fill_parent"
+		        android:layout_height="0dp"
+	          	android:layout_weight="0.7"
+		        android:layout_below="@+id/guess_label"
+		        android:gravity="center_vertical"
+		        android:orientation="horizontal" >
+		    </LinearLayout>
 	    </LinearLayout>
-    </LinearLayout>
-    
-   	<LinearLayout
-   	    android:id="@+id/Players"
-   	    android:layout_width="fill_parent"
-   	    android:layout_height="100dp"
-   	    android:layout_alignParentLeft="true"
-   	    android:layout_below="@+id/First_Answer"
-   	    android:gravity="center_vertical"
-   	    android:orientation="horizontal" >
-
-   	</LinearLayout>
+	    
+	   	<LinearLayout
+	   	    android:id="@+id/Players"
+	   	    android:layout_width="fill_parent"
+	   	    android:layout_height="72dp"
+	   	    android:layout_alignParentLeft="true"
+	   	    android:layout_below="@+id/First_Answer"
+	   	    android:gravity="center_vertical"
+	   	    android:orientation="horizontal" >
 	
-    <LinearLayout
-        android:id="@+id/Second_Answer"
-        android:layout_width="fill_parent"
-        android:layout_height="148dp"
-        android:layout_below="@+id/guess_label"
-        android:layout_marginTop="250dp"
-        android:background="@color/DarkGreen"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
-        
-   	    <TextView
-           android:id="@+id/Answer2"
-           style="@android:style/TextAppearance.Medium"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_centerHorizontal="true"
-           android:layout_marginTop="10dp"
-           android:text="Cat" />
-   	
-	  	<LinearLayout
-	        android:id="@+id/Second_Answer_Slot"
-	        android:layout_width="fill_parent"
-	        android:layout_height="78dp"
-	        android:layout_below="@+id/guess_label"
-	        android:layout_marginTop="30dp"
-	        android:gravity="center_vertical"
-	        android:orientation="horizontal" >
 	   	</LinearLayout>
-    </LinearLayout>
+	    
+	
+	     <LinearLayout
+	         android:id="@+id/Second_Answer"
+	         android:layout_width="fill_parent"
+	         android:layout_height="120dp"
+	         android:layout_alignParentLeft="true"
+	         android:layout_below="@+id/Players"
+	         android:background="@color/DarkGreen"
+	         android:gravity="center_horizontal"
+	         android:orientation="vertical" >
+	
+	         <TextView
+	             android:id="@+id/Answer2"
+	             style="@android:style/TextAppearance.Medium"
+	             android:layout_width="wrap_content"
+	             android:layout_height="0dp"
+	          	 android:layout_weight="0.3"
+	             android:layout_centerHorizontal="true"
+	             android:text="Cat" />
+	
+	         <LinearLayout
+	             android:id="@+id/Second_Answer_Slot"
+	             android:layout_width="fill_parent"
+	             android:layout_height="0dp"
+	          	 android:layout_weight="0.7"
+	             android:layout_below="@+id/guess_label"
+	             android:gravity="center_vertical"
+	             android:orientation="horizontal" >
+	         </LinearLayout>
+	     </LinearLayout>
+	     
+	     <FrameLayout
+	        android:id="@+id/Buttons"
+	        android:layout_width="120dp"
+	        android:layout_height="72dp"
+	        android:layout_below="@+id/Second_Answer"
+	        android:layout_centerHorizontal="true" >
+	
+	        
+	        <Button
+	            android:id="@+id/Continue"
+	            android:layout_width="120dp"
+	            android:layout_height="wrap_content"
+	        	android:layout_below="@+id/Second_Answer"
+	            android:layout_centerHorizontal="true"
+	            android:layout_gravity="center_vertical"
+	            android:background="@color/Green"
+	            android:onClick="goToScore"
+	            android:text="@string/score" />
+	
+			<Button
+	            android:id="@+id/Score"
+	            android:layout_width="120dp"
+	            android:layout_height="wrap_content"
+	        	android:layout_below="@+id/Second_Answer"
+	            android:layout_centerHorizontal="true"
+	            android:layout_gravity="center_vertical"
+	            android:background="@color/Green"
+	            android:onClick="guessResults"
+	            android:text="@string/done" />        
 
-    <Button 
-        android:id="@+id/Done"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@color/Green"
-        android:text="@string/done"
-        android:onClick="guessResults"
-      />
-   
+	    </FrameLayout>
+	</RelativeLayout>
 </RelativeLayout>
