@@ -19,10 +19,14 @@ public class ServerReset implements NetworkingEventHandler {
 	private static final String USER_ID_KEY = "userId";
 	private static final String GAME_ID_KEY = "gameId";
 	private static final String QUESTION_LIST_KEY = "questionList";
+	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 
 	private NetworkingManager manager = new NetworkingManager(this, GROUP, RESET_USER);
 	
 	public void resetGames() {
+		for(int i = 1; i < 20; i++) {
+			manager.deleteKeyOfUser(USER_TO_ANSWER_KEY, "M" + i);
+		}
 		manager.saveValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER, "M1");
 	}
 	
@@ -89,7 +93,7 @@ public class ServerReset implements NetworkingEventHandler {
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 	
 	
