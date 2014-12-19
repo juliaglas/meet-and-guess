@@ -24,11 +24,14 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	
 	private static final String GROUP = "G9";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String ANSWERING_DONE_KEY = "answeringDone";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
 	private String userName;
 	private NetworkingManager manager;
 	private Game game;
+	private int numberOfPlayers;
+	private int numberOfFinishedPlayers;
 	private Answer answer;
 
 	@Override
@@ -46,9 +49,17 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		this.userName = sharedPref.getString("username", null);
 		
 		this.manager = new NetworkingManager(this, GROUP, this.userName);
-		
+				
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
+		numberOfPlayers = MainActivity.getNextRoundNumberOfPlayers();
+		
+		if(userName.equals(game.getOwner())) {
+			manager.monitorKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		} else {
+			manager.monitorKeyOfUser(ANSWERING_DONE_KEY, game.getGameId());
+		}
+
 		displayQuestion();
 	}
 	
@@ -65,39 +76,52 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	}
 	
 	public void answer1Selected(View view) {
+		// TODO display loading
 		answer = Answer.ANSWER1;
 		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	}
 	
 	public void answer2Selected(View view) {
+		// TODO display loading
 		answer = Answer.ANSWER2;
 		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	}
 	
 	public void skipQuestion(View view) {
+		// TODO display loading
 		answer = Answer.SKIPQUESTION;
 		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 	}
 	
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		manager.unlockKeyOfUser(key, user);
+		if(key.equals(USER_TO_ANSWER_KEY)) {
+			manager.unlockKeyOfUser(key, user);
+		} else if(key.equals(ANSWERING_DONE_KEY)) {
+			manager.ignoreKeyOfUser(key, user);
+			Intent intent = new Intent(this, GuessActivity.class);
+			intent.putExtra("game", game);
+			intent.putExtra("numberOfPlayers", numberOfPlayers);
+			this.startActivity(intent);
+		}
 	}
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		try {
-				Gson gson = new Gson();
-				Map<String, Answer> userToAnswer = gson.fromJson(json.getString("value"), new TypeToken<Map<String, Answer>>(){}.getType());
-				if(userToAnswer == null) {
-					userToAnswer = new HashMap<String, Answer>();
-				}
-				userToAnswer.put(userName, answer);
-				String userToAnswerJson = gson.toJson(userToAnswer);
-				manager.saveValueForKeyOfUser(key, user, userToAnswerJson);
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(key.equals(USER_TO_ANSWER_KEY)) {
+			try {
+					Gson gson = new Gson();
+					Map<String, Answer> userToAnswer = gson.fromJson(json.getString("value"), new TypeToken<Map<String, Answer>>(){}.getType());
+					if(userToAnswer == null) {
+						userToAnswer = new HashMap<String, Answer>();
+					}
+					userToAnswer.put(userName, answer);
+					String userToAnswerJson = gson.toJson(userToAnswer);
+					manager.saveValueForKeyOfUser(key, user, userToAnswerJson);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -110,7 +134,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	@Override
 	public void monitoringKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -122,17 +146,26 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		// TODO Auto-generated method stub
-		
+		if(key.equals(USER_TO_ANSWER_KEY)) {
+			numberOfFinishedPlayers++;
+			if(numberOfFinishedPlayers == numberOfPlayers) { // TODO check if method is also invoked when the owner anwers himself
+				manager.saveValueForKeyOfUser(ANSWERING_DONE_KEY, game.getGameId(), "done");
+			}
+		} else if(key.equals(ANSWERING_DONE_KEY)) {
+			manager.ignoreKeyOfUser(key, user);
+			Intent intent = new Intent(this, GuessActivity.class);
+			intent.putExtra("game", game);
+			this.startActivityForResult(intent, 0);
+		}
 	}
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
 		try {
-			if(json.getString("code").equals("1")) {
+			if(key.equals(USER_TO_ANSWER_KEY) && json.getString("code").equals("1")) {
 				manager.loadValueForKeyOfUser(key, user);
 			} else {
-				manager.lockKeyOfUser(key, user);
+				manager.lockKeyOfUser(key, user); // TODO Check: DO WE NEED TO CALL THIS AGAIN?
 			}
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
@@ -142,8 +175,6 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-		Intent intent = new Intent(this, GuessActivity.class);
-		intent.putExtra("game", game);
-		this.startActivityForResult(intent, 0);
+
 	}
 }
