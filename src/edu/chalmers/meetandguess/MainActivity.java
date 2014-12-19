@@ -313,7 +313,7 @@ public class MainActivity extends ActionBarActivity implements
 		switch (requestCode) {
 		case (PROFILE_ACTIVITY_REQUEST_CODE):
 			if (manager == null) {
-				String userName = data.getStringExtra("userName");
+				userName = data.getStringExtra("userName");
 				this.manager = new NetworkingManager(this, "G9", userName);
 			}
 		case (CREATE_GAME_REQUEST_CODE):
