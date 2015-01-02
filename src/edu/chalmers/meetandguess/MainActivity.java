@@ -59,19 +59,22 @@ public class MainActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		
 		initViews();
 
 		// methods to reset the app/server
-		// resetApp();
-		// ServerReset resetter = new ServerReset();
-		// resetter.resetUsers();
-		// resetter.resetGames();
-		// resetter.resetQuestionList();
+		 /*resetApp();
+		 ServerReset resetter = new ServerReset();
+		 resetter.resetUsers();
+		 resetter.resetGames();
+		 resetter.resetQuestionList();*/
+		
+		
 
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF,
 				MODE_PRIVATE);
-		userName = sharedPref.getString("username", null);
+		userName = sharedPref.getString("username", "U1");
 		if (userName == null) {
 			loadProfileActivity(null);
 		} else {

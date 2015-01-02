@@ -2,18 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/LightGreen" >
+    android:background="@color/LightGreen"
+    android:clipChildren="false" >
 
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
     
     <RelativeLayout
+        android:id ="@+id/Main_Screen"
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:background="@color/LightGreen" 
 	    android:layout_below="@+id/toolbar"
 	    android:layout_alignParentTop="@+id/toolbar"
+	    android:clipChildren="false"
 	    >
 	    
 	     <TextView
@@ -40,7 +43,8 @@
 	        android:layout_below="@+id/guess_label"
 	        android:background="@color/DarkGreen"
 	        android:gravity="center_horizontal"
-	        android:orientation="vertical" >
+	        android:orientation="vertical"
+	        android:clipChildren="false" >
 	        
 	   	    <TextView
 	           android:id="@+id/Answer1"
@@ -59,7 +63,8 @@
 	          	android:layout_weight="0.7"
 		        android:layout_below="@+id/guess_label"
 		        android:gravity="center_vertical"
-		        android:orientation="horizontal" >
+		        android:orientation="horizontal"
+		        android:clipChildren="false" >
 		    </LinearLayout>
 	    </LinearLayout>
 	    
@@ -70,8 +75,8 @@
 	   	    android:layout_alignParentLeft="true"
 	   	    android:layout_below="@+id/First_Answer"
 	   	    android:gravity="center_vertical"
-	   	    android:orientation="horizontal" >
-	
+	   	    android:orientation="horizontal"
+	   	    android:clipChildren="false" >
 	   	</LinearLayout>
 	    
 	
@@ -83,7 +88,8 @@
 	         android:layout_below="@+id/Players"
 	         android:background="@color/DarkGreen"
 	         android:gravity="center_horizontal"
-	         android:orientation="vertical" >
+	         android:orientation="vertical"
+	         android:clipChildren="false" >
 	
 	         <TextView
 	             android:id="@+id/Answer2"
@@ -91,7 +97,6 @@
 	             android:layout_width="wrap_content"
 	             android:layout_height="0dp"
 	          	 android:layout_weight="0.3"
-	             android:layout_centerHorizontal="true"
 	             android:text="Cat" />
 	
 	         <LinearLayout
@@ -99,9 +104,9 @@
 	             android:layout_width="fill_parent"
 	             android:layout_height="0dp"
 	          	 android:layout_weight="0.7"
-	             android:layout_below="@+id/guess_label"
 	             android:gravity="center_vertical"
-	             android:orientation="horizontal" >
+	             android:orientation="horizontal"
+	             android:clipChildren="false" >
 	         </LinearLayout>
 	     </LinearLayout>
 	     
