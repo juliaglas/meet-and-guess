@@ -1,6 +1,7 @@
 package edu.chalmers.meetandguess;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -29,6 +30,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class MainActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
@@ -49,6 +51,9 @@ public class MainActivity extends ActionBarActivity implements
 	private ListView drawerList;
 	private String[] drawerMenuItems;
 	private Navigation navigation;
+	
+	private LinkedList<Game> gameList;
+	private ArrayAdapter<Game> adapter;
 
 	private NetworkingManager manager;
 
@@ -129,7 +134,28 @@ public class MainActivity extends ActionBarActivity implements
 		drawerList.setAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, drawerMenuItems));
 		drawerList.setOnItemClickListener(new DrawerItemClickListener());
+		
+		gameList = new LinkedList<Game>();
+		Game testGame = new Game("x", "loc", "det", null, "me");
+		gameList.add(testGame);
+		Game testGame2 = new Game("y", "loc2", "det2", null, "you");
+		gameList.add(testGame2);
+		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, gameList);
+		ListView listView = (ListView) findViewById(R.id.gameListView);
+		listView.setAdapter(adapter);
+		
+		listView.setOnItemClickListener(
+				new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(
+							AdapterView<?> parent,
+							View view,
+							int position, 
+							long id) {}
+				});
 	}
+	
 
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
