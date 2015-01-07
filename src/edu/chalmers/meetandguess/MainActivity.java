@@ -269,9 +269,11 @@ public class MainActivity extends ActionBarActivity implements
 			String user) {
 		if (key.equals(REQUEST_JOINING_KEY)) {
 			nextRoundNumberOfPlayers++;
-			Intent intent = new Intent(this, QuestionActivity.class);
-			intent.putExtra("game", game);
-			this.startActivity(intent);
+			if(nextRoundNumberOfPlayers == 2) {
+				Intent intent = new Intent(this, QuestionActivity.class);
+				intent.putExtra("game", game);
+				this.startActivity(intent);
+			}
 		}
 	}
 
