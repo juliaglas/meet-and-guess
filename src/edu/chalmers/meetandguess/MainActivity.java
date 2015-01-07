@@ -25,6 +25,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -43,10 +44,10 @@ public class MainActivity extends ActionBarActivity implements
 	private static final int PROFILE_ACTIVITY_REQUEST_CODE = 0;
 	private static final int CREATE_GAME_REQUEST_CODE = 1;
 
-	private DrawerLayout drawer;
-
+	private DrawerLayout drawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
 	private ListView drawerList;
+	private String[] drawerMenuItems;
 	private Navigation navigation;
 
 	private NetworkingManager manager;
@@ -90,9 +91,9 @@ public class MainActivity extends ActionBarActivity implements
 		toolbar.inflateMenu(R.menu.main);
 
 		// Drawer Layout
-		drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		// Drawer Toggle
-		drawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
 				R.string.drawer_open, R.string.drawer_close) {
 
 			/** Called when a drawer has settled in a completely closed state. */
@@ -111,7 +112,7 @@ public class MainActivity extends ActionBarActivity implements
 		};
 
 		// Set the drawer toggle as the DrawerListener
-		drawer.setDrawerListener(drawerToggle);
+		drawerLayout.setDrawerListener(drawerToggle);
 
 		getSupportActionBar().setDisplayShowHomeEnabled(true);
 		getSupportActionBar().setHomeButtonEnabled(true);
@@ -120,12 +121,13 @@ public class MainActivity extends ActionBarActivity implements
 		// drawer.setStatusBarBackgroundColor(R.color.StatusGreen);
 
 		navigation = new Navigation();
-		// Set the adapter for the list view
+		drawerMenuItems = getResources().getStringArray(R.array.drawer_items_array);
+
+        // Set the list's click listener
 		drawerList = (ListView) findViewById(R.id.left_drawer);
 		drawerList.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, navigation.getNavList()));
-		// Set the list's click listener
-		// drawerList.setOnItemClickListener(new DrawerItemClickListener());
+				android.R.layout.simple_list_item_1, drawerMenuItems));
+		drawerList.setOnItemClickListener(new DrawerItemClickListener());
 	}
 
 	@Override
@@ -350,5 +352,26 @@ public class MainActivity extends ActionBarActivity implements
 	
 	public static void addPlayerForNextRound() {
 		nextRoundNumberOfPlayers++;
+	}
+	
+	private class DrawerItemClickListener implements ListView.OnItemClickListener {
+	    @Override
+	    public void onItemClick(AdapterView parent, View view, int position, long id) {
+	        selectItem(position);
+	    }
+	}
+
+	/** Swaps fragments in the main content view */
+	private void selectItem(int position) {
+	    switch (position) {
+		case 0:
+			drawerList.setItemChecked(position, true);
+			drawerLayout.closeDrawer(drawerList);
+			Intent intent = new Intent(this, ProfileActivity.class);
+			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
+			break;
+		default:
+			break;
+		}
 	}
 }
