@@ -75,7 +75,8 @@ public class MainActivity extends ActionBarActivity implements
 				MODE_PRIVATE);
 		userName = sharedPref.getString("username", null);
 		if (userName == null) {
-			loadProfileActivity(null);
+			Intent intent = new Intent(this, ProfileActivity.class);
+			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
 		} else {
 			this.manager = new NetworkingManager(this, GROUP, this.userName);
 		}
@@ -173,16 +174,6 @@ public class MainActivity extends ActionBarActivity implements
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	public void loadQuestionActivity(View view) {
-		Intent intent = new Intent(this, QuestionActivity.class);
-		if (game != null) {
-			intent.putExtra("game", game);
-			this.startActivity(intent);
-		} else {
-			// TODO: Alert that there is no game
-		}
 	}
 
 	@Override
@@ -285,11 +276,6 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-	}
-
-	public void loadProfileActivity(View view) {
-		Intent intent = new Intent(this, ProfileActivity.class);
-		this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
 	}
 
 	private void displayJoinAlertDialog() {
