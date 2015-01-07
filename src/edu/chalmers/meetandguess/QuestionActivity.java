@@ -33,13 +33,14 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	private int numberOfPlayers;
 	private int numberOfFinishedPlayers;
 	private Answer answer;
+	private boolean answerSelected = false;
+	private boolean ownerDone = false;
 
 	@Override
 	// TODO everybody has to update the current question number on his own
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.question);
-		
 		// Toolbar Layout
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
@@ -77,20 +78,29 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	
 	public void answer1Selected(View view) {
 		// TODO display loading
-		answer = Answer.ANSWER1;
-		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		if(!answerSelected) {
+			answer = Answer.ANSWER1;
+			answerSelected = true;
+			manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		}
 	}
 	
 	public void answer2Selected(View view) {
 		// TODO display loading
-		answer = Answer.ANSWER2;
-		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		if(!answerSelected) {
+			answer = Answer.ANSWER2;
+			answerSelected = true;
+			manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		}
 	}
 	
 	public void skipQuestion(View view) {
 		// TODO display loading
-		answer = Answer.SKIPQUESTION;
-		manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		if(!answerSelected) {
+			answer = Answer.SKIPQUESTION;
+			answerSelected = true;
+			manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
+		}
 	}
 	
 	@Override
@@ -148,14 +158,20 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 			String user) {
 		if(key.equals(USER_TO_ANSWER_KEY)) {
 			numberOfFinishedPlayers++;
-			if(numberOfFinishedPlayers == numberOfPlayers) { // TODO check if method is also invoked when the owner anwers himself
+			if(numberOfFinishedPlayers == numberOfPlayers) {
+				manager.ignoreKeyOfUser(key, user);
 				manager.saveValueForKeyOfUser(ANSWERING_DONE_KEY, game.getGameId(), "done");
+				Intent intent = new Intent(this, GuessActivity.class);
+				intent.putExtra("game", game);
+				intent.putExtra("numberOfPlayers", numberOfPlayers);
+				this.startActivity(intent);
 			}
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
 			manager.ignoreKeyOfUser(key, user);
 			Intent intent = new Intent(this, GuessActivity.class);
 			intent.putExtra("game", game);
-			this.startActivityForResult(intent, 0);
+			intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary
+			this.startActivity(intent);
 		}
 	}
 
@@ -175,6 +191,5 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 
 	@Override
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
-
 	}
 }

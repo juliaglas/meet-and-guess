@@ -76,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements
 		if (userName == null) {
 			loadProfileActivity(null);
 		} else {
-			this.manager = new NetworkingManager(this, GROUP, userName);
+			this.manager = new NetworkingManager(this, GROUP, this.userName);
 		}
 	}
 
@@ -316,7 +316,7 @@ public class MainActivity extends ActionBarActivity implements
 		case (PROFILE_ACTIVITY_REQUEST_CODE):
 			if (manager == null) {
 				userName = data.getStringExtra("userName");
-				this.manager = new NetworkingManager(this, "G9", userName);
+				this.manager = new NetworkingManager(this, "G9", this.userName);
 			}
 		case (CREATE_GAME_REQUEST_CODE):
 			if (game == null) {
