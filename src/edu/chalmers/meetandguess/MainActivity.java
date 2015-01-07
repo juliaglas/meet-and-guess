@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity implements
 	private static final String GAME_KEY = "game";
 	private static final String CURRENT_QUESTION_NUMBER_KEY = "currentQuestion";
 	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
-	private static final String NEW_USER_KEY = "newUser";
+	private static final String REQUEST_JOINING_KEY = "newUser";
 
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	private Game game;
 	private String userName;
+	private static int nextRoundNumberOfPlayers = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class MainActivity extends ActionBarActivity implements
 		if (userName == null) {
 			loadProfileActivity(null);
 		} else {
-			this.manager = new NetworkingManager(this, GROUP, userName);
+			this.manager = new NetworkingManager(this, GROUP, this.userName);
 		}
 	}
 
@@ -184,7 +185,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if (key.equals(NEW_USER_KEY)) { // successfully notified to be a new
+		if (key.equals(REQUEST_JOINING_KEY)) { // successfully notified to be a new
 										// user
 			Intent intent = new Intent(this, QuestionActivity.class);
 			intent.putExtra("game", game);
@@ -234,7 +235,7 @@ public class MainActivity extends ActionBarActivity implements
 				int currentQuestion = gson.fromJson(json.getString("value"),
 						Integer.class);
 				game.setCurrentQuestionNumber(currentQuestion);
-				manager.saveValueForKeyOfUser(NEW_USER_KEY, game.getGameId(),
+				manager.saveValueForKeyOfUser(REQUEST_JOINING_KEY, game.getGameId(),
 						userName);
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
@@ -266,10 +267,13 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		if (key.equals(NEW_USER_KEY)) {
-			Intent intent = new Intent(this, QuestionActivity.class);
-			intent.putExtra("game", game);
-			this.startActivityForResult(intent, 0);
+		if (key.equals(REQUEST_JOINING_KEY)) {
+			nextRoundNumberOfPlayers++;
+			if(nextRoundNumberOfPlayers == 2) {
+				Intent intent = new Intent(this, QuestionActivity.class);
+				intent.putExtra("game", game);
+				this.startActivity(intent);
+			}
 		}
 	}
 
@@ -314,13 +318,14 @@ public class MainActivity extends ActionBarActivity implements
 		case (PROFILE_ACTIVITY_REQUEST_CODE):
 			if (manager == null) {
 				userName = data.getStringExtra("userName");
-				this.manager = new NetworkingManager(this, "G9", userName);
+				this.manager = new NetworkingManager(this, "G9", this.userName);
 			}
 		case (CREATE_GAME_REQUEST_CODE):
 			if (game == null) {
 				game = (Game) data.getParcelableExtra("game");
+				nextRoundNumberOfPlayers++;
 				if (game != null) { // wait for another player
-					manager.monitorKeyOfUser(NEW_USER_KEY, game.getGameId());
+					manager.monitorKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
 					AlertDialog.Builder alert = new AlertDialog.Builder(this);
 					alert.setTitle(game.getGameId());
 					alert.setMessage(getResources().getText(R.string.game_id_information));
@@ -337,5 +342,13 @@ public class MainActivity extends ActionBarActivity implements
 		SharedPreferences.Editor editor = sharedPref.edit();
 		editor.putString("username", null);
 		editor.commit();
+	}
+	
+	public static int getNextRoundNumberOfPlayers() {
+		return nextRoundNumberOfPlayers;
+	}
+	
+	public static void addPlayerForNextRound() {
+		nextRoundNumberOfPlayers++;
 	}
 }

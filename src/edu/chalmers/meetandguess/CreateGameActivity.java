@@ -35,6 +35,9 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String GAME_KEY = "game";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String USER_TO_SCORE_KEY = "userToScore";
+	private static final String ANSWERING_DONE_KEY = "answeringDone";
+
+	private static final String REQUEST_JOINING_KEY = "newUser";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
 	private String userName;
@@ -108,6 +111,10 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if(key.equals(USER_TO_ANSWER_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_SCORE_KEY)) {
+			manager.saveValueForKeyOfUser(ANSWERING_DONE_KEY, game.getGameId(), "notdone");
+		} else if(key.equals(ANSWERING_DONE_KEY)) {
+			manager.saveValueForKeyOfUser(REQUEST_JOINING_KEY, game.getGameId(), null);
+		} else if(key.equals(REQUEST_JOINING_KEY)) {
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
 			setResult(RESULT_OK, intent);

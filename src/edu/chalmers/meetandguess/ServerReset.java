@@ -19,18 +19,33 @@ public class ServerReset implements NetworkingEventHandler {
 	private static final String USER_ID_KEY = "userId";
 	private static final String GAME_ID_KEY = "gameId";
 	private static final String QUESTION_LIST_KEY = "questionList";
+	private static final String CURRENT_QUESTION_KEY = "currentQuestion";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
+	private static final String USER_TO_SCORE_KEY = "userToScore";
+	private static final String ANSWERING_DONE_KEY = "answeringDone";
+	private static final String GAME_KEY = "game";
+	private static final String PROFILE_KEY = "profile";
 
 	private NetworkingManager manager = new NetworkingManager(this, GROUP, RESET_USER);
 	
 	public void resetGames() {
 		for(int i = 1; i < 20; i++) {
-			manager.deleteKeyOfUser(USER_TO_ANSWER_KEY, "M" + i);
+			String gameId = "M" + i;
+			manager.deleteKeyOfUser(QUESTION_LIST_KEY, gameId);
+			manager.deleteKeyOfUser(CURRENT_QUESTION_KEY, gameId);
+			manager.deleteKeyOfUser(USER_TO_ANSWER_KEY, gameId);
+			manager.deleteKeyOfUser(USER_TO_SCORE_KEY, gameId);
+			manager.deleteKeyOfUser(ANSWERING_DONE_KEY, gameId);
+			manager.deleteKeyOfUser(GAME_KEY, gameId);
 		}
 		manager.saveValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER, "M1");
 	}
 	
 	public void resetUsers() {
+		for(int i = 1; i < 20; i++) {
+			String userId = "U" + i;
+			manager.deleteKeyOfUser(PROFILE_KEY, userId);
+		}
 		manager.saveValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER, "U1");
 	}
 	
