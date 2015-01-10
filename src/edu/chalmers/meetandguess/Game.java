@@ -19,9 +19,10 @@ public class Game implements Parcelable {
 	private List<Question> questionList;
 	private transient int currentQuestionNumber;
 	private String owner;
+	private String ownerImage;
 	private transient Map<String, Integer> user2totalScore;
 	
-	public Game(String gameId, /*Location location, */String locationDescription, String detailedDescription, List<Question> questionList, String owner) {
+	public Game(String gameId, /*Location location, */String locationDescription, String detailedDescription, List<Question> questionList, String owner, String ownerImage) {
 		super();
 		this.gameId = gameId;
 		//this.location = location;
@@ -30,6 +31,7 @@ public class Game implements Parcelable {
 		this.questionList = questionList;
 		this.currentQuestionNumber = 0;
 		this.owner = owner;
+		this.ownerImage = ownerImage;
 		this.user2totalScore = new HashMap<String, Integer>();
 	}
 
@@ -71,6 +73,14 @@ public class Game implements Parcelable {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+	
+	public String getOwnerImage() {
+		return ownerImage;
+	}
+
+	public void setOwnerImage(String ownerImage) {
+		this.ownerImage = ownerImage;
 	}
 	
 	public Map<String, Integer> getUser2TotalScore() {
@@ -125,6 +135,7 @@ public class Game implements Parcelable {
 		dest.writeTypedList(questionList);
 		dest.writeInt(currentQuestionNumber);
 		dest.writeString(owner);
+		dest.writeString(ownerImage);
 		final int mapSize = user2totalScore.size();
         dest.writeInt(mapSize);
         for (Map.Entry<String, Integer> entry : user2totalScore.entrySet()) {
@@ -142,6 +153,7 @@ public class Game implements Parcelable {
 		parcel.readTypedList(questionList, Question.CREATOR);
 		currentQuestionNumber = parcel.readInt();
 		owner = parcel.readString();
+		ownerImage = parcel.readString();
 		int mapSize = parcel.readInt();
 		user2totalScore = new HashMap<String, Integer>();
 		for (int i=0; i<mapSize; i++) {

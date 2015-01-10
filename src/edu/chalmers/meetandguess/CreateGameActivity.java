@@ -31,6 +31,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String GAME_MANAGER_USER = "gameManager";
 	private static final String GAME_DATA_USER = "gameData";
 	private static final String GAME_ID_KEY = "gameId";
+	private static final String PROFILE_KEY = "profile";
 	private static final String QUESTION_LIST_KEY = "questionList";
 	private static final String CURRENT_QUESTION_KEY = "currentQuestion";
 	private static final String GAME_KEY = "game";
@@ -49,6 +50,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private String locationDescription;
 	private String detailDescription;
 	private List<Question> questionList;
+	private String ownerImage;
 
 	private Game game;
 
@@ -96,10 +98,10 @@ public class CreateGameActivity extends ActionBarActivity implements
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if (key.equals(GAME_ID_KEY)) { // after increasing gameId on the server
-			manager.loadValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER);
+			manager.loadValueForKeyOfUser(PROFILE_KEY, userName);
 		} else if (key.equals(CURRENT_QUESTION_KEY)) {
 			game = new Game(gameId, locationDescription, detailDescription,
-					questionList, userName);
+					questionList, userName, ownerImage);
 			Gson gson = new Gson();
 			try {
 				String gameString = gson.toJson(game);
@@ -145,6 +147,20 @@ public class CreateGameActivity extends ActionBarActivity implements
 			nextGameId++;
 			String nextGameIdString = "M" + nextGameId;
 			manager.saveValueForKeyOfUser(key, user, nextGameIdString);
+		} else if(key.equals(PROFILE_KEY)) {
+			Gson gson = new Gson();
+			Player owner;
+			try {
+				owner = gson.fromJson(json.getString("value"), Player.class);
+				ownerImage = owner.getImage();
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			manager.loadValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER);
 		} else if (key.equals(QUESTION_LIST_KEY)) { // select a part of the questions as the questions of the current game
 			Gson gson = new Gson();
 			try {
