@@ -77,7 +77,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// methods to reset the app/server
 		// resetApp();
-		// ServerReset resetter = new ServerReset();
+		ServerReset resetter = new ServerReset();
 		// resetter.resetQuestionList();
 
 		// Access the user name
@@ -91,7 +91,6 @@ public class MainActivity extends ActionBarActivity implements
 			this.manager = new NetworkingManager(this, GROUP, this.userName);
 			loadGameList();
 		}
-		
 	}
 
 	public void initViews() {
