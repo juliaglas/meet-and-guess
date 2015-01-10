@@ -67,12 +67,14 @@ public class ProfileActivity extends ActionBarActivity implements
 		if(userId != null) { // show profile of an existing user
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			Button createButton = (Button) findViewById(R.id.create_profile_button);
-			createButton.setVisibility(View.GONE);
+			createButton.setVisibility(View.INVISIBLE);
 			createButton.setEnabled(false);
 			this.manager = new NetworkingManager(this, GROUP, userId);
 			this.manager.loadValueForKeyOfUser(PROFILE_KEY, userId);
 		} else { // create profile of a new user
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Hide back button
+			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
+			firstNameValue.requestFocus();
 			this.manager = new NetworkingManager(this, GROUP, GAME_MANAGER_USER);
 			this.manager.loadValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER);
 		}
@@ -149,6 +151,10 @@ public class ProfileActivity extends ActionBarActivity implements
 		if(key.equals(USER_ID_KEY)) {
 			try {
 				userId = gson.fromJson(json.getString("value"), String.class);
+				userId = json.getString("value");
+				if(userId.equals("null")) {
+					userId = "U1";
+				}
 				String copyOfUserId = new String(userId);
 				int nextUserId = Integer.parseInt(copyOfUserId.replaceAll(
 						"[^\\d.]", ""));
@@ -211,6 +217,16 @@ public class ProfileActivity extends ActionBarActivity implements
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 			firstNameValue.setText(player.getFirstname());
 		}
+		// Display age
+		if(player.getAge() != -1) {
+			EditText ageValue = (EditText) findViewById(R.id.age_edit);
+			ageValue.setText(String.valueOf(player.getAge()));
+		}
+		// Display city
+		if(player.getCity() != null) {
+			EditText cityValue = (EditText) findViewById(R.id.city_edit);
+			cityValue.setText(player.getCity());
+		}
 		// Display country
 		if(player.getCountry() != null) {
 			EditText countryValue = (EditText) findViewById(R.id.country_edit);
@@ -222,16 +238,28 @@ public class ProfileActivity extends ActionBarActivity implements
 		if(imgData != null) { // if everything is okay save the user data
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 			String firstName = firstNameValue.getText().toString();
+			EditText ageValue = (EditText) findViewById(R.id.age_edit);
+			String ageString = ageValue.getText().toString();
+			int age;
+			try {
+				age = Integer.parseInt(ageString);
+			} catch (NumberFormatException e) {
+				age = -1;
+			}
+			EditText cityValue = (EditText) findViewById(R.id.city_edit);
+			String city = cityValue.getText().toString();
 			EditText countryValue = (EditText) findViewById(R.id.country_edit);
 			String country = countryValue.getText().toString();
 			if (this.player == null) { // new user
-				this.player = new Player(userId, firstName, country, this.imgData);
+				this.player = new Player(userId, firstName, age, city, country, this.imgData);
 				SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString("username", userId);
 				editor.commit();
 			} else { // existing user
 				this.player.setFirstname(firstName);
+				this.player.setAge(age);
+				this.player.setCity(city);
 				this.player.setCountry(country);
 				this.player.setImage(this.imgData);
 			}

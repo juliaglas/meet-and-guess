@@ -1,6 +1,7 @@
 package edu.chalmers.meetandguess;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -36,8 +37,9 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String ANSWERING_DONE_KEY = "answeringDone";
-
 	private static final String REQUEST_JOINING_KEY = "newUser";
+	private static final String ACTIVE_GAMES_KEY = "activeGames";
+
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 
 	private String userName;
@@ -115,6 +117,9 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
 			manager.saveValueForKeyOfUser(REQUEST_JOINING_KEY, game.getGameId(), null);
 		} else if(key.equals(REQUEST_JOINING_KEY)) {
+			manager.lockKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
+		} else if(key.equals(ACTIVE_GAMES_KEY)) {
+			manager.unlockKeyOfUser(key, user);
 			Intent intent = NavUtils.getParentActivityIntent(this);
 			intent.putExtra("game", game);
 			setResult(RESULT_OK, intent);
@@ -127,6 +132,9 @@ public class CreateGameActivity extends ActionBarActivity implements
 		if (key.equals(GAME_ID_KEY)) { // get the id of the new game
 			try {
 				gameId = json.getString("value");
+				if(gameId.equals("null")) {
+					gameId = "M1";
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -165,6 +173,25 @@ public class CreateGameActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if(key.equals(ACTIVE_GAMES_KEY)) {
+			Gson gson = new Gson();
+			try {
+				LinkedList<Game> gameList = gson.fromJson(json.getString("value"),
+						new TypeToken<LinkedList<Game>>() {
+						}.getType());
+				if(gameList == null) {
+					gameList = new LinkedList<Game>();
+				}
+				gameList.addFirst(game);
+				String gameListString = gson.toJson(gameList);
+				manager.saveValueForKeyOfUser(key, user, gameListString);
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -195,8 +222,16 @@ public class CreateGameActivity extends ActionBarActivity implements
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
+		try {
+			if(key.equals(ACTIVE_GAMES_KEY) && json.getString("code").equals("1")) {
+				manager.loadValueForKeyOfUser(key, user);
+			} else {
+				manager.lockKeyOfUser(key, user); // TODO Check: DO WE NEED TO CALL THIS AGAIN?
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override

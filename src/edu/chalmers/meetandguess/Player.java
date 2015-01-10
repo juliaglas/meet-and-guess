@@ -4,14 +4,18 @@ public class Player {
 
 	private String username;
 	private String firstname;
+	private int age;
+	private String city;
 	private String country;
 	private String image;
 	private int score;
 	
-	public Player(String username, String firstname, String country, String image) {
+	public Player(String username, String firstname, int age, String city, String country, String image) {
 		super();
 		this.username = username;
 		this.firstname = firstname;
+		this.age = age;
+		this.city = city;
 		this.country = country;
 		this.image = image;
 	}
@@ -27,6 +31,18 @@ public class Player {
 	}
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
 	}
 	public String getCountry() {
 		return country;

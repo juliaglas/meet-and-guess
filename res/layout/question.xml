@@ -34,7 +34,7 @@
         android:layout_below="@+id/question_label"
         android:layout_marginTop="48dp"
         android:text="Dog" 
-        android:background="@color/Green"
+        android:background="@drawable/green_button"
         android:onClick="answer1Selected"/>
 
     <Button
@@ -46,7 +46,7 @@
         android:layout_below="@+id/answer1_button"
         android:layout_marginTop="24dp"
         android:text="Cat" 
-        android:background="@color/Green"
+        android:background="@drawable/green_button"
         android:onClick="answer2Selected"/>
 
     <Button

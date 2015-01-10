@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="drawer_items_array">
+        <item>"View Profile"</item>
+        <item>"View Players"</item>
+        <item>"Create Game"</item>
+        <item>"Join Game"</item>
+    </string-array>
+</resources>
