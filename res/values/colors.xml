@@ -4,6 +4,7 @@
     <color name="DarkGreen">#558b2f</color>
     <color name="LightGreen">#f1f8e9</color>
     <color name="StatusGreen">#689f38</color>
+    <color name="ButtonPressedGreen">#AED581</color>
     <color name="Black87">#DE000000</color>
     <color name="HighlightColor">#78909C</color>
 </resources>

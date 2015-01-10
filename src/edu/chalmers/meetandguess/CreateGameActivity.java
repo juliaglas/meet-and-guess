@@ -111,14 +111,12 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if (key.equals(GAME_KEY)) {
 			manager.saveValueForKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_ANSWER_KEY)) {
-			manager.ignoreKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
 			manager.saveValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId(), null);
 		} else if(key.equals(USER_TO_SCORE_KEY)) {
 			manager.saveValueForKeyOfUser(ANSWERING_DONE_KEY, game.getGameId(), "notdone");
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
 			manager.saveValueForKeyOfUser(REQUEST_JOINING_KEY, game.getGameId(), null);
 		} else if(key.equals(REQUEST_JOINING_KEY)) {
-			manager.ignoreKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
 			manager.lockKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
 		} else if(key.equals(ACTIVE_GAMES_KEY)) {
 			manager.unlockKeyOfUser(key, user);
@@ -134,6 +132,9 @@ public class CreateGameActivity extends ActionBarActivity implements
 		if (key.equals(GAME_ID_KEY)) { // get the id of the new game
 			try {
 				gameId = json.getString("value");
+				if(gameId.equals("null")) {
+					gameId = "M1";
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

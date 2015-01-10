@@ -71,11 +71,8 @@ public class MainActivity extends ActionBarActivity implements
 		initViews();
 
 		// methods to reset the app/server
-		resetApp();
+		// resetApp();
 		// ServerReset resetter = new ServerReset();
-		// resetter.resetActiveGamesList();
-		// resetter.resetUsers();
-		// resetter.resetGames();
 		// resetter.resetQuestionList();
 
 		// Access the user name
@@ -227,6 +224,8 @@ public class MainActivity extends ActionBarActivity implements
 					gameList.clear();
 					gameList.addAll(loadedList);
 					adapter.notifyDataSetChanged();
+				} else {
+					manager.saveValueForKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER, null);
 				}
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block
@@ -283,6 +282,7 @@ public class MainActivity extends ActionBarActivity implements
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+
 			}
 		}
 	}
@@ -300,22 +300,31 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void ignoringKeyOfUser(JSONObject json, String key, String user) {
-		if(key.equals(REQUEST_JOINING_KEY)) {
-			manager.monitorKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
-		}
 	}
 
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
+		/*try {
+			String first = json.getString("records");
+			if(first.contains("userToAnswer")) {
+				key = "userToAnswer";
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
 		if (key.equals(REQUEST_JOINING_KEY)) {
+			manager.ignoreKeyOfUser(key, user);
 			nextRoundNumberOfPlayers++;
 			if(nextRoundNumberOfPlayers == 2) {
 				Intent intent = new Intent(this, QuestionActivity.class);
 				intent.putExtra("game", game);
 				this.startActivity(intent);
 			}
-		}
+		} /*else if(key.equals("userToAnswer")) {
+			QuestionActivity.numberOfFinishedPlayers++;
+		}*/
 	}
 
 	@Override
@@ -361,9 +370,9 @@ public class MainActivity extends ActionBarActivity implements
 			if (game == null && data.getParcelableExtra("game") != null) {
 				game = (Game) data.getParcelableExtra("game");
 				loadGameList();
+				manager.monitorKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
 				nextRoundNumberOfPlayers++;
 				if (game != null) { // wait for another player
-					manager.ignoreKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
 					AlertDialog.Builder alert = new AlertDialog.Builder(this);
 					alert.setTitle(game.getGameId());
 					alert.setMessage(getResources().getText(R.string.game_id_information));

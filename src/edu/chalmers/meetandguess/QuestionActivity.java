@@ -32,6 +32,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	private Game game;
 	private int numberOfPlayers;
 	private int numberOfFinishedPlayers;
+	// public static int numberOfFinishedPlayers;
 	private Answer answer;
 	private boolean answerSelected = false;
 
@@ -53,6 +54,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
 		numberOfPlayers = MainActivity.getNextRoundNumberOfPlayers();
+		numberOfFinishedPlayers = 0;
 		
 		if(userName.equals(game.getOwner())) {
 			manager.monitorKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
@@ -107,7 +109,6 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		if(key.equals(USER_TO_ANSWER_KEY)) {
 			manager.unlockKeyOfUser(key, user);
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
-			manager.ignoreKeyOfUser(key, user);
 			Intent intent = new Intent(this, GuessActivity.class);
 			intent.putExtra("game", game);
 			intent.putExtra("numberOfPlayers", numberOfPlayers);

@@ -121,5 +121,4 @@ public class ServerReset implements NetworkingEventHandler {
 
 	}
 	
-	
 }

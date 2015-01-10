@@ -162,9 +162,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@+id/score_display"
         android:layout_marginBottom="48dp"
-        android:background="@color/Green"
+        android:background="@drawable/green_button"
         android:onClick="createProfile"
-        android:text="@string/create" 
-        android:focusableInTouchMode="true"/>
+        android:text="@string/create" />
 
 </RelativeLayout>

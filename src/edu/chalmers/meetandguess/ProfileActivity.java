@@ -73,6 +73,8 @@ public class ProfileActivity extends ActionBarActivity implements
 			this.manager.loadValueForKeyOfUser(PROFILE_KEY, userId);
 		} else { // create profile of a new user
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Hide back button
+			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
+			firstNameValue.requestFocus();
 			this.manager = new NetworkingManager(this, GROUP, GAME_MANAGER_USER);
 			this.manager.loadValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER);
 		}
@@ -149,6 +151,10 @@ public class ProfileActivity extends ActionBarActivity implements
 		if(key.equals(USER_ID_KEY)) {
 			try {
 				userId = gson.fromJson(json.getString("value"), String.class);
+				userId = json.getString("value");
+				if(userId.equals("null")) {
+					userId = "U1";
+				}
 				String copyOfUserId = new String(userId);
 				int nextUserId = Integer.parseInt(copyOfUserId.replaceAll(
 						"[^\\d.]", ""));
