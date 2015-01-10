@@ -25,8 +25,10 @@
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentRight="true"
 	        android:layout_below="@+id/toolbar"
-	        android:divider="@android:color/darker_gray"
-	        android:dividerHeight="1px">
+	        android:divider="@color/Black12"
+	        android:dividerHeight="2px"
+	        android:childDivider="@color/Black12"
+	        android:groupIndicator="@null" >
             
         </ExpandableListView>
     </RelativeLayout>
@@ -38,7 +40,7 @@
         android:layout_gravity="start"
         android:background="#111"
         android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
+        android:divider="@color/Black12"
         android:dividerHeight="0dp" />
 
 </android.support.v4.widget.DrawerLayout>

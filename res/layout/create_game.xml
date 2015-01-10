@@ -6,17 +6,32 @@
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
+    
+    <TextView 
+	    android:id="@+id/create_game_info" 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/toolbar" 
+	    android:layout_marginTop="24dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_alignParentRight="true"
+	    android:layout_marginLeft="24dp"
+	    android:layout_marginRight="24dp"
+	    android:textAppearance="?android:attr/textAppearanceSmall"
+	    android:textColor="@color/Black87"
+	    android:text="@string/create_game_info"/>
 
     <TextView
         android:id="@+id/location_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/toolbar"
-        android:layout_below="@+id/toolbar"
-        android:layout_marginTop="48dp"
+        android:layout_below="@+id/create_game_info"
+        android:layout_marginTop="24dp"
         android:layout_marginLeft="24dp"
         android:text="@string/location_label"
-        android:textColor="@color/Black87" />
+        
+        android:textColor="@color/HighlightColor" />
 
     <EditText
         android:id="@+id/location_edit"
@@ -41,17 +56,16 @@
         android:layout_below="@+id/location_label"
         android:layout_marginTop="24dp"
         android:text="@string/detail_label"
-        android:textColor="@color/Black87" />
+        
+        android:textColor="@color/HighlightColor" />
 
     <EditText
         android:id="@+id/detail_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:lines="6"
-        android:layout_alignTop="@+id/detail_label"
+        android:layout_alignBaseline="@+id/detail_label"
         android:layout_alignLeft="@+id/location_edit"
         android:layout_alignRight="@+id/location_edit"
-        android:ems="10"
         android:hint="Detailed location description"
         android:textColor="@color/Black87">
     </EditText>
@@ -62,8 +76,8 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/location_label"
         android:layout_alignRight="@+id/location_edit"
-        android:layout_below="@+id/detail_edit"
-        android:layout_marginTop="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="48dp"
         android:background="@drawable/green_button"
         android:text="@string/create" 
         android:onClick="createGame"/>

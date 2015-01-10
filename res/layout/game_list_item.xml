@@ -25,7 +25,7 @@
         android:layout_toRightOf="@id/ownerImage"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="12dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/Black87"
         android:text="Location" />
     
@@ -38,5 +38,14 @@
         android:textAppearance="?android:attr/textAppearanceSmall" 
         android:textColor="@color/Black54"
         android:text="Owner"/>
+    
+    <ImageView
+        android:id="@+id/collapseExpandImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_action_expand" >
+    </ImageView>
 
 </RelativeLayout>
