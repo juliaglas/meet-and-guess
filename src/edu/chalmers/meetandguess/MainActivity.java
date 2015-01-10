@@ -36,6 +36,8 @@ public class MainActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
 
 	private static final String GROUP = "G9";
+	private static final String GAME_MANAGER_USER = "gameManager";
+	private static final String ACTIVE_GAMES_KEY = "activeGames";
 	private static final String GAME_KEY = "game";
 	private static final String CURRENT_QUESTION_NUMBER_KEY = "currentQuestion";
 	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
@@ -52,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements
 	private String[] drawerMenuItems;
 	private Navigation navigation;
 	
-	private LinkedList<Game> gameList;
+	private LinkedList<Game> gameList = new LinkedList<Game>();
 	private ArrayAdapter<Game> adapter;
 
 	private NetworkingManager manager;
@@ -69,8 +71,9 @@ public class MainActivity extends ActionBarActivity implements
 		initViews();
 
 		// methods to reset the app/server
-		// resetApp();
+		resetApp();
 		// ServerReset resetter = new ServerReset();
+		// resetter.resetActiveGamesList();
 		// resetter.resetUsers();
 		// resetter.resetGames();
 		// resetter.resetQuestionList();
@@ -84,6 +87,7 @@ public class MainActivity extends ActionBarActivity implements
 			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
 		} else {
 			this.manager = new NetworkingManager(this, GROUP, this.userName);
+			loadGameList();
 		}
 	}
 
@@ -135,11 +139,6 @@ public class MainActivity extends ActionBarActivity implements
 				android.R.layout.simple_list_item_1, drawerMenuItems));
 		drawerList.setOnItemClickListener(new DrawerItemClickListener());
 		
-		gameList = new LinkedList<Game>();
-		Game testGame = new Game("x", "loc", "det", null, "me");
-		gameList.add(testGame);
-		Game testGame2 = new Game("y", "loc2", "det2", null, "you");
-		gameList.add(testGame2);
 		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, gameList);
 		ListView listView = (ListView) findViewById(R.id.gameListView);
 		listView.setAdapter(adapter);
@@ -201,6 +200,10 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	private void loadGameList() {
+		manager.loadValueForKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
+	}
 
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
@@ -214,7 +217,25 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void loadedValueForKeyOfUser(JSONObject json, String key, String user) {
-		if (key.equals(GAME_KEY)) {
+		if(key.equals(ACTIVE_GAMES_KEY)) {
+			Gson gson = new Gson();
+			try {
+				LinkedList<Game> loadedList = gson.fromJson(json.getString("value"),
+						new TypeToken<LinkedList<Game>>() {
+						}.getType());
+				if(loadedList != null) {
+					gameList.clear();
+					gameList.addAll(loadedList);
+					adapter.notifyDataSetChanged();
+				}
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (key.equals(GAME_KEY)) {
 			Gson gson = new Gson();
 			try {
 				game = gson.fromJson(json.getString("value"), Game.class);
@@ -279,8 +300,9 @@ public class MainActivity extends ActionBarActivity implements
 
 	@Override
 	public void ignoringKeyOfUser(JSONObject json, String key, String user) {
-		// TODO Auto-generated method stub
-
+		if(key.equals(REQUEST_JOINING_KEY)) {
+			manager.monitorKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
+		}
 	}
 
 	@Override
@@ -333,13 +355,15 @@ public class MainActivity extends ActionBarActivity implements
 			if (manager == null) {
 				userName = data.getStringExtra("userName");
 				this.manager = new NetworkingManager(this, "G9", this.userName);
+				loadGameList();
 			}
 		case (CREATE_GAME_REQUEST_CODE):
-			if (game == null) {
+			if (game == null && data.getParcelableExtra("game") != null) {
 				game = (Game) data.getParcelableExtra("game");
+				loadGameList();
 				nextRoundNumberOfPlayers++;
 				if (game != null) { // wait for another player
-					manager.monitorKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
+					manager.ignoreKeyOfUser(REQUEST_JOINING_KEY, game.getGameId());
 					AlertDialog.Builder alert = new AlertDialog.Builder(this);
 					alert.setTitle(game.getGameId());
 					alert.setMessage(getResources().getText(R.string.game_id_information));
@@ -373,7 +397,6 @@ public class MainActivity extends ActionBarActivity implements
 	    }
 	}
 
-	/** Swaps fragments in the main content view */
 	private void selectItem(int position) {
 	    switch (position) {
 		case 0:

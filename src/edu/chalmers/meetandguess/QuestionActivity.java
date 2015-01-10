@@ -34,7 +34,6 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	private int numberOfFinishedPlayers;
 	private Answer answer;
 	private boolean answerSelected = false;
-	private boolean ownerDone = false;
 
 	@Override
 	// TODO everybody has to update the current question number on his own

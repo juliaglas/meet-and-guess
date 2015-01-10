@@ -16,26 +16,37 @@ public class ServerReset implements NetworkingEventHandler {
 	private static final String RESET_USER = "reset";
 	private static final String GAME_MANAGER_USER = "gameManager";
 	private static final String GAME_DATA_USER = "gameData";
+	private static final String ACTIVE_GAMES_KEY = "activeGames";
 	private static final String USER_ID_KEY = "userId";
 	private static final String GAME_ID_KEY = "gameId";
 	private static final String QUESTION_LIST_KEY = "questionList";
 	private static final String CURRENT_QUESTION_KEY = "currentQuestion";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String USER_TO_SCORE_KEY = "userToScore";
+	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
 	private static final String ANSWERING_DONE_KEY = "answeringDone";
+	private static final String REQUEST_JOINING_KEY = "newUser";
 	private static final String GAME_KEY = "game";
 	private static final String PROFILE_KEY = "profile";
 
 	private NetworkingManager manager = new NetworkingManager(this, GROUP, RESET_USER);
 	
+	public void resetActiveGamesList() {
+		manager.unlockKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
+		manager.deleteKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
+		manager.saveValueForKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER, null);
+	}
+	
 	public void resetGames() {
-		for(int i = 1; i < 20; i++) {
+		for(int i = 1; i < 10; i++) {
 			String gameId = "M" + i;
 			manager.deleteKeyOfUser(QUESTION_LIST_KEY, gameId);
 			manager.deleteKeyOfUser(CURRENT_QUESTION_KEY, gameId);
 			manager.deleteKeyOfUser(USER_TO_ANSWER_KEY, gameId);
 			manager.deleteKeyOfUser(USER_TO_SCORE_KEY, gameId);
+			manager.deleteKeyOfUser(USER_TO_TOTAL_SCORE_KEY, gameId);
 			manager.deleteKeyOfUser(ANSWERING_DONE_KEY, gameId);
+			manager.deleteKeyOfUser(REQUEST_JOINING_KEY, gameId);
 			manager.deleteKeyOfUser(GAME_KEY, gameId);
 		}
 		manager.saveValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER, "M1");
@@ -65,7 +76,6 @@ public class ServerReset implements NetworkingEventHandler {
 	@Override
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -77,7 +87,7 @@ public class ServerReset implements NetworkingEventHandler {
 	@Override
 	public void deletedKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

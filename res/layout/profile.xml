@@ -3,16 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-	android:descendantFocusability="beforeDescendants"
-	android:focusableInTouchMode="true">
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true" >
+
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
 
     <ImageButton
         android:id="@+id/profile_picture"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/toolbar"
         android:layout_marginLeft="24dp"
@@ -27,11 +28,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/score_display"
-        android:layout_toLeftOf="@+id/score_display"
         android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/score_display"
         android:text="@string/score_label"
-        android:textColor="@color/Green" />
-    
+        android:textColor="@color/HighlightColor" />
+
     <TextView
         android:id="@+id/score_display"
         android:layout_width="wrap_content"
@@ -39,70 +40,131 @@
         android:layout_alignBottom="@+id/profile_picture"
         android:layout_alignParentRight="true"
         android:layout_marginRight="24dp"
-        android:background="@color/Green"
+        android:background="@color/HighlightColor"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
         android:text="0"
         android:textSize="48sp" />
 
-    <TextView
-        android:id="@+id/firstname_label"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/create_profile_button"
         android:layout_alignLeft="@+id/profile_picture"
+        android:layout_alignRight="@+id/score_display"
         android:layout_below="@+id/profile_picture"
-        android:layout_marginTop="48dp"
-        android:text="@string/firstname_label"
-        android:textColor="@color/Black87" />
+        android:gravity="center"
+        android:descendantFocusability="beforeDescendants"
+    	android:focusableInTouchMode="true" >
 
-    <EditText
-        android:id="@+id/firstname_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/firstname_label"
-        android:layout_toRightOf="@+id/firstname_label"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="24dp"
-        android:ems="10"
-        android:hint="Your name"
-        android:textColor="@color/Black87">
-    </EditText>
+        <RelativeLayout
+            android:id="@+id/fillout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:descendantFocusability="beforeDescendants"
+    		android:focusableInTouchMode="true" >
 
-    
-    
-    <TextView
-        android:id="@+id/country_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/firstname_label"
-        android:layout_below="@+id/firstname_label"
-        android:layout_marginTop="24dp"
-        android:text="@string/country_label"
-        android:textColor="@color/Black87" />
+            <TextView
+                android:id="@+id/firstname_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/firstname_label"
+                android:textColor="@color/Black87" />
 
-    <EditText
-        android:id="@+id/country_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/country_label"
-        android:layout_alignLeft="@+id/firstname_edit"
-        android:layout_alignRight="@+id/firstname_edit"
-        android:ems="10"
-        android:hint="Your real name"
-        android:textColor="@color/Black87" >
-    </EditText>
-    
-        <Button
+            <EditText
+                android:id="@+id/firstname_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/firstname_label"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/country_label"
+                android:layout_marginLeft="12dp"
+                android:ems="10"
+                android:hint="Your name"
+                android:textColor="@color/Black87" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/age_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/firstname_label"
+                android:layout_below="@+id/firstname_label"
+                android:layout_marginTop="24dp"
+                android:text="@string/age_label"
+                android:textColor="@color/Black87" />
+
+            <EditText
+                android:id="@+id/age_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/age_label"
+                android:layout_alignLeft="@+id/firstname_edit"
+                android:layout_alignRight="@+id/firstname_edit"
+                android:ems="10"
+                android:hint="Your age"
+                android:textColor="@color/Black87" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/city_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/age_label"
+                android:layout_below="@+id/age_label"
+                android:layout_marginTop="24dp"
+                android:text="@string/city_label"
+                android:textColor="@color/Black87" />
+
+            <EditText
+                android:id="@+id/city_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/city_label"
+                android:layout_alignLeft="@+id/age_edit"
+                android:layout_alignRight="@+id/age_edit"
+                android:ems="10"
+                android:hint="Your city"
+                android:textColor="@color/Black87" >
+            </EditText>
+
+            <TextView
+                android:id="@+id/country_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/city_label"
+                android:layout_below="@+id/city_label"
+                android:layout_marginTop="24dp"
+                android:text="@string/country_label"
+                android:textColor="@color/Black87" />
+
+            <EditText
+                android:id="@+id/country_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/country_label"
+                android:layout_alignLeft="@+id/city_edit"
+                android:layout_alignRight="@+id/city_edit"
+                android:ems="10"
+                android:hint="Your country"
+                android:textColor="@color/Black87" >
+            </EditText>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <Button
         android:id="@+id/create_profile_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/firstname_label"
-        android:layout_alignRight="@+id/firstname_edit"
-        android:layout_below="@+id/country_label"
-        android:layout_marginTop="48dp"
+        android:layout_alignLeft="@+id/profile_picture"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/score_display"
+        android:layout_marginBottom="48dp"
         android:background="@color/Green"
+        android:onClick="createProfile"
         android:text="@string/create" 
-        android:onClick="createProfile"/>
+        android:focusableInTouchMode="true"/>
 
 </RelativeLayout>

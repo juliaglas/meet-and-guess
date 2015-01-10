@@ -67,7 +67,7 @@ public class ProfileActivity extends ActionBarActivity implements
 		if(userId != null) { // show profile of an existing user
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			Button createButton = (Button) findViewById(R.id.create_profile_button);
-			createButton.setVisibility(View.GONE);
+			createButton.setVisibility(View.INVISIBLE);
 			createButton.setEnabled(false);
 			this.manager = new NetworkingManager(this, GROUP, userId);
 			this.manager.loadValueForKeyOfUser(PROFILE_KEY, userId);
@@ -211,6 +211,16 @@ public class ProfileActivity extends ActionBarActivity implements
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 			firstNameValue.setText(player.getFirstname());
 		}
+		// Display age
+		if(player.getAge() != -1) {
+			EditText ageValue = (EditText) findViewById(R.id.age_edit);
+			ageValue.setText(String.valueOf(player.getAge()));
+		}
+		// Display city
+		if(player.getCity() != null) {
+			EditText cityValue = (EditText) findViewById(R.id.city_edit);
+			cityValue.setText(player.getCity());
+		}
 		// Display country
 		if(player.getCountry() != null) {
 			EditText countryValue = (EditText) findViewById(R.id.country_edit);
@@ -222,16 +232,28 @@ public class ProfileActivity extends ActionBarActivity implements
 		if(imgData != null) { // if everything is okay save the user data
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 			String firstName = firstNameValue.getText().toString();
+			EditText ageValue = (EditText) findViewById(R.id.age_edit);
+			String ageString = ageValue.getText().toString();
+			int age;
+			try {
+				age = Integer.parseInt(ageString);
+			} catch (NumberFormatException e) {
+				age = -1;
+			}
+			EditText cityValue = (EditText) findViewById(R.id.city_edit);
+			String city = cityValue.getText().toString();
 			EditText countryValue = (EditText) findViewById(R.id.country_edit);
 			String country = countryValue.getText().toString();
 			if (this.player == null) { // new user
-				this.player = new Player(userId, firstName, country, this.imgData);
+				this.player = new Player(userId, firstName, age, city, country, this.imgData);
 				SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString("username", userId);
 				editor.commit();
 			} else { // existing user
 				this.player.setFirstname(firstName);
+				this.player.setAge(age);
+				this.player.setCity(city);
 				this.player.setCountry(country);
 				this.player.setImage(this.imgData);
 			}
