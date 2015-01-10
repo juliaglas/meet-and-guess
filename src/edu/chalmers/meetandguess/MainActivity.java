@@ -28,7 +28,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -55,7 +57,7 @@ public class MainActivity extends ActionBarActivity implements
 	private Navigation navigation;
 	
 	private LinkedList<Game> gameList = new LinkedList<Game>();
-	private ArrayAdapter<Game> adapter;
+	private BaseExpandableListAdapter adapter;
 
 	private NetworkingManager manager;
 
@@ -86,6 +88,20 @@ public class MainActivity extends ActionBarActivity implements
 			this.manager = new NetworkingManager(this, GROUP, this.userName);
 			loadGameList();
 		}
+		
+		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, R.layout.game_list_item_detail, gameList);
+		ExpandableListView listView = (ExpandableListView) findViewById(R.id.gameListView);
+		listView.setAdapter(adapter);
+		listView.setOnItemClickListener(
+				new OnItemClickListener() {
+
+					@Override
+					public void onItemClick(
+							AdapterView<?> parent,
+							View view,
+							int position, 
+							long id) {}
+				});
 	}
 
 	public void initViews() {
@@ -136,20 +152,6 @@ public class MainActivity extends ActionBarActivity implements
 				android.R.layout.simple_list_item_1, drawerMenuItems));
 		drawerList.setOnItemClickListener(new DrawerItemClickListener());
 		
-		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, gameList);
-		ListView listView = (ListView) findViewById(R.id.gameListView);
-		listView.setAdapter(adapter);
-		
-		listView.setOnItemClickListener(
-				new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(
-							AdapterView<?> parent,
-							View view,
-							int position, 
-							long id) {}
-				});
 	}
 	
 
