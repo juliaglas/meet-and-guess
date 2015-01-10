@@ -50,6 +50,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private String locationDescription;
 	private String detailDescription;
 	private List<Question> questionList;
+	private String ownerName;
 	private String ownerImage;
 
 	private Game game;
@@ -101,7 +102,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 			manager.loadValueForKeyOfUser(PROFILE_KEY, userName);
 		} else if (key.equals(CURRENT_QUESTION_KEY)) {
 			game = new Game(gameId, locationDescription, detailDescription,
-					questionList, userName, ownerImage);
+					questionList, userName, ownerName, ownerImage);
 			Gson gson = new Gson();
 			try {
 				String gameString = gson.toJson(game);
@@ -152,6 +153,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 			Player owner;
 			try {
 				owner = gson.fromJson(json.getString("value"), Player.class);
+				ownerName = owner.getFirstname();
 				ownerImage = owner.getImage();
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block

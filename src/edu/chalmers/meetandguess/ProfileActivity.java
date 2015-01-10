@@ -97,7 +97,7 @@ public class ProfileActivity extends ActionBarActivity implements
 					// Read image
 					Uri uri = data.getData();
 					InputStream input = getContentResolver().openInputStream(uri);
-					Bitmap bm = BitmapDecoder.decodeSampledBitmapFromInputStream(input, null, 48, 48);
+					Bitmap bm = BitmapDecoder.decodeSampledBitmapFromInputStream(input, null, 96, 96);
 
 					// Set image in view
 					ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);

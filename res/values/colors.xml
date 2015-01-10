@@ -6,5 +6,6 @@
     <color name="StatusGreen">#689f38</color>
     <color name="ButtonPressedGreen">#AED581</color>
     <color name="Black87">#DE000000</color>
+    <color name="Black54">#8A000000</color>
     <color name="HighlightColor">#78909C</color>
 </resources>

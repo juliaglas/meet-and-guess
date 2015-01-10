@@ -40,10 +40,12 @@ public class GameCollectionArrayAdapter extends ArrayAdapter<Game>{
 			if(game.getOwnerImage() != null) {
 				byte[] bitmapData = Base64.decode(game.getOwnerImage(), Base64.DEFAULT);
 				Bitmap bm = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-				ownerImage.setImageBitmap(bm);
+				ownerImage.setImageBitmap(BitmapDecoder.getCircleBitmap(bm));
 			}
 			TextView locationTextView = (TextView) view.findViewById(R.id.listItemLocation);
 			locationTextView.setText(game.getLocationDescription());
+			TextView ownerTextView = (TextView) view.findViewById(R.id.listItemOwner);
+			ownerTextView.setText("Game owner: " + game.getOwnerName());
 		}
 		
 		return view;

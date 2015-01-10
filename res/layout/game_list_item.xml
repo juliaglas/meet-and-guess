@@ -10,10 +10,11 @@
 
     <ImageView
         android:id="@+id/ownerImage"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_alignTop="@+id/listItemLocation"
+        android:layout_alignBottom="@+id/listItemOwner"
         android:src="@drawable/ic_contact_picture" >
     </ImageView>
     
@@ -22,10 +23,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/ownerImage"
-        android:layout_centerInParent="true"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="12dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/black"
+        android:textColor="@color/Black87"
         android:text="Location" />
+    
+    <TextView
+        android:id="@+id/listItemOwner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/listItemLocation"
+        android:layout_below="@id/listItemLocation"
+        android:textAppearance="?android:attr/textAppearanceSmall" 
+        android:textColor="@color/Black54"
+        android:text="Owner"/>
 
 </RelativeLayout>
