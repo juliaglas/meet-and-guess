@@ -3,10 +3,14 @@ package edu.chalmers.meetandguess;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class GameCollectionArrayAdapter extends ArrayAdapter<Game>{
@@ -31,7 +35,13 @@ public class GameCollectionArrayAdapter extends ArrayAdapter<Game>{
 		}
 		
 		Game game = getItem(position);
-		if(game != null){
+		if(game != null) {
+			ImageView ownerImage = (ImageView) view.findViewById(R.id.ownerImage);
+			if(game.getOwnerImage() != null) {
+				byte[] bitmapData = Base64.decode(game.getOwnerImage(), Base64.DEFAULT);
+				Bitmap bm = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+				ownerImage.setImageBitmap(bm);
+			}
 			TextView locationTextView = (TextView) view.findViewById(R.id.listItemLocation);
 			locationTextView.setText(game.getLocationDescription());
 		}
