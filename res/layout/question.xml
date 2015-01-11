@@ -21,7 +21,7 @@
         android:layout_marginTop="48dp"
         android:minHeight="48dp"
         android:text="Which animal is the cuter one?"
-        android:textStyle="normal|bold" 
+        android:textStyle="bold" 
         android:textColor="@color/Black87"
         android:gravity="center"/>
 
@@ -34,7 +34,7 @@
         android:layout_below="@+id/question_label"
         android:layout_marginTop="48dp"
         android:text="Dog" 
-        android:background="@drawable/green_button"
+        android:background="@drawable/highlight_button"
         android:onClick="answer1Selected"/>
 
     <Button
@@ -46,7 +46,7 @@
         android:layout_below="@+id/answer1_button"
         android:layout_marginTop="24dp"
         android:text="Cat" 
-        android:background="@drawable/green_button"
+        android:background="@drawable/highlight_button"
         android:onClick="answer2Selected"/>
 
     <Button
@@ -59,7 +59,7 @@
         android:layout_marginTop="24dp"
         android:text="Skip question" 
         android:background="@android:color/white"
-        android:textColor="@color/Green"
+        android:textColor="@color/HighlightColor"
         android:onClick="skipQuestion"/>
 
 </RelativeLayout>

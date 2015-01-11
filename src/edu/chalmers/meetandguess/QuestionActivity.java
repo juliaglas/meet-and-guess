@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -35,6 +36,8 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	// public static int numberOfFinishedPlayers;
 	private Answer answer;
 	private boolean answerSelected = false;
+	
+	ProgressDialog progress;
 
 	@Override
 	// TODO everybody has to update the current question number on his own
@@ -50,6 +53,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		this.userName = sharedPref.getString("username", null);
 		
 		this.manager = new NetworkingManager(this, GROUP, this.userName);
+		progress = new ProgressDialog(this);
 				
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
@@ -78,8 +82,10 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	}
 	
 	public void answer1Selected(View view) {
-		// TODO display loading
 		if(!answerSelected) {
+			progress.setTitle("Loading");
+			progress.setMessage("Wait while loading...");
+			progress.show();
 			answer = Answer.ANSWER1;
 			answerSelected = true;
 			manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
@@ -89,6 +95,9 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	public void answer2Selected(View view) {
 		// TODO display loading
 		if(!answerSelected) {
+			progress.setTitle("Loading");
+			progress.setMessage("Wait while loading...");
+			progress.show();
 			answer = Answer.ANSWER2;
 			answerSelected = true;
 			manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
@@ -98,6 +107,9 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	public void skipQuestion(View view) {
 		// TODO display loading
 		if(!answerSelected) {
+			progress.setTitle("Loading");
+			progress.setMessage("Wait while loading...");
+			progress.show();
 			answer = Answer.SKIPQUESTION;
 			answerSelected = true;
 			manager.lockKeyOfUser(USER_TO_ANSWER_KEY, game.getGameId());
@@ -109,6 +121,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 		if(key.equals(USER_TO_ANSWER_KEY)) {
 			manager.unlockKeyOfUser(key, user);
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
+			progress.dismiss();
 			Intent intent = new Intent(this, GuessActivity.class);
 			intent.putExtra("game", game);
 			intent.putExtra("numberOfPlayers", numberOfPlayers);
@@ -168,6 +181,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 			}
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
 			manager.ignoreKeyOfUser(key, user);
+			progress.dismiss();
 			Intent intent = new Intent(this, GuessActivity.class);
 			intent.putExtra("game", game);
 			intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary

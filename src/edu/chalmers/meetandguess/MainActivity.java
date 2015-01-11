@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,10 +29,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RelativeLayout;
 
+@SuppressLint("NewApi")
 public class MainActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
 
@@ -55,7 +60,7 @@ public class MainActivity extends ActionBarActivity implements
 	private Navigation navigation;
 	
 	private LinkedList<Game> gameList = new LinkedList<Game>();
-	private ArrayAdapter<Game> adapter;
+	private BaseExpandableListAdapter adapter;
 
 	private NetworkingManager manager;
 
@@ -72,7 +77,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// methods to reset the app/server
 		// resetApp();
-		// ServerReset resetter = new ServerReset();
+		ServerReset resetter = new ServerReset();
 		// resetter.resetQuestionList();
 
 		// Access the user name
@@ -135,21 +140,24 @@ public class MainActivity extends ActionBarActivity implements
 		drawerList.setAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, drawerMenuItems));
 		drawerList.setOnItemClickListener(new DrawerItemClickListener());
-		
-		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, gameList);
-		ListView listView = (ListView) findViewById(R.id.gameListView);
+	
+		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, R.layout.game_list_item_detail, gameList);
+		ExpandableListView listView = (ExpandableListView) findViewById(R.id.gameListView);
 		listView.setAdapter(adapter);
-		
-		listView.setOnItemClickListener(
-				new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(
-							AdapterView<?> parent,
-							View view,
-							int position, 
-							long id) {}
-				});
+		listView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+			
+			@Override
+			public boolean onGroupClick(ExpandableListView parent, View v,
+					int groupPosition, long id) {
+				ImageView collapseExpandView = (ImageView) v.findViewById(R.id.collapseExpandImage);
+				if(parent.isGroupExpanded(groupPosition)) {
+					collapseExpandView.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_expand));
+				} else {
+					collapseExpandView.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_collapse));
+				}
+				return false;
+			}
+		});
 	}
 	
 
@@ -417,5 +425,13 @@ public class MainActivity extends ActionBarActivity implements
 		default:
 			break;
 		}
+	}
+	
+	public int getDipsFromPixel(float pixels)
+	{
+	 // Get the screen's density scale
+	 final float scale = getResources().getDisplayMetrics().density;
+	 // Convert the dps to pixels, based on density scale
+	 return (int) (pixels * scale + 0.5f);
 	}
 }

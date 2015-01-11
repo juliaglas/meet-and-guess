@@ -30,7 +30,7 @@
         android:layout_alignBottom="@+id/score_display"
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@+id/score_display"
-        android:text="@string/score_label"
+        android:text="@string/score_label"        
         android:textColor="@color/HighlightColor" />
 
     <TextView
@@ -70,8 +70,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:text="@string/firstname_label"
-                android:textColor="@color/Black87" />
+                android:text="@string/firstname_label"                
+                android:textColor="@color/HighlightColor" />
 
             <EditText
                 android:id="@+id/firstname_edit"
@@ -94,7 +94,7 @@
                 android:layout_below="@+id/firstname_label"
                 android:layout_marginTop="24dp"
                 android:text="@string/age_label"
-                android:textColor="@color/Black87" />
+                android:textColor="@color/HighlightColor" />
 
             <EditText
                 android:id="@+id/age_edit"
@@ -116,7 +116,7 @@
                 android:layout_below="@+id/age_label"
                 android:layout_marginTop="24dp"
                 android:text="@string/city_label"
-                android:textColor="@color/Black87" />
+                android:textColor="@color/HighlightColor" />
 
             <EditText
                 android:id="@+id/city_edit"
@@ -138,7 +138,7 @@
                 android:layout_below="@+id/city_label"
                 android:layout_marginTop="24dp"
                 android:text="@string/country_label"
-                android:textColor="@color/Black87" />
+                android:textColor="@color/HighlightColor" />
 
             <EditText
                 android:id="@+id/country_edit"
