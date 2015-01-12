@@ -39,13 +39,13 @@ public class NavigationDrawerArrayAdapter extends ArrayAdapter<String> {
 			Bitmap icon = null;
 			switch (position) {
 			case 0:
-				icon = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_crop);
+				icon = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_add);
 				break;
 			case 1:
-				icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_media_play);
+				icon = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_media_play);
 				break;
 			case 2:
-				icon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_menu_add);
+				icon = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.ic_menu_crop);
 				break;
 			default:
 				break;
