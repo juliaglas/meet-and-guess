@@ -3,6 +3,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".HomeActivity" >
 
     <RelativeLayout
@@ -33,14 +34,47 @@
         </ExpandableListView>
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/left_drawer"
+    <LinearLayout
+        android:id="@+id/left_drawer_view"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:layout_gravity="start"
-        android:background="#111"
-        android:choiceMode="singleChoice"
-        android:divider="@color/Black12"
-        android:dividerHeight="0dp" />
+        android:onClick="launch_choose_location">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="@color/HighlightColor">
+
+            <ImageView
+                android:id="@+id/drawer_header_image"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="4dp"
+                android:layout_centerInParent="true"
+                android:src="@drawable/ic_contact_picture"
+                android:scaleType="centerCrop">
+            </ImageView>
+        </RelativeLayout>
+        <!--  ListView
+        	android:id="@+id/left_drawer"
+        	android:layout_width="@dimen/drawer_width"
+        	android:layout_height="match_parent"
+        	android:background="#111"
+        	android:choiceMode="singleChoice"
+        	android:divider="@color/Black12"
+        	android:dividerHeight="0dp" 
+        /-->
+        <ListView
+            android:id="@+id/left_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="start"
+            android:divider="?android:dividerHorizontal"
+            android:showDividers="middle"
+            android:choiceMode="singleChoice"
+            android:background="@android:color/white"/>
+        </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

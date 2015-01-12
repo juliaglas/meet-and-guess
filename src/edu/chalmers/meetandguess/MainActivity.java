@@ -33,8 +33,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 @SuppressLint("NewApi")
 public class MainActivity extends ActionBarActivity implements
@@ -54,6 +54,7 @@ public class MainActivity extends ActionBarActivity implements
 	private static final int CREATE_GAME_REQUEST_CODE = 1;
 
 	private DrawerLayout drawerLayout;
+	private LinearLayout linearDrawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
 	private ListView drawerList;
 	private String[] drawerMenuItems;
@@ -107,6 +108,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// Drawer Layout
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		linearDrawerLayout = (LinearLayout) findViewById(R.id.left_drawer_view);
 		// Drawer Toggle
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
 				R.string.drawer_open, R.string.drawer_close) {
@@ -421,7 +423,7 @@ public class MainActivity extends ActionBarActivity implements
 	    switch (position) {
 		case 0:
 			drawerList.setItemChecked(position, true);
-			drawerLayout.closeDrawer(drawerList);
+			drawerLayout.closeDrawer(linearDrawerLayout);
 			Intent intent = new Intent(this, ProfileActivity.class);
 			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
 			break;
@@ -430,11 +432,4 @@ public class MainActivity extends ActionBarActivity implements
 		}
 	}
 	
-	public int getDipsFromPixel(float pixels)
-	{
-	 // Get the screen's density scale
-	 final float scale = getResources().getDisplayMetrics().density;
-	 // Convert the dps to pixels, based on density scale
-	 return (int) (pixels * scale + 0.5f);
-	}
 }
