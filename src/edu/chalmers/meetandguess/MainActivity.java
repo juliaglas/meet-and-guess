@@ -77,8 +77,8 @@ public class MainActivity extends ActionBarActivity implements
 		initViews();
 
 		// methods to reset the app/server
-
-		// resetApp();
+		 
+		resetApp();
 		ServerReset resetter = new ServerReset();
 		// resetter.resetQuestionList();
 
@@ -86,7 +86,7 @@ public class MainActivity extends ActionBarActivity implements
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF,
 				MODE_PRIVATE);
-		userName = sharedPref.getString("username", "U1");
+		userName = sharedPref.getString("username", "null");
 		if (userName == null) {
 			Intent intent = new Intent(this, ProfileActivity.class);
 			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
