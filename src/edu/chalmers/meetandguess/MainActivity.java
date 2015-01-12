@@ -78,8 +78,9 @@ public class MainActivity extends ActionBarActivity implements
 
 		// methods to reset the app/server
 		 
-		resetApp();
+		//resetApp();
 		ServerReset resetter = new ServerReset();
+		//resetter.resetActiveGamesList();
 		// resetter.resetQuestionList();
 
 

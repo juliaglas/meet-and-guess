@@ -27,7 +27,6 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String ANSWERING_DONE_KEY = "answeringDone";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
-
 	private String userName;
 	private NetworkingManager manager;
 	private Game game;
