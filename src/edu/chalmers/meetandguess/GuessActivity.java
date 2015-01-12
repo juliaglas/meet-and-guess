@@ -101,6 +101,7 @@ public class GuessActivity extends ActionBarActivity implements
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
 
+		
 		// Load Profile Images
 		if (userName != null)
 			// User fetches images from server
@@ -201,7 +202,8 @@ public class GuessActivity extends ActionBarActivity implements
 			final float yDistance = event1.getY() - event2.getY();
 			// Swipe Up or Down
 			if (Math.abs(yDistance) > SWIPE_THRESHOLD
-					&& Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+					&& Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) 
+			{
 				guess = playerGuess.get(idToUser.get(viewTouched));
 				// Swipe Up
 				if (yDistance > 0 && guess != Answer.ANSWER1) {
@@ -230,31 +232,35 @@ public class GuessActivity extends ActionBarActivity implements
 		// Get Answer that player image is placed
 		Answer guess = playerGuess.get(idToUser.get(viewTouched));
 
-		//float posX = mImage.getX();
-		//float posY = mImage.getY();
 		// Remove it from the Viewgroup
-		if (oldParent != null)
-			oldParent.removeView(mImage);
+		//if (oldParent != null)
+		//	oldParent.removeView(mImage);
 
 		int emptySlot = findEmptySlot(choice);
 		ImageView profile = (ImageView) findViewById(emptySlot);
 		ViewGroup newParent = (ViewGroup) profile.getParent();
 
-		FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) profile
-				.getLayoutParams();
-
-		mImage.setLayoutParams(layoutParams);
-
-		// Animate movement to new position
-		/*
-		 * TranslateAnimation anim = new TranslateAnimation( 0, profile.getX() -
-		 * mImage.getX() , 0, profile.getY() - mImage.getY() );
-		 * anim.setDuration(500); anim.setFillAfter( true );
-		 * anim.setAnimationListener(new MyAnimationListener(newParent));
-		 * mImage.startAnimation(anim);
-		 */
-
-		newParent.addView(mImage);
+		int[] mImagePos = new int[2];
+		int[] profilePos = new int[2];
+		profile.getLocationOnScreen(profilePos);
+		mImage.getLocationOnScreen(mImagePos);
+		mImage.setVisibility(View.GONE);
+		mImage.bringToFront();
+		LinearLayout slayout = (LinearLayout)findViewById(R.id.Second_Answer);
+		((View)slayout).requestLayout();
+		((View)slayout).invalidate();
+		mImage.requestLayout();
+		mImage.invalidate();
+	
+		// Animate movement to new position	
+		TranslateAnimation anim = new TranslateAnimation( 0, profilePos[0]-mImagePos[0] , 0, profilePos[1]-mImagePos[1]);
+		anim.setRepeatMode(0);
+		anim.setDuration(500); 
+		anim.setFillAfter( true );
+		//anim.setZAdjustment(Animation.ZORDER_TOP);
+		anim.setAnimationListener(new MyAnimationListener(newParent, profile));
+		mImage.startAnimation(anim);
+		
 
 		// Mark Slot full
 		guessSlot.put(emptySlot, true);
@@ -340,16 +346,21 @@ public class GuessActivity extends ActionBarActivity implements
 	private class MyAnimationListener implements AnimationListener {
 
 		private ViewGroup parent;
+		private ImageView slot;
 
-		public MyAnimationListener(ViewGroup viewgroup) {
+		public MyAnimationListener(ViewGroup viewgroup, ImageView slot) {
 			this.parent = viewgroup;
+			this.slot = slot;
 		}
 
 		@Override
 		public void onAnimationEnd(Animation animation) {
 			mImage.clearAnimation();
+			FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) slot
+					.getLayoutParams();
 			ViewGroup oldparent = (ViewGroup) mImage.getParent();
 			oldparent.removeView(mImage);
+			mImage.setLayoutParams(layoutParams);
 			parent.addView(mImage);
 			mImage.setVisibility(View.VISIBLE);
 		}
@@ -360,6 +371,7 @@ public class GuessActivity extends ActionBarActivity implements
 
 		@Override
 		public void onAnimationStart(Animation animation) {
+
 		}
 
 	}
@@ -412,7 +424,7 @@ public class GuessActivity extends ActionBarActivity implements
 				Gson gson = new Gson();
 				player = gson.fromJson(json.getString("value"), Player.class);
 				// TODO Load only other player's images
-				if(player != null && player.getUsername()!= this.userName) {
+				if(player != null && player.getUsername().equals(this.userName)) {
 					imgData = player.getImage();
 					LinearLayout players = (LinearLayout) findViewById(R.id.Players);
 					playerIcons(players, id); // 1, 2, ...
@@ -423,6 +435,7 @@ public class GuessActivity extends ActionBarActivity implements
 					// Next id
 					id++;
 				}
+				
 
 			} catch (JsonSyntaxException e) {
 				Log.d(TAG_ERROR,
