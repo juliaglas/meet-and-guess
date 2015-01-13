@@ -569,6 +569,7 @@ public class GuessActivity extends ActionBarActivity implements
 					intent.putExtra("game", game);
 					intent.putExtra("numberOfPlayers", numberOfPlayers);
 					this.startActivity(intent);
+					finish();
 				}
 			} 
 			// When all players have guessed the owner changes the AnsweringDone key to transition
@@ -580,6 +581,7 @@ public class GuessActivity extends ActionBarActivity implements
 				intent.putExtra("game", game);
 				intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary
 				this.startActivity(intent);
+				finish();
 			}
 		} catch (JsonSyntaxException e) {
 			// TODO Auto-generated catch block
