@@ -25,6 +25,7 @@ public class ServerReset implements NetworkingEventHandler {
 	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
 	private static final String ANSWERING_DONE_KEY = "answeringDone";
+	private static final String GUESSING_DONE_KEY = "guessingDone";
 	private static final String REQUEST_JOINING_KEY = "newUser";
 	private static final String GAME_KEY = "game";
 	private static final String PROFILE_KEY = "profile";
@@ -46,6 +47,7 @@ public class ServerReset implements NetworkingEventHandler {
 			manager.deleteKeyOfUser(USER_TO_SCORE_KEY, gameId);
 			manager.deleteKeyOfUser(USER_TO_TOTAL_SCORE_KEY, gameId);
 			manager.deleteKeyOfUser(ANSWERING_DONE_KEY, gameId);
+			manager.deleteKeyOfUser(GUESSING_DONE_KEY, gameId);
 			manager.deleteKeyOfUser(REQUEST_JOINING_KEY, gameId);
 			manager.deleteKeyOfUser(GAME_KEY, gameId);
 		}

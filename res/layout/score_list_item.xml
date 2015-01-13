@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    
+	 <ImageView
+        android:id="@+id/playerImage"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/UserName"
+        android:layout_alignBottom="@+id/CurrentScore"
+        android:src="@drawable/ic_contact_picture" >
+    </ImageView>
+
+    <TextView
+        android:id="@+id/CurrentScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="42dp"
+        android:layout_toRightOf="@+id/UserName"
+        android:text="1"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/Black87" />
+
+    <TextView
+        android:id="@+id/UserName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TotalScore"
+        android:layout_alignBottom="@+id/TotalScore"
+        android:layout_marginLeft="26dp"
+        android:layout_toRightOf="@+id/playerImage"
+        android:text="Vasilis"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/Black87" />
+
+    <TextView
+        android:id="@+id/TotalScore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/CurrentScore"
+        android:layout_alignBottom="@+id/CurrentScore"
+        android:layout_marginLeft="67dp"
+        android:layout_toRightOf="@+id/CurrentScore"
+        android:text="10"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/Black54" />
+    
+</RelativeLayout>
