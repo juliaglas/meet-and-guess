@@ -119,17 +119,6 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
 		if(key.equals(USER_TO_ANSWER_KEY)) {
 			manager.unlockKeyOfUser(key, user);
-		} else if(key.equals(ANSWERING_DONE_KEY)) {
-			try{
-			progress.dismiss();
-			}catch(Exception exception){
-				exception.printStackTrace();
-			}
-			Intent intent = new Intent(this, GuessActivity.class);
-			intent.putExtra("game", game);
-			intent.putExtra("numberOfPlayers", numberOfPlayers);
-			this.startActivity(intent);
-			finish();
 		}
 	}
 
