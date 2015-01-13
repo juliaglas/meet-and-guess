@@ -126,8 +126,8 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 				      //game.addUser(entry.getKey());
 					  //game.increaseScoreForUser(userName, entry.getValue());
 					 
-					 // Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
-					 // scoreList.add(score);
+					  Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
+					  scoreList.add(score);
 					  i++;
 					}
 				}
@@ -144,8 +144,8 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 						// Updates Score
 						game.increaseScoreForUser(entry.getKey(), entry.getValue());
 						
-						//Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
-						//scoreList.add(score);
+						Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
+						scoreList.add(score);
 						adapter.notifyDataSetChanged();
 						i++;
 					}
