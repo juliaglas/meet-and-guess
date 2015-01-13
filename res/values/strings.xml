@@ -33,7 +33,7 @@
     <string name="done">Done</string>
     <string name="score">Continue</string>
     <string name="current_score">Score</string>
-    <string name="total_score">Total Score</string>
+    <string name="total_score">Total</string>
     <string name="players">Player</string>
 
 </resources>

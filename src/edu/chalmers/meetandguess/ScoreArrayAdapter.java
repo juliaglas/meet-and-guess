@@ -59,7 +59,7 @@ public class ScoreArrayAdapter extends BaseAdapter {
 		if(view == null){
 			LayoutInflater inflater = (LayoutInflater) context.getSystemService(
 					Context.LAYOUT_INFLATER_SERVICE);
-			view = inflater.inflate(layout, null);
+			view = inflater.inflate(layout, parent, false);
 		}
 		
 		Score score = (Score) getItem(position);

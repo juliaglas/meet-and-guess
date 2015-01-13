@@ -22,10 +22,12 @@
              android:id="@+id/Players"
              android:layout_width="0dp"
              android:layout_height="wrap_content"
-             android:layout_weight="0.4"
-             android:layout_marginLeft="24dp"
+             android:layout_weight="0.5"
              android:layout_gravity="center_vertical"
+             android:gravity="center" 
              android:text="@string/players"
+			 android:layout_marginLeft="24dp"
+             android:textAppearance="?android:attr/textAppearanceLarge"
              android:textColor="@color/Black87"
              android:textStyle="normal|bold" />
          
@@ -35,18 +37,22 @@
              android:layout_weight="0.3"
              android:layout_height="wrap_content"
              android:layout_gravity="center_vertical"
+             android:gravity="center" 
              android:textStyle="normal|bold" 
+             android:textAppearance="?android:attr/textAppearanceLarge"
         	 android:textColor="@color/Black87"
              android:text="@string/current_score" />
          
          <TextView
              android:id="@+id/TotalScore"
              android:layout_width="0dp"
-             android:layout_weight="0.3"
+             android:layout_weight="0.2"
              android:layout_height="wrap_content"
              android:layout_gravity="center_vertical"
-             android:layout_marginRight="24dp"
-             android:textStyle="normal|bold" 
+             android:layout_marginRight="12dp"
+             android:gravity="center" 
+             android:textStyle="normal|bold"
+             android:textAppearance="?android:attr/textAppearanceLarge" 
         	 android:textColor="@color/Black87"
              android:text="@string/total_score" />
 
@@ -55,7 +61,7 @@
       <ListView
           android:id="@+id/scoreListView"
           android:layout_width="match_parent"
-          android:layout_height="match_parent"
+          android:layout_height="96dp"
           android:layout_above="@+id/Continue"
           android:layout_alignParentLeft="true"
           android:layout_below="@+id/Heading"

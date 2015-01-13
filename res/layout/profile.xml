@@ -32,8 +32,7 @@
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@+id/score_display"
         android:text="@string/score_label"        
-        	    android:textAppearance="?android:attr/textAppearanceMedium"
-        
+		android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/HighlightColor" />
 
     <TextView
