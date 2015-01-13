@@ -482,7 +482,7 @@ public class GuessActivity extends ActionBarActivity implements
 				if (player != null) {
 					String image = player.getImage();
 
-					// game.addPlayerImage(image);
+					game.addPlayerImage(image);
 
 					if (!player.getUsername().equals(userName)) {
 						LinearLayout players = (LinearLayout) findViewById(R.id.Players);

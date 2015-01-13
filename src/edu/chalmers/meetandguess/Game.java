@@ -144,10 +144,10 @@ public class Game implements Parcelable {
 	}
 
 	public void increaseScoreForUser(String user, int currentScoreToAdd) {
-		int oldScore = user2totalScore.get(user);
 		if(!user2totalScore.containsKey(user)) {
 			user2totalScore.put(user, currentScoreToAdd);
 		} else {
+			int oldScore = user2totalScore.get(user);
 			user2totalScore.put(user, oldScore + currentScoreToAdd);
 		}
 	}
