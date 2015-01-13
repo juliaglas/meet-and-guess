@@ -83,7 +83,7 @@
                 android:layout_marginLeft="12dp"
                 android:ems="10"
                 android:hint="Your name"
-                android:textColor="@color/Black87" >
+                android:textColor="@color/Black87">
             </EditText>
 
             <TextView

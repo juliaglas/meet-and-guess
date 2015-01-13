@@ -12,6 +12,7 @@ import com.google.gson.JsonSyntaxException;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -75,6 +77,7 @@ public class ProfileActivity extends ActionBarActivity implements
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Hide back button
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
 			firstNameValue.requestFocus();
+			enableEditing();
 			this.manager = new NetworkingManager(this, GROUP, GAME_MANAGER_USER);
 			this.manager.loadValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER);
 		}
@@ -274,16 +277,24 @@ public class ProfileActivity extends ActionBarActivity implements
 		}
 	}
 
-	/*private void enableEditing() {
+	@SuppressLint("NewApi")
+	private void enableEditing() {
 		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 		profilePicture.setEnabled(true);
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-		firstNameValue.setEnabled(true);
-		firstNameValue.setFocusable(true);
-		firstNameValue.setFocusableInTouchMode(true);
+		firstNameValue.setShowSoftInputOnFocus(true);
+		/*firstNameValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		        if (hasFocus) {
+		            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		        }
+		    }
+		});*/
+
 	}
 
-	private void disableEditing() {
+	/*private void disableEditing() {
 		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 		profilePicture.setEnabled(false);
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
