@@ -279,6 +279,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private void handleKeyboard() {
 		EditText locationValue = (EditText) findViewById(R.id.location_edit);
 		setKeyBoardOnFocusChangeListener(locationValue);
+		locationValue.requestFocus();
 		EditText detailValue = (EditText) findViewById(R.id.detail_edit);
 		setKeyBoardOnFocusChangeListener(detailValue);
 	}
