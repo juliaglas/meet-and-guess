@@ -556,27 +556,39 @@ public class GuessActivity extends ActionBarActivity implements
 			String user) {
 		// TODO Auto-generated method stub
 		// Owner increases counter when a player has guessed and updated userToScore key
-		if(key.equals(USER_TO_SCORE_KEY)) {
-			numberOfFinishedPlayers++;
-			if(numberOfFinishedPlayers == numberOfPlayers) {
+		Gson gson = new Gson();
+		String jsonKey;
+		try {
+			jsonKey = json.getString("records"); 
+			if(key.equals(USER_TO_SCORE_KEY) && jsonKey.contains(USER_TO_SCORE_KEY)) {
+				numberOfFinishedPlayers++;
+				if(numberOfFinishedPlayers == numberOfPlayers) {
+					manager.ignoreKeyOfUser(key, user);
+					manager.saveValueForKeyOfUser(GUESSING_DONE_KEY, game.getGameId(), "done");
+					Intent intent = new Intent(this, ScoreActivity.class);
+					intent.putExtra("game", game);
+					intent.putExtra("numberOfPlayers", numberOfPlayers);
+					this.startActivity(intent);
+				}
+			} 
+			// When all players have guessed the owner changes the AnsweringDone key to transition
+			// to Score Activity
+			else if(key.equals(GUESSING_DONE_KEY)) {
 				manager.ignoreKeyOfUser(key, user);
-				manager.saveValueForKeyOfUser(GUESSING_DONE_KEY, game.getGameId(), "done");
+				progress.dismiss();
 				Intent intent = new Intent(this, ScoreActivity.class);
 				intent.putExtra("game", game);
-				intent.putExtra("numberOfPlayers", numberOfPlayers);
+				intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary
 				this.startActivity(intent);
 			}
-		} 
-		// When all players have guessed the owner changes the AnsweringDone key to transition
-		// to Score Activity
-		else if(key.equals(GUESSING_DONE_KEY)) {
-			manager.ignoreKeyOfUser(key, user);
-			progress.dismiss();
-			Intent intent = new Intent(this, ScoreActivity.class);
-			intent.putExtra("game", game);
-			intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary
-			this.startActivity(intent);
+		} catch (JsonSyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		
 
 	}
 

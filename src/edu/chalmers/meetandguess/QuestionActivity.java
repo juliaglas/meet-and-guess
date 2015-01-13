@@ -125,6 +125,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 			intent.putExtra("game", game);
 			intent.putExtra("numberOfPlayers", numberOfPlayers);
 			this.startActivity(intent);
+			finish();
 		}
 	}
 
@@ -177,6 +178,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 				intent.putExtra("game", game);
 				intent.putExtra("numberOfPlayers", numberOfPlayers);
 				this.startActivity(intent);
+				finish();
 			}
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
 			manager.ignoreKeyOfUser(key, user);
@@ -185,6 +187,7 @@ public class QuestionActivity extends ActionBarActivity implements NetworkingEve
 			intent.putExtra("game", game);
 			intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary
 			this.startActivity(intent);
+			finish();
 		}
 	}
 

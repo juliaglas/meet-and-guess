@@ -211,9 +211,11 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 	
 	// User Pressed Continue button to proceed to Score Activity
 	public void goTonextQuestion(View view) {
+		game.updateCurrentQuestionNumber();
 		Intent intent = new Intent(this, QuestionActivity.class);
 		intent.putExtra("game", game);
-		this.startActivityForResult(intent, 0);
+		this.startActivity(intent);
+		finish();
 
 	}
 
