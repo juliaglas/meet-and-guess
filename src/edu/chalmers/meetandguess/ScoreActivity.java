@@ -1,6 +1,7 @@
 package edu.chalmers.meetandguess;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.json.JSONException;
@@ -10,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
@@ -38,7 +41,10 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 	private Player player;
 	private Map<String, Integer> userToScore;
 	private Map<String, Integer> userToTotalScore;
-	private ListView scoreList;
+	private LinkedList<Score> scoreList = new LinkedList<Score>();
+	private ScoreArrayAdapter adapter;
+	
+	ProgressDialog progress;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,12 +63,18 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 		
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
-		
+		progress = new ProgressDialog(this);
 		// Load Current Score
+		progress.setTitle("Loading");
+		progress.setMessage("Loading scores...");
+		progress.show();
 		if(userName !=null)
 			this.manager.loadValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId());
-
 		
+		this.adapter = new ScoreArrayAdapter(this, R.layout.score_list_item, scoreList);
+		ListView listView = (ListView) findViewById(R.id.scoreListView);
+		listView.setAdapter(adapter);
+
     }
 	
 	@Override
@@ -106,16 +118,23 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 				if(userToTotalScore == null) 
 				{
 					userToTotalScore = new HashMap<String, Integer>(userToScore);
+					game.setUser2TotalScore(userToScore);
+					int i = 0;
 					// Add users to game total score map and update it
 					for(Map.Entry<String, Integer> entry : userToTotalScore.entrySet())
 					{
-				      game.addUser(entry.getKey());
-					  game.increaseScoreForUser(userName, entry.getValue());
+				      //game.addUser(entry.getKey());
+					  //game.increaseScoreForUser(userName, entry.getValue());
+					 
+					 // Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
+					 // scoreList.add(score);
+					  i++;
 					}
 				}
 				// Else update it
 				else
 				{
+					int i=0;
 					// Adds new users retrieved from current score Map
 					for(Map.Entry<String, Integer> entry : userToScore.entrySet())
 					{
@@ -124,6 +143,11 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					
 						// Updates Score
 						game.increaseScoreForUser(entry.getKey(), entry.getValue());
+						
+						//Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
+						//scoreList.add(score);
+						adapter.notifyDataSetChanged();
+						i++;
 					}
 				}
 				
@@ -134,10 +158,6 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					String userToTotalScoreJson = gson.toJson(game.getUser2totalScore());
 					manager.saveValueForKeyOfUser(USER_TO_TOTAL_SCORE_KEY, user, userToTotalScoreJson);
 				}
-				
-				//scoreList = (ListView) findViewById(R.id.score_list);
-		       // scoreList.setAdapter(new ArrayAdapter<Integer>(this,
-		        //		android.R.layout.simple_list_item_1,userToScore.get(userName) ));
 			
 			}catch (JsonSyntaxException e) {
 				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
@@ -145,6 +165,9 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			
+			progress.dismiss();
 			
 		}
 		

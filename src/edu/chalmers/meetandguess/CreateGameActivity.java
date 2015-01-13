@@ -38,6 +38,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String ANSWERING_DONE_KEY = "answeringDone";
+	private static final String GUESSING_DONE_KEY = "guessingDone";
 	private static final String REQUEST_JOINING_KEY = "newUser";
 	private static final String ACTIVE_GAMES_KEY = "activeGames";
 
@@ -118,8 +119,11 @@ public class CreateGameActivity extends ActionBarActivity implements
 		} else if(key.equals(USER_TO_SCORE_KEY)) {
 			manager.saveValueForKeyOfUser(ANSWERING_DONE_KEY, game.getGameId(), "notdone");
 		} else if(key.equals(ANSWERING_DONE_KEY)) {
+			manager.saveValueForKeyOfUser(GUESSING_DONE_KEY, game.getGameId(), "notdone");
+		} else if(key.equals(GUESSING_DONE_KEY)) {
 			manager.saveValueForKeyOfUser(REQUEST_JOINING_KEY, game.getGameId(), null);
-		} else if(key.equals(REQUEST_JOINING_KEY)) {
+		}
+		else if(key.equals(REQUEST_JOINING_KEY)) {
 			manager.lockKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
 		} else if(key.equals(ACTIVE_GAMES_KEY)) {
 			manager.unlockKeyOfUser(key, user);

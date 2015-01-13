@@ -17,32 +17,34 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-@SuppressLint("NewApi")
 public class MainActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
 
 	private static final String GROUP = "G9";
 	private static final String GAME_MANAGER_USER = "gameManager";
 	private static final String ACTIVE_GAMES_KEY = "activeGames";
+	private static final String PROFILE_KEY = "profile";
 	private static final String GAME_KEY = "game";
 	private static final String CURRENT_QUESTION_NUMBER_KEY = "currentQuestion";
 	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScoreKey";
@@ -54,10 +56,11 @@ public class MainActivity extends ActionBarActivity implements
 	private static final int CREATE_GAME_REQUEST_CODE = 1;
 
 	private DrawerLayout drawerLayout;
+	private LinearLayout linearDrawerLayout;
 	private ActionBarDrawerToggle drawerToggle;
 	private ListView drawerList;
 	private String[] drawerMenuItems;
-	private Navigation navigation;
+	
 	
 	private LinkedList<Game> gameList = new LinkedList<Game>();
 	private BaseExpandableListAdapter adapter;
@@ -66,6 +69,8 @@ public class MainActivity extends ActionBarActivity implements
 
 	private Game game;
 	private String userName;
+	private Player userProfile;
+	private Bitmap profilePicture;
 	private static int nextRoundNumberOfPlayers = 0;
 
 	@Override
@@ -78,22 +83,22 @@ public class MainActivity extends ActionBarActivity implements
 
 		// methods to reset the app/server
 		 
-		//resetApp();
+		// resetApp();
 		ServerReset resetter = new ServerReset();
-		//resetter.resetActiveGamesList();
 		// resetter.resetQuestionList();
 
 
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF,
 				MODE_PRIVATE);
-		userName = sharedPref.getString("username", "null");
+		userName = sharedPref.getString("username", null);
 		if (userName == null) {
 			Intent intent = new Intent(this, ProfileActivity.class);
 			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
 		} else {
 			this.manager = new NetworkingManager(this, GROUP, this.userName);
 			loadGameList();
+			manager.loadValueForKeyOfUser(PROFILE_KEY, userName);
 		}
 	}
 
@@ -108,6 +113,7 @@ public class MainActivity extends ActionBarActivity implements
 
 		// Drawer Layout
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		linearDrawerLayout = (LinearLayout) findViewById(R.id.left_drawer_view);
 		// Drawer Toggle
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
 				R.string.drawer_open, R.string.drawer_close) {
@@ -115,16 +121,24 @@ public class MainActivity extends ActionBarActivity implements
 			/** Called when a drawer has settled in a completely closed state. */
 			public void onDrawerClosed(View view) {
 				super.onDrawerClosed(view);
-				getSupportActionBar().setTitle("Close");
 
 			}
 
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				getSupportActionBar().setTitle("Open");
-
+				if(profilePicture != null) {
+					ImageView profilePictureView = (ImageView) drawerView.findViewById(R.id.drawer_header_image);
+					profilePictureView.setImageBitmap(profilePicture);
+				}
+				if(userProfile != null) {
+					TextView userNameView = (TextView) drawerView.findViewById(R.id.drawer_user_name);
+					userNameView.setText(userProfile.getFirstname());
+					TextView scoreView = (TextView) drawerView.findViewById(R.id.drawer_score_display);
+					scoreView.setTag(userProfile.getScore());
+				}
 			}
+			
 		};
 
 		// Set the drawer toggle as the DrawerListener
@@ -136,13 +150,12 @@ public class MainActivity extends ActionBarActivity implements
 		// Status Bar Color
 		// drawer.setStatusBarBackgroundColor(R.color.StatusGreen);
 
-		navigation = new Navigation();
 		drawerMenuItems = getResources().getStringArray(R.array.drawer_items_array);
 
         // Set the list's click listener
 		drawerList = (ListView) findViewById(R.id.left_drawer);
-		drawerList.setAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, drawerMenuItems));
+		drawerList.setAdapter(new NavigationDrawerArrayAdapter(this,
+				R.layout.navigation_drawer_item, drawerMenuItems));
 		drawerList.setOnItemClickListener(new DrawerItemClickListener());
 	
 		this.adapter = new GameCollectionArrayAdapter(this, R.layout.game_list_item, R.layout.game_list_item_detail, gameList);
@@ -246,6 +259,22 @@ public class MainActivity extends ActionBarActivity implements
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		} else if(key.equalsIgnoreCase(PROFILE_KEY)) {
+			Gson gson = new Gson();
+			try {
+				userProfile = gson.fromJson(json.getString("value"), Player.class);
+				if(userProfile.getImage() != null) {
+					byte[] bitmapData = Base64.decode(userProfile.getImage(), Base64.DEFAULT);
+					Bitmap bm = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+					profilePicture = BitmapDecoder.getCircleBitmap(bm);
+				}
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (key.equals(GAME_KEY)) {
 			Gson gson = new Gson();
 			try {
@@ -317,15 +346,6 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		/*try {
-			String first = json.getString("records");
-			if(first.contains("userToAnswer")) {
-				key = "userToAnswer";
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		if (key.equals(REQUEST_JOINING_KEY)) {
 			manager.ignoreKeyOfUser(key, user);
 			nextRoundNumberOfPlayers++;
@@ -334,9 +354,7 @@ public class MainActivity extends ActionBarActivity implements
 				intent.putExtra("game", game);
 				this.startActivity(intent);
 			}
-		} /*else if(key.equals("userToAnswer")) {
-			QuestionActivity.numberOfFinishedPlayers++;
-		}*/
+		}
 	}
 
 	@Override
@@ -376,8 +394,9 @@ public class MainActivity extends ActionBarActivity implements
 			if (manager == null) {
 				userName = data.getStringExtra("userName");
 				this.manager = new NetworkingManager(this, "G9", this.userName);
-				loadGameList();
 			}
+		loadGameList();
+		manager.loadValueForKeyOfUser(PROFILE_KEY, userName);
 		case (CREATE_GAME_REQUEST_CODE):
 			if (game == null && data.getParcelableExtra("game") != null) {
 				game = (Game) data.getParcelableExtra("game");
@@ -422,20 +441,24 @@ public class MainActivity extends ActionBarActivity implements
 	    switch (position) {
 		case 0:
 			drawerList.setItemChecked(position, true);
-			drawerLayout.closeDrawer(drawerList);
-			Intent intent = new Intent(this, ProfileActivity.class);
-			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
+			drawerLayout.closeDrawer(linearDrawerLayout);
+			Intent intent = new Intent(this, CreateGameActivity.class);
+			this.startActivityForResult(intent, CREATE_GAME_REQUEST_CODE);
+			break;
+		case 1:
+			drawerList.setItemChecked(position, true);
+			drawerLayout.closeDrawer(linearDrawerLayout);
+			displayJoinAlertDialog();
+			break;
+		case 2:
+			drawerList.setItemChecked(position, true);
+			drawerLayout.closeDrawer(linearDrawerLayout);
+			Intent intent2 = new Intent(this, ProfileActivity.class);
+			this.startActivityForResult(intent2, PROFILE_ACTIVITY_REQUEST_CODE);
 			break;
 		default:
 			break;
 		}
 	}
 	
-	public int getDipsFromPixel(float pixels)
-	{
-	 // Get the screen's density scale
-	 final float scale = getResources().getDisplayMetrics().density;
-	 // Convert the dps to pixels, based on density scale
-	 return (int) (pixels * scale + 0.5f);
-	}
 }

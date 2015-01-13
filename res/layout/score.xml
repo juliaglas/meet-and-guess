@@ -9,16 +9,6 @@
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />
     
-     <Button
-      	android:id="@+id/Continue"
-     	android:layout_width="120dp"
-      	android:layout_height="wrap_content"
-      	android:layout_alignParentBottom="true"
-      	android:layout_centerHorizontal="true"
-      	android:layout_marginBottom="48dp"
-      	android:background="@color/Green"
-      	android:onClick="goTonextQuestion"
-      	android:text="@string/score" />
 
      <LinearLayout
          android:id="@+id/Heading"
@@ -61,60 +51,29 @@
 
      </LinearLayout>
      
-     <LinearLayout
-         android:layout_width="wrap_content"
-         android:layout_height="72dp"
-         android:layout_alignParentLeft="true"
-         android:layout_alignParentRight="true"
-         android:layout_below="@+id/Heading"
-         android:background="@color/Green"
-         android:orientation="horizontal" >
+      <ListView
+          android:id="@+id/scoreListView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_above="@+id/Continue"
+          android:layout_alignParentLeft="true"
+          android:layout_below="@+id/Heading"
+          android:divider="@color/Black12"
+          android:dividerHeight="2px" >
 
-         <LinearLayout
-             android:id="@+id/Second_Slot"
-             android:layout_width="0dp"
-             android:layout_height="72dp"
-             android:layout_weight="0.5"
-             android:orientation="horizontal" >
+     </ListView>
 
-             <ImageView
-                 android:id="@+id/icon"
-                 android:layout_width="68dp"
-                 android:layout_height="68dp"
-                 android:layout_centerHorizontal="true"
-                 android:layout_gravity="center_vertical"
-                 android:src="@drawable/slot_shadow" />
+     <Button
+      	android:id="@+id/Continue"
+     	android:layout_width="120dp"
+      	android:layout_height="wrap_content"
+      	android:layout_alignParentBottom="true"
+      	android:layout_centerHorizontal="true"
+      	android:layout_marginBottom="48dp"
+      	android:background="@color/Green"
+      	android:onClick="goTonextQuestion"
+      	android:text="@string/score" />
 
-             <TextView
-                 android:id="@+id/Name"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_gravity="center_vertical"
-                 android:text="Vasilis"
-                 android:textColor="@color/Black87"
-                 android:textStyle="normal|bold" />
-         </LinearLayout>
-
-	        <TextView
-	        android:id="@+id/userscore"
-	        android:layout_width="0dp"
-           	android:layout_weight="0.25"         
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_vertical"
-	        android:textStyle="normal|bold" 
-	   		android:textColor="@color/Black87"
-	        android:text="1" />
-	         
-	        <TextView
-	        android:id="@+id/usertotalscore"
-	        android:layout_width="0dp"
-           	android:layout_weight="0.2"         
-	        android:layout_height="wrap_content"
-	        android:layout_gravity="center_vertical"
-	        android:layout_centerHorizontal="true"
-	        android:textStyle="normal|bold" 
-	   		android:textColor="@color/Black87"
-	        android:text="10" />
-     </LinearLayout>
+    
 
 </RelativeLayout>

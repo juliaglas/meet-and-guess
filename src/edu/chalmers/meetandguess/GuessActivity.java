@@ -45,7 +45,7 @@ public class GuessActivity extends ActionBarActivity implements
 	private static final String GROUP = "G9";
 	private static final String USER_TO_ANSWER_KEY = "userToAnswer";
 	private static final String USER_TO_SCORE_KEY = "userToScore";
-	private static final String ANSWERING_DONE_KEY = "answeringDone";
+	private static final String GUESSING_DONE_KEY = "guessingDone";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
 	private int numberOfPlayers;
 	private int numberOfFinishedPlayers;
@@ -59,7 +59,7 @@ public class GuessActivity extends ActionBarActivity implements
 	private Map<String, Integer> userToScore;
 	private int id = 1;
 	private int score = 0;
-
+    private boolean wrongGuess = false;
 	private GestureDetectorCompat mDetector;
 	View.OnTouchListener mListener;
 	private ImageView mImage;
@@ -117,7 +117,7 @@ public class GuessActivity extends ActionBarActivity implements
 		if (userName != null)
 		{
 			progress.setTitle("Loading");
-			progress.setMessage("Wait while player icons...");
+			progress.setMessage("Loading player icons...");
 			progress.show();
 			// User fetches images from server
 			this.manager.loadValueForKeyOfUser(USER_TO_ANSWER_KEY,
@@ -132,7 +132,7 @@ public class GuessActivity extends ActionBarActivity implements
 		if(userName.equals(game.getOwner())) {
 			manager.monitorKeyOfUser(USER_TO_SCORE_KEY, game.getGameId());
 		} else {
-			manager.monitorKeyOfUser(ANSWERING_DONE_KEY, game.getGameId());
+			manager.monitorKeyOfUser(GUESSING_DONE_KEY, game.getGameId());
 		}
 
 	}
@@ -333,7 +333,7 @@ public class GuessActivity extends ActionBarActivity implements
 		// Compare Answers to User Guesses
 		for (Map.Entry<String, Answer> entry : userToAnswer.entrySet()) {
 			// Correct Guess
-			if (entry.getValue() == playerGuess.get(entry.getKey())) {
+			if (entry.getValue() == playerGuess.get(entry.getKey()) && userName!=entry.getKey()) {
 				// Overlay correct Feedback
 				for (Map.Entry<Integer, String> idEntry : idToUser.entrySet()) {
 					// Get The Id of the player image to overlay
@@ -346,15 +346,15 @@ public class GuessActivity extends ActionBarActivity implements
 				score++;
 			}
 			// Incorrect Guess
-			else {
+			else if(userName!=entry.getKey()) {
 				// Get The Id of the player image to move
-				for (Map.Entry<Integer, String> idEntry : idToUser.entrySet()) {
+				for (Map.Entry<Integer, String> idEntry : idToUser.entrySet() ) {
 					if (idEntry.getValue() == entry.getKey()) {
 						viewTouched = idEntry.getKey();
+						wrongGuess = true;
 						// Move view to correct spot
 						movePlayer(entry.getValue());
-						// Overlay incorrect Feedback
-						overlayIcon(idEntry.getKey(), false);
+						
 					}
 				}
 
@@ -373,7 +373,7 @@ public class GuessActivity extends ActionBarActivity implements
 		
 		if(!goToScoreSelected) {
 			progress.setTitle("Loading");
-			progress.setMessage("Wait while loading...");
+			progress.setMessage("Wait other players to guess...");
 			progress.show();
 			goToScoreSelected = true;
 			// Lock Score to Update User to Score Map (Current Score Map)
@@ -403,6 +403,11 @@ public class GuessActivity extends ActionBarActivity implements
 			mImage.setLayoutParams(layoutParams);
 			parent.addView(mImage);
 			mImage.setVisibility(View.VISIBLE);
+			
+			// Overlay incorrect Feedback in case of wrong guess
+			if(wrongGuess)
+				overlayIcon(viewTouched, false);
+			wrongGuess = true;
 		}
 
 		@Override
@@ -448,9 +453,9 @@ public class GuessActivity extends ActionBarActivity implements
 					// TODO 2: Fetch them internally if no new players)
 					for (Map.Entry<String, Answer> entry : userToAnswer
 							.entrySet()) {
-						// Load Images of other players
-						if(!entry.getKey().equals(userName))
-							manager.loadValueForKeyOfUser("profile", entry.getKey());
+						// Load player images
+						//if(!entry.getKey().equals(userName))
+					    manager.loadValueForKeyOfUser("profile", entry.getKey());
 						idToUser.put(id, entry.getKey());
 					}
 
@@ -467,15 +472,22 @@ public class GuessActivity extends ActionBarActivity implements
 				player = gson.fromJson(json.getString("value"), Player.class);
 				// Load player image
 				if(player != null) {
-					imgData = player.getImage();
-					LinearLayout players = (LinearLayout) findViewById(R.id.Players);
-					playerIcons(players, id); // 1, 2, ...
-					LinearLayout firstAnswer = (LinearLayout) findViewById(R.id.First_Answer_Slot);
-					emptySlots(firstAnswer, id + 10); // 11, 12, ...
-					LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot);
-					emptySlots(secondAnswer, id + 20); // 21, 22, ...
-					// Next id
-					id++;
+					String image = player.getImage();
+					
+					//game.addPlayerImage(image);
+				
+					if(!player.getUsername().equals(userName))
+					{
+						LinearLayout players = (LinearLayout) findViewById(R.id.Players);
+						imgData = image;
+					    playerIcons(players, id); // 1, 2, ...
+					    LinearLayout firstAnswer = (LinearLayout) findViewById(R.id.First_Answer_Slot);
+						emptySlots(firstAnswer, id + 10); // 11, 12, ...
+						LinearLayout secondAnswer = (LinearLayout) findViewById(R.id.Second_Answer_Slot);
+						emptySlots(secondAnswer, id + 20); // 21, 22, ...
+						// Next id
+						id++;
+					}
 					progress.dismiss();
 				}
 				
@@ -547,7 +559,7 @@ public class GuessActivity extends ActionBarActivity implements
 			numberOfFinishedPlayers++;
 			if(numberOfFinishedPlayers == numberOfPlayers) {
 				manager.ignoreKeyOfUser(key, user);
-				manager.saveValueForKeyOfUser(ANSWERING_DONE_KEY, game.getGameId(), "guessingDone");
+				manager.saveValueForKeyOfUser(GUESSING_DONE_KEY, game.getGameId(), "done");
 				Intent intent = new Intent(this, ScoreActivity.class);
 				intent.putExtra("game", game);
 				intent.putExtra("numberOfPlayers", numberOfPlayers);
@@ -556,7 +568,7 @@ public class GuessActivity extends ActionBarActivity implements
 		} 
 		// When all players have guessed the owner changes the AnsweringDone key to transition
 		// to Score Activity
-		else if(key.equals(ANSWERING_DONE_KEY)) {
+		else if(key.equals(GUESSING_DONE_KEY)) {
 			manager.ignoreKeyOfUser(key, user);
 			progress.dismiss();
 			Intent intent = new Intent(this, ScoreActivity.class);
