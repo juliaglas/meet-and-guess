@@ -175,6 +175,17 @@ public class CreateGameActivity extends ActionBarActivity implements
 						json.getString("value"),
 						new TypeToken<ArrayList<Question>>() {
 						}.getType());
+				if(completeQuestionList == null) {
+					Question firstQuestion = new Question("Which animal is the cuter one?", "Dog", "Cat");
+					Question secondQuestion = new Question("Have you been to Australia?", "Yes", "No");
+					Question thirdQuestion = new Question("Have you been to Asia?", "Yes", "No");
+					completeQuestionList = new ArrayList<Question>();
+					completeQuestionList.add(firstQuestion);
+					completeQuestionList.add(secondQuestion);
+					completeQuestionList.add(thirdQuestion);
+					String questionJson = gson.toJson(completeQuestionList);
+					manager.saveValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER, questionJson);
+				}
 				// set questionList for current game
 				if (completeQuestionList.size() < 15) {
 					questionList = completeQuestionList;

@@ -80,13 +80,8 @@ public class MainActivity extends ActionBarActivity implements
 
 		
 		initViews();
-
-		// methods to reset the app/server
 		 
 		// resetApp();
-		ServerReset resetter = new ServerReset();
-		// resetter.resetQuestionList();
-
 
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF,
