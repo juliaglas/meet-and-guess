@@ -14,6 +14,7 @@ import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -29,6 +30,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -282,15 +284,17 @@ public class ProfileActivity extends ActionBarActivity implements
 		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 		profilePicture.setEnabled(true);
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-		firstNameValue.setShowSoftInputOnFocus(true);
-		/*firstNameValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		firstNameValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
+	            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 		        if (hasFocus) {
-		            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+		            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+		        } else {
+		        	imm.hideSoftInputFromWindow(v.getWindowToken(),0); 
 		        }
 		    }
-		});*/
+		});
 
 	}
 
