@@ -23,7 +23,7 @@ public class Game implements Parcelable {
 	private String ownerName;
 	private String ownerImage;
 	private transient Map<String, Integer> user2totalScore;
-	//private ArrayList<String> playerImages;
+	private ArrayList<String> playerImages;
 	
 	public Game(String gameId, /*Location location, */String locationDescription, String detailedDescription, List<Question> questionList, String owner, String ownerName, String ownerImage) {
 		super();
@@ -37,9 +37,9 @@ public class Game implements Parcelable {
 		this.ownerName = ownerName;
 		this.ownerImage = ownerImage;
 		this.user2totalScore = new HashMap<String, Integer>();
-		//this.playerImages = new ArrayList<String>();
+		this.playerImages = new ArrayList<String>();
 	}
-/*
+
 	public String getPlayerImage(int index)
 	{
 		return playerImages.get(index);
@@ -49,7 +49,7 @@ public class Game implements Parcelable {
 	{
 		playerImages.add(image);
 	}
-*/
+
 	public String getGameId() {
 		return gameId;
 	}
@@ -134,7 +134,7 @@ public class Game implements Parcelable {
 	public void addUser(String user) {
 		user2totalScore.put(user, 0);
 	}
-	/*
+	
 	public ArrayList<String> getPlayerImages() {
 		return playerImages;
 	}
@@ -142,7 +142,7 @@ public class Game implements Parcelable {
 	public void setPlayerImages(ArrayList<String> playerImages) {
 		this.playerImages = playerImages;
 	}
-*/
+
 	public void increaseScoreForUser(String user, int currentScoreToAdd) {
 		int oldScore = user2totalScore.get(user);
 		if(!user2totalScore.containsKey(user)) {
@@ -174,12 +174,12 @@ public class Game implements Parcelable {
         	dest.writeString(entry.getKey());
         	dest.writeInt(entry.getValue());
         }
-        /*final int imageListSize = playerImages.size();
+        final int imageListSize = playerImages.size();
         dest.writeInt(imageListSize);
         for(int i=0; i<playerImages.size() ; i++)
         {
         	dest.writeString(playerImages.get(i));
-        }*/
+        }
 	}
 	
 	public Game(Parcel parcel) {
@@ -200,13 +200,13 @@ public class Game implements Parcelable {
             int score = parcel.readInt(); 
             user2totalScore.put(user, score);
         }
-		//int imageListSize = parcel.readInt();
-	    //playerImages = new ArrayList<String>();
-	    /*for(int i=0; i<imageListSize ; i++)
+		int imageListSize = parcel.readInt();
+	    playerImages = new ArrayList<String>();
+	    for(int i=0; i<imageListSize ; i++)
 	    {
 	       String image = parcel.readString();
 	       playerImages.add(image);
-	    }*/
+	    }
 		
 	}
 	
