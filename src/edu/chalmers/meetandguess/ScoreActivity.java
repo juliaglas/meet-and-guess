@@ -96,9 +96,25 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					userToScore = new HashMap<String, Integer>();
 					Log.d(TAG_ERROR,"No Score");
 				}
-				// Load total score map from server
-				this.manager.loadValueForKeyOfUser(USER_TO_TOTAL_SCORE_KEY, game.getGameId());
+				int i = 0;
+				Map<String, Integer> userToTotalScore = game.getUser2totalScore();
+				for(String userId : userToScore.keySet()) 
+				{
+					int currentScore = userToScore.get(userId);
 				
+					game.increaseScoreForUser(userId, currentScore);
+					Score score = new Score(game.getPlayerImage(i), userId, currentScore, userToTotalScore.get(userId));
+					scoreList.add(score);
+					adapter.notifyDataSetChanged();
+					i++;
+				}
+				
+				// Load total score map from server
+				if(game.getOwner().equals(this.userName)) {
+					// Saves total Score Map on the Server
+					String userToTotalScoreJson = gson.toJson(game.getUser2totalScore());
+					manager.saveValueForKeyOfUser(USER_TO_TOTAL_SCORE_KEY, user, userToTotalScoreJson);
+				}
 			
 			}catch (JsonSyntaxException e) {
 				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
@@ -108,7 +124,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 			}
 		}
 		// Loaded Total Score
-		else if(key.equals(USER_TO_TOTAL_SCORE_KEY)) 
+		/*else if(key.equals(USER_TO_TOTAL_SCORE_KEY)) 
 		{
 			try {
 				Gson gson = new Gson();
@@ -126,8 +142,8 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 				      //game.addUser(entry.getKey());
 					  //game.increaseScoreForUser(userName, entry.getValue());
 					 
-					 // Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
-					 // scoreList.add(score);
+					  Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
+					  scoreList.add(score);
 					  i++;
 					}
 				}
@@ -144,8 +160,8 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 						// Updates Score
 						game.increaseScoreForUser(entry.getKey(), entry.getValue());
 						
-						//Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
-						//scoreList.add(score);
+						Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
+						scoreList.add(score);
 						adapter.notifyDataSetChanged();
 						i++;
 					}
@@ -169,7 +185,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 			
 			progress.dismiss();
 			
-		}
+		}*/
 		
 	}
 
@@ -211,11 +227,20 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 	
 	// User Pressed Continue button to proceed to Score Activity
 	public void goTonextQuestion(View view) {
-		game.updateCurrentQuestionNumber();
-		Intent intent = new Intent(this, QuestionActivity.class);
-		intent.putExtra("game", game);
-		this.startActivity(intent);
-		finish();
+		if(game.updateCurrentQuestionNumber())
+		{
+		   Intent intent = new Intent(this, QuestionActivity.class);
+		   intent.putExtra("game", game);
+		   this.startActivity(intent);
+		   finish();	
+		}
+		else
+		{   	
+			// Owner has to remove it from the active list
+			
+			// Intent to Main Activity
+			
+		}
 
 	}
 
