@@ -14,6 +14,7 @@ import com.google.gson.reflect.TypeToken;
 
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class CreateGameActivity extends ActionBarActivity implements
@@ -60,6 +62,7 @@ public class CreateGameActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.create_game);
+		handleKeyboard();
 
 		// Toolbar Layout
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -271,5 +274,26 @@ public class CreateGameActivity extends ActionBarActivity implements
 	public void unlockedKeyOfUser(JSONObject json, String key, String user) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	private void handleKeyboard() {
+		EditText locationValue = (EditText) findViewById(R.id.location_edit);
+		setKeyBoardOnFocusChangeListener(locationValue);
+		EditText detailValue = (EditText) findViewById(R.id.detail_edit);
+		setKeyBoardOnFocusChangeListener(detailValue);
+	}
+
+	private void setKeyBoardOnFocusChangeListener(EditText view) {
+		view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				if (hasFocus) {
+				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+				} else {
+				imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+			}
+			}
+		});
 	}
 }
