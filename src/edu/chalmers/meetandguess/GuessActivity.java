@@ -366,7 +366,7 @@ public class GuessActivity extends ActionBarActivity implements
 
 	// User Pressed Continue button to proceed to Score Activity
 	public void goToScore() {
-
+		System.out.println();
 		if (!goToScoreSelected) {
 			progress.setTitle("Loading");
 			progress.setMessage("Wait other players to guess...");
@@ -377,18 +377,15 @@ public class GuessActivity extends ActionBarActivity implements
 		}
 
 	}
-	
-	public void buttonClicked(View view){
+
+	public void buttonClicked(View view) {
 		Button button = (Button) view;
-		if(button.getText().equals(getResources().getText(R.string.done)))
-		{
+		if (button.getText().equals(getResources().getText(R.string.done))) {
 			button.setText(getResources().getText(R.string.score));
 			guessResults();
-		} 
-		else
-		{
+		} else {
 			goToScore();
-		} 
+		}
 	}
 
 	// Animating swiping
@@ -414,10 +411,9 @@ public class GuessActivity extends ActionBarActivity implements
 			mImage.setVisibility(View.VISIBLE);
 
 			// Overlay incorrect Feedback in case of wrong guess
-			if (wrongGuess)
-			{
+			if (wrongGuess) {
 				overlayIcon(viewTouched, false);
-			    wrongGuess = true;
+				wrongGuess = true;
 			}
 		}
 
@@ -578,23 +574,19 @@ public class GuessActivity extends ActionBarActivity implements
 				intent.putExtra("numberOfPlayers", numberOfPlayers);
 				this.startActivity(intent);
 				finish();
-
 			}
-			// When all players have guessed the owner changes the AnsweringDone
-			// key to transition
-			// to Score Activity
-			else if (key.equals(GUESSING_DONE_KEY)) {
-				manager.ignoreKeyOfUser(key, user);
-				// progress.dismiss();
-				Intent intent = new Intent(this, ScoreActivity.class);
-				intent.putExtra("game", game);
-				intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO
-																		// check
-																		// if
-																		// necessary
-				this.startActivity(intent);
-				finish();
-			}
+		}
+		// When all players have guessed the owner changes the AnsweringDone
+		// key to transition
+		// to Score Activity
+		else if (key.equals(GUESSING_DONE_KEY)) {
+			manager.ignoreKeyOfUser(key, user);
+			// progress.dismiss();
+			Intent intent = new Intent(this, ScoreActivity.class);
+			intent.putExtra("game", game);
+			intent.putExtra("numberOfPlayers", numberOfPlayers); // TODO check if necessary
+			this.startActivity(intent);
+			finish();
 		}
 
 	}
