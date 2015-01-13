@@ -105,6 +105,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					game.increaseScoreForUser(userId, currentScore);
 					Score score = new Score(game.getPlayerImage(i), userId, currentScore, userToTotalScore.get(userId));
 					scoreList.add(score);
+					adapter.notifyDataSetChanged();
 					i++;
 				}
 				
