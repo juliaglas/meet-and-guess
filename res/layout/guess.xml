@@ -23,14 +23,12 @@
 	        android:id="@+id/guess_label"
 	        style="@android:style/TextAppearance.Medium"
 	        android:layout_width="wrap_content"
-	        android:layout_height="56dp"
+	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentRight="true"
-	        android:layout_gravity="center"
-	        android:layout_marginLeft="48dp"
-	        android:layout_marginRight="48dp"
-	        android:layout_marginTop="0dp"
-	        android:minHeight="48dp"
+	        android:layout_marginLeft="24dp"
+	        android:layout_marginRight="24dp"
+	        android:layout_marginTop="24dp"
 	        android:text="Which animal is the cuter one?"
 	        android:textStyle="normal|bold" 
 	        android:textColor="@color/Black87"
@@ -41,6 +39,11 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="120dp"
 	        android:layout_below="@+id/guess_label"
+	        android:layout_alignParentLeft ="true"
+            android:layout_marginLeft="24dp"
+            android:layout_alignParentRight ="true"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="24dp"
 	        android:background="@drawable/highlight_button"
 	        android:gravity="center_horizontal"
 	        android:orientation="vertical"
@@ -52,7 +55,7 @@
 	           android:layout_width="wrap_content"
 	           android:layout_height="0dp"
 	           android:layout_weight="0.3"
-	           android:layout_marginTop="3dp"
+	           android:layout_marginTop="10dp"
 	           android:layout_centerHorizontal="true"
 	           android:text="Dog" />
 	   	
@@ -71,7 +74,7 @@
 	   	<LinearLayout
 	   	    android:id="@+id/Players"
 	   	    android:layout_width="fill_parent"
-	   	    android:layout_height="72dp"
+	   	    android:layout_height="80dp"
 	   	    android:layout_alignParentLeft="true"
 	   	    android:layout_below="@+id/First_Answer"
 	   	    android:gravity="center_vertical"
@@ -86,6 +89,9 @@
 	         android:layout_height="120dp"
 	         android:layout_alignParentLeft="true"
 	         android:layout_below="@+id/Players"
+             android:layout_marginLeft="24dp"
+             android:layout_alignParentRight ="true"
+             android:layout_marginRight="24dp"
 	         android:background="@drawable/highlight_button"
 	         android:gravity="center_horizontal"
 	         android:orientation="vertical"
@@ -97,6 +103,7 @@
 	             android:layout_width="wrap_content"
 	             android:layout_height="0dp"
 	          	 android:layout_weight="0.3"
+	          	 android:layout_marginTop="10dp"
 	             android:text="Cat" />
 	
 	         <LinearLayout
@@ -110,37 +117,22 @@
 	         </LinearLayout>
 	     </LinearLayout>
 	     
-	     <FrameLayout
-	        android:id="@+id/Buttons"
-	        android:layout_width="120dp"
-	        android:layout_height="72dp"
-	        android:layout_below="@+id/Second_Answer"
-	        android:layout_centerHorizontal="true" >
-	
-	        
-	        <Button
-	            android:id="@+id/Continue"
-	            android:layout_width="120dp"
-	            android:layout_height="wrap_content"
-	        	android:layout_below="@+id/Second_Answer"
-	            android:layout_centerHorizontal="true"
-	            android:layout_gravity="center_vertical"
-	            android:background="@drawable/highlight_button"
-	            android:onClick="goToScore"
-	            android:text="@string/score" />
-	
-			<Button
-	            android:id="@+id/Score"
-	            android:layout_width="120dp"
-	            android:layout_height="wrap_content"
-	        	android:layout_below="@+id/Second_Answer"
-	            android:layout_centerHorizontal="true"
-	            android:layout_gravity="center_vertical"
-	            android:background="@drawable/highlight_button"
-	            android:onClick="guessResults"
-	            android:text="@string/done"
-	             />        
-
-	    </FrameLayout>
+	    
+		<Button
+            android:id="@+id/Score"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft ="true"
+            android:layout_marginLeft="24dp"
+            android:layout_alignParentBottom ="true"
+            android:layout_marginBottom="48dp"
+            android:layout_alignParentRight ="true"
+            android:layout_marginRight="24dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/green_button"
+            android:onClick="buttonClicked"
+            android:text="@string/done"
+             />        
+	     
 	</RelativeLayout>
 </RelativeLayout>
