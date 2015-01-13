@@ -81,7 +81,7 @@ public class MainActivity extends ActionBarActivity implements
 		
 		initViews();
 		 
-		resetApp();
+		//resetApp();
 
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF,

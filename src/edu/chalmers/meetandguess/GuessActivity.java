@@ -483,7 +483,7 @@ public class GuessActivity extends ActionBarActivity implements
 					String image = player.getImage();
 
 					game.addPlayerImage(image);
-					
+					game.addUserName(player.getFirstname());
 					if (!player.getUsername().equals(userName)) {
 						LinearLayout players = (LinearLayout) findViewById(R.id.Players);
 						imgData = image;
@@ -567,8 +567,7 @@ public class GuessActivity extends ActionBarActivity implements
 			numberOfFinishedPlayers++;
 			if (numberOfFinishedPlayers == numberOfPlayers) {
 				manager.ignoreKeyOfUser(key, user);
-				manager.saveValueForKeyOfUser(GUESSING_DONE_KEY,
-						game.getGameId(), "done");
+				manager.saveValueForKeyOfUser(GUESSING_DONE_KEY,game.getGameId(), "done");
 				Intent intent = new Intent(this, ScoreActivity.class);
 				intent.putExtra("game", game);
 				intent.putExtra("numberOfPlayers", numberOfPlayers);

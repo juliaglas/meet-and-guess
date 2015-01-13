@@ -42,9 +42,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 	private Map<String, Integer> userToScore;
 	private Map<String, Integer> userToTotalScore;
 	private LinkedList<Score> scoreList = new LinkedList<Score>();
-	private ScoreArrayAdapter adapter;
-	
-	ProgressDialog progress;
+	private ScoreArrayAdapter adapter;	
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,11 +61,6 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 		
 		Intent intent = getIntent();
 		game = (Game) intent.getParcelableExtra("game");
-		progress = new ProgressDialog(this);
-		// Load Current Score
-		progress.setTitle("Loading");
-		progress.setMessage("Loading scores...");
-		progress.show();
 		if(userName !=null)
 			this.manager.loadValueForKeyOfUser(USER_TO_SCORE_KEY, game.getGameId());
 		
@@ -103,7 +96,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					int currentScore = userToScore.get(userId);
 				
 					game.increaseScoreForUser(userId, currentScore);
-					Score score = new Score(game.getPlayerImage(i), userId, currentScore, userToTotalScore.get(userId));
+					Score score = new Score(game.getPlayerImage(i), game.getUserName(i), currentScore, userToTotalScore.get(userId));
 					scoreList.add(score);
 					adapter.notifyDataSetChanged();
 					i++;
@@ -183,7 +176,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 			}
 			
 			
-			progress.dismiss();
+		
 			
 		}*/
 		
