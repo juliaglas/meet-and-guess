@@ -415,8 +415,10 @@ public class GuessActivity extends ActionBarActivity implements
 
 			// Overlay incorrect Feedback in case of wrong guess
 			if (wrongGuess)
+			{
 				overlayIcon(viewTouched, false);
-			wrongGuess = true;
+			    wrongGuess = true;
+			}
 		}
 
 		@Override

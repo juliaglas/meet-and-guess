@@ -67,14 +67,15 @@
 		        android:layout_below="@+id/guess_label"
 		        android:gravity="center_vertical"
 		        android:orientation="horizontal"
-		        android:clipChildren="false" >
+		        android:clipChildren="false"
+		        android:layout_marginBottom="10dp" >
 		    </LinearLayout>
 	    </LinearLayout>
 	    
 	   	<LinearLayout
 	   	    android:id="@+id/Players"
 	   	    android:layout_width="fill_parent"
-	   	    android:layout_height="80dp"
+	   	    android:layout_height="100dp"
 	   	    android:layout_alignParentLeft="true"
 	   	    android:layout_below="@+id/First_Answer"
 	   	    android:gravity="center_vertical"
@@ -113,7 +114,8 @@
 	          	 android:layout_weight="0.7"
 	             android:gravity="center_vertical"
 	             android:orientation="horizontal"
-	             android:clipChildren="false" >
+	             android:clipChildren="false"
+	             android:layout_marginBottom="10dp" >
 	         </LinearLayout>
 	     </LinearLayout>
 	     
@@ -125,9 +127,10 @@
             android:layout_alignParentLeft ="true"
             android:layout_marginLeft="24dp"
             android:layout_alignParentBottom ="true"
-            android:layout_marginBottom="48dp"
+            android:layout_marginBottom="24dp"
             android:layout_alignParentRight ="true"
             android:layout_marginRight="24dp"
+            android:layout_marginTop="24dp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/green_button"
             android:onClick="buttonClicked"
