@@ -24,7 +24,16 @@ public class Game implements Parcelable {
 	private String ownerImage;
 	private transient Map<String, Integer> user2totalScore;
 	private ArrayList<String> playerImages;
+	private ArrayList<String> userNames;
 	
+	public ArrayList<String> getUserNames() {
+		return userNames;
+	}
+
+	public void setUserNames(ArrayList<String> userNames) {
+		this.userNames = userNames;
+	}
+
 	public Game(String gameId, /*Location location, */String locationDescription, String detailedDescription, List<Question> questionList, String owner, String ownerName, String ownerImage) {
 		super();
 		this.gameId = gameId;
@@ -38,6 +47,7 @@ public class Game implements Parcelable {
 		this.ownerImage = ownerImage;
 		this.user2totalScore = new HashMap<String, Integer>();
 		this.playerImages = new ArrayList<String>();
+		this.userNames = new ArrayList<String>();
 	}
 
 	public String getPlayerImage(int index)
@@ -49,6 +59,17 @@ public class Game implements Parcelable {
 	{
 		playerImages.add(image);
 	}
+	
+	public String getUserName(int index)
+	{
+		return userNames.get(index);
+	}
+	
+	public void addUserName(String userName)
+	{
+		userNames.add(userName);
+	}
+
 
 	public String getGameId() {
 		return gameId;
@@ -180,6 +201,12 @@ public class Game implements Parcelable {
         {
         	dest.writeString(playerImages.get(i));
         }
+        final int usernameSize = userNames.size();
+        dest.writeInt(usernameSize);
+        for(int i=0; i<userNames.size() ; i++)
+        {
+        	dest.writeString(userNames.get(i));
+        }
 	}
 	
 	public Game(Parcel parcel) {
@@ -206,6 +233,13 @@ public class Game implements Parcelable {
 	    {
 	       String image = parcel.readString();
 	       playerImages.add(image);
+	    }
+	    int userNamesSize = parcel.readInt();
+	    userNames = new ArrayList<String>();
+	    for(int i=0; i<userNamesSize ; i++)
+	    {
+	       String image = parcel.readString();
+	       userNames.add(image);
 	    }
 		
 	}

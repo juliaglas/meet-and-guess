@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true" >
+    android:focusableInTouchMode="true"
+    android:clickable="true" >
 
     <include
         android:id="@+id/toolbar"
@@ -31,6 +32,8 @@
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@+id/score_display"
         android:text="@string/score_label"        
+        	    android:textAppearance="?android:attr/textAppearanceMedium"
+        
         android:textColor="@color/HighlightColor" />
 
     <TextView
@@ -55,14 +58,16 @@
         android:layout_below="@+id/profile_picture"
         android:gravity="center"
         android:descendantFocusability="beforeDescendants"
-    	android:focusableInTouchMode="true" >
+    	android:focusableInTouchMode="true"
+    	android:clickable="true" >
 
         <RelativeLayout
             android:id="@+id/fillout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:descendantFocusability="beforeDescendants"
-    		android:focusableInTouchMode="true" >
+    		android:focusableInTouchMode="true" 
+    		android:clickable="true">
 
             <TextView
                 android:id="@+id/firstname_label"
@@ -70,7 +75,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:text="@string/firstname_label"                
+                android:text="@string/firstname_label"    
+                	    android:textAppearance="?android:attr/textAppearanceMedium"
+                            
                 android:textColor="@color/HighlightColor" />
 
             <EditText
@@ -83,6 +90,8 @@
                 android:layout_marginLeft="12dp"
                 android:ems="10"
                 android:hint="Your name"
+                                	    android:textAppearance="?android:attr/textAppearanceLarge"
+                
                 android:textColor="@color/Black87">
             </EditText>
 
@@ -94,6 +103,8 @@
                 android:layout_below="@+id/firstname_label"
                 android:layout_marginTop="24dp"
                 android:text="@string/age_label"
+                	    android:textAppearance="?android:attr/textAppearanceMedium"
+                
                 android:textColor="@color/HighlightColor" />
 
             <EditText
@@ -105,6 +116,8 @@
                 android:layout_alignRight="@+id/firstname_edit"
                 android:ems="10"
                 android:hint="Your age"
+                                                	    android:textAppearance="?android:attr/textAppearanceLarge"
+                
                 android:textColor="@color/Black87" >
             </EditText>
 
@@ -116,6 +129,8 @@
                 android:layout_below="@+id/age_label"
                 android:layout_marginTop="24dp"
                 android:text="@string/city_label"
+                	    android:textAppearance="?android:attr/textAppearanceMedium"
+                
                 android:textColor="@color/HighlightColor" />
 
             <EditText
@@ -127,6 +142,8 @@
                 android:layout_alignRight="@+id/age_edit"
                 android:ems="10"
                 android:hint="Your city"
+                                                	    android:textAppearance="?android:attr/textAppearanceLarge"
+                
                 android:textColor="@color/Black87" >
             </EditText>
 
@@ -138,6 +155,8 @@
                 android:layout_below="@+id/city_label"
                 android:layout_marginTop="24dp"
                 android:text="@string/country_label"
+                	    android:textAppearance="?android:attr/textAppearanceMedium"
+                
                 android:textColor="@color/HighlightColor" />
 
             <EditText
@@ -149,6 +168,8 @@
                 android:layout_alignRight="@+id/city_edit"
                 android:ems="10"
                 android:hint="Your country"
+                                                	    android:textAppearance="?android:attr/textAppearanceLarge"
+                
                 android:textColor="@color/Black87" >
             </EditText>
         </RelativeLayout>

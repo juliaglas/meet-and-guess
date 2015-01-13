@@ -78,8 +78,8 @@ public class ProfileActivity extends ActionBarActivity implements
 		} else { // create profile of a new user
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Hide back button
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-			firstNameValue.requestFocus();
 			enableEditing();
+			firstNameValue.requestFocus();
 			this.manager = new NetworkingManager(this, GROUP, GAME_MANAGER_USER);
 			this.manager.loadValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER);
 		}
@@ -284,16 +284,17 @@ public class ProfileActivity extends ActionBarActivity implements
 		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
 		profilePicture.setEnabled(true);
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
+		firstNameValue.setShowSoftInputOnFocus(true);
 		firstNameValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-		    @Override
-		    public void onFocusChange(View v, boolean hasFocus) {
-	            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-		        if (hasFocus) {
-		            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-		        } else {
-		        	imm.hideSoftInputFromWindow(v.getWindowToken(),0); 
-		        }
-		    }
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+				if (hasFocus) {
+				imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
+				} else {
+				imm.hideSoftInputFromWindow(v.getWindowToken(),0);
+			}
+			}
 		});
 
 	}

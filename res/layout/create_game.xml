@@ -17,7 +17,7 @@
 	    android:layout_alignParentRight="true"
 	    android:layout_marginLeft="24dp"
 	    android:layout_marginRight="24dp"
-	    android:textAppearance="?android:attr/textAppearanceSmall"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
 	    android:textColor="@color/Black87"
 	    android:text="@string/create_game_info"/>
 
@@ -30,7 +30,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginLeft="24dp"
         android:text="@string/location_label"
-        
+        	    android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/HighlightColor" />
 
     <EditText
@@ -44,6 +44,8 @@
         android:layout_marginRight="24dp"
         android:ems="10"
         android:hint="Short location description"
+                                        	    android:textAppearance="?android:attr/textAppearanceLarge"
+        
         android:textColor="@color/Black87"
     >
     </EditText>
@@ -56,6 +58,7 @@
         android:layout_below="@+id/location_label"
         android:layout_marginTop="24dp"
         android:text="@string/detail_label"
+        	    android:textAppearance="?android:attr/textAppearanceMedium"
         
         android:textColor="@color/HighlightColor" />
 
@@ -67,6 +70,8 @@
         android:layout_alignLeft="@+id/location_edit"
         android:layout_alignRight="@+id/location_edit"
         android:hint="Detailed location description"
+                                        	    android:textAppearance="?android:attr/textAppearanceLarge"
+        
         android:textColor="@color/Black87">
     </EditText>
 
