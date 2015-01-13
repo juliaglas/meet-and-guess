@@ -454,9 +454,10 @@ public class GuessActivity extends ActionBarActivity implements
 					for (Map.Entry<String, Answer> entry : userToAnswer
 							.entrySet()) {
 						// Load player images
-						//if(!entry.getKey().equals(userName))
 					    manager.loadValueForKeyOfUser("profile", entry.getKey());
-						idToUser.put(id, entry.getKey());
+					    // Other player icons only get ids
+					    if(!entry.getKey().equals(userName))
+							idToUser.put(id, entry.getKey());
 					}
 
 				}
