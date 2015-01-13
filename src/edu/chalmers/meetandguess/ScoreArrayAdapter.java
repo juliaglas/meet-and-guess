@@ -73,9 +73,9 @@ public class ScoreArrayAdapter extends BaseAdapter {
 			TextView userNameTextView = (TextView) view.findViewById(R.id.UserName);
 			userNameTextView.setText(score.getUserName());
 			TextView currentScoreTextView = (TextView) view.findViewById(R.id.CurrentScore);
-			currentScoreTextView.setText(score.getCurrentScore());
+			currentScoreTextView.setText(Integer.toString(score.getCurrentScore()));
 			TextView totalScoreTextView = (TextView) view.findViewById(R.id.TotalScore);
-			totalScoreTextView.setText(score.getTotalScore());
+			totalScoreTextView.setText(Integer.toString(score.getTotalScore()));
 			
 		}
 		
