@@ -279,13 +279,19 @@ public class ProfileActivity extends ActionBarActivity implements
 		}
 	}
 
-	@SuppressLint("NewApi")
 	private void enableEditing() {
-		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
-		profilePicture.setEnabled(true);
 		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-		firstNameValue.setShowSoftInputOnFocus(true);
-		firstNameValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+		setKeyBoardOnFocusChangeListener(firstNameValue);
+		EditText ageValue = (EditText) findViewById(R.id.age_edit);
+		setKeyBoardOnFocusChangeListener(ageValue);
+		EditText cityValue = (EditText) findViewById(R.id.city_edit);
+		setKeyBoardOnFocusChangeListener(cityValue);
+		EditText countryValue = (EditText) findViewById(R.id.country_edit);
+		setKeyBoardOnFocusChangeListener(countryValue);
+	}
+
+	private void setKeyBoardOnFocusChangeListener(EditText view) {
+		view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -296,15 +302,5 @@ public class ProfileActivity extends ActionBarActivity implements
 			}
 			}
 		});
-
 	}
-
-	/*private void disableEditing() {
-		ImageButton profilePicture = (ImageButton) findViewById(R.id.profile_picture);
-		profilePicture.setEnabled(false);
-		EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-		firstNameValue.setEnabled(false);
-		firstNameValue.setFocusable(false);
-		firstNameValue.setFocusableInTouchMode(false);
-	}*/
 }
