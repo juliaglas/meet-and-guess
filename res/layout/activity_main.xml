@@ -23,14 +23,13 @@
             android:id="@+id/gameListView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentRight="true"
-	        android:layout_below="@+id/toolbar"
-	        android:divider="@color/Black12"
-	        android:dividerHeight="2px"
-	        android:childDivider="@color/Black12"
-	        android:groupIndicator="@null" >
-            
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/toolbar"
+            android:childDivider="@color/Black12"
+            android:divider="@color/Black12"
+            android:dividerHeight="2px"
+            android:groupIndicator="@null" >
         </ExpandableListView>
     </RelativeLayout>
 
@@ -38,33 +37,71 @@
         android:id="@+id/left_drawer_view"
         android:layout_width="@dimen/drawer_width"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_gravity="start" >
+        android:layout_gravity="start"
+        android:orientation="vertical" >
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="96dp"
-            android:background="@color/HighlightColor">
+            android:layout_height="156dp"
+            android:background="@drawable/bggraphic"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin" >
 
-            <ImageView
-                android:id="@+id/drawer_header_image"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+            <RelativeLayout
+                android:id="@+id/user_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_centerInParent="true"
-                android:scaleType="centerCrop">
-            </ImageView>
+                android:layout_alignParentBottom="true" >
+
+                <ImageView
+                    android:id="@+id/drawer_header_image"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_alignParentLeft="true"
+                    android:scaleType="centerCrop" >
+                </ImageView>
+
+                <TextView
+                    android:id="@+id/drawer_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/drawer_header_image"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="6dp" 
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/drawer_score_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/drawer_score_display"
+                android:text="@string/score_label"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/drawer_score_display"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/drawer_score_label"
+                android:layout_alignParentRight="true"
+                android:text="0"
+                android:textSize="48sp" />
         </RelativeLayout>
 
         <ListView
             android:id="@+id/left_drawer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start"
-            android:divider="?android:dividerHorizontal"
-            android:showDividers="middle"
+            android:layout_height="fill_parent"
+            android:background="@android:color/white"
             android:choiceMode="singleChoice"
-            android:background="#E0E0E0"/>
-        </LinearLayout>
+            android:divider="@color/Black12"
+            android:dividerHeight="2px" />
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

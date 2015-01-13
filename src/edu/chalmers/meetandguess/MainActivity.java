@@ -36,6 +36,7 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
@@ -68,6 +69,7 @@ public class MainActivity extends ActionBarActivity implements
 
 	private Game game;
 	private String userName;
+	private Player userProfile;
 	private Bitmap profilePicture;
 	private static int nextRoundNumberOfPlayers = 0;
 
@@ -125,8 +127,16 @@ public class MainActivity extends ActionBarActivity implements
 			/** Called when a drawer has settled in a completely open state. */
 			public void onDrawerOpened(View drawerView) {
 				super.onDrawerOpened(drawerView);
-				ImageView profilePictureView = (ImageView) drawerView.findViewById(R.id.drawer_header_image);
-				profilePictureView.setImageBitmap(profilePicture);
+				if(profilePicture != null) {
+					ImageView profilePictureView = (ImageView) drawerView.findViewById(R.id.drawer_header_image);
+					profilePictureView.setImageBitmap(profilePicture);
+				}
+				if(userProfile != null) {
+					TextView userNameView = (TextView) drawerView.findViewById(R.id.drawer_user_name);
+					userNameView.setText(userProfile.getFirstname());
+					TextView scoreView = (TextView) drawerView.findViewById(R.id.drawer_score_display);
+					scoreView.setTag(userProfile.getScore());
+				}
 			}
 			
 		};
@@ -252,7 +262,7 @@ public class MainActivity extends ActionBarActivity implements
 		} else if(key.equalsIgnoreCase(PROFILE_KEY)) {
 			Gson gson = new Gson();
 			try {
-				Player userProfile = gson.fromJson(json.getString("value"), Player.class);
+				userProfile = gson.fromJson(json.getString("value"), Player.class);
 				if(userProfile.getImage() != null) {
 					byte[] bitmapData = Base64.decode(userProfile.getImage(), Base64.DEFAULT);
 					Bitmap bm = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
@@ -336,15 +346,6 @@ public class MainActivity extends ActionBarActivity implements
 	@Override
 	public void valueChangedForKeyOfUser(JSONObject json, String key,
 			String user) {
-		/*try {
-			String first = json.getString("records");
-			if(first.contains("userToAnswer")) {
-				key = "userToAnswer";
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
 		if (key.equals(REQUEST_JOINING_KEY)) {
 			manager.ignoreKeyOfUser(key, user);
 			nextRoundNumberOfPlayers++;
@@ -353,9 +354,7 @@ public class MainActivity extends ActionBarActivity implements
 				intent.putExtra("game", game);
 				this.startActivity(intent);
 			}
-		} /*else if(key.equals("userToAnswer")) {
-			QuestionActivity.numberOfFinishedPlayers++;
-		}*/
+		}
 	}
 
 	@Override
@@ -443,8 +442,19 @@ public class MainActivity extends ActionBarActivity implements
 		case 0:
 			drawerList.setItemChecked(position, true);
 			drawerLayout.closeDrawer(linearDrawerLayout);
-			Intent intent = new Intent(this, ProfileActivity.class);
-			this.startActivityForResult(intent, PROFILE_ACTIVITY_REQUEST_CODE);
+			Intent intent = new Intent(this, CreateGameActivity.class);
+			this.startActivityForResult(intent, CREATE_GAME_REQUEST_CODE);
+			break;
+		case 1:
+			drawerList.setItemChecked(position, true);
+			drawerLayout.closeDrawer(linearDrawerLayout);
+			displayJoinAlertDialog();
+			break;
+		case 2:
+			drawerList.setItemChecked(position, true);
+			drawerLayout.closeDrawer(linearDrawerLayout);
+			Intent intent2 = new Intent(this, ProfileActivity.class);
+			this.startActivityForResult(intent2, PROFILE_ACTIVITY_REQUEST_CODE);
 			break;
 		default:
 			break;
