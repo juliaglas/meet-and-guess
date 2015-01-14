@@ -72,13 +72,11 @@ public class ServerReset implements NetworkingEventHandler {
 	}
 	
 	public void resetQuestionList() {
-		Question firstQuestion = new Question("Which animal is the cuter one?", "Dog", "Cat");
-		Question secondQuestion = new Question("Have you been to Australia?", "Yes", "No");
-		Question thirdQuestion = new Question("Have you been to Asia?", "Yes", "No");
+		Question firstQuestion = new Question("Have you been to Asia?", "Yes", "No");
+		Question secondQuestion = new Question("Which one do you prefer?", "Dog", "Cat");
 		List<Question> questionList = new ArrayList<Question>();
 		questionList.add(firstQuestion);
 		questionList.add(secondQuestion);
-		questionList.add(thirdQuestion);
 		Gson gson = new Gson();
 		String questionJson = gson.toJson(questionList);
 		manager.saveValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER, questionJson);

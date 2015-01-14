@@ -80,7 +80,6 @@ public class MainActivity extends ActionBarActivity implements
 
 		boolean setUpDemoServer = true;
 		if(setUpDemoServer) {
-			resetApp();
 			ServerReset sr = new ServerReset();
 			sr.setUpServer(this);
 		}
