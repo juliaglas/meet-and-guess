@@ -23,14 +23,14 @@ public class Game implements Parcelable {
 	private String ownerName;
 	private String ownerImage;
 	private transient Map<String, Integer> user2totalScore;
-	private ArrayList<String> playerImages;
-	private ArrayList<String> userNames;
+	private Map<String, String> playerImages;
+	private Map<String, String> userNames;
 	
-	public ArrayList<String> getUserNames() {
+	public Map<String, String> getUserNames() {
 		return userNames;
 	}
 
-	public void setUserNames(ArrayList<String> userNames) {
+	public void setUserNames(Map<String, String> userNames) {
 		this.userNames = userNames;
 	}
 
@@ -46,28 +46,28 @@ public class Game implements Parcelable {
 		this.ownerName = ownerName;
 		this.ownerImage = ownerImage;
 		this.user2totalScore = new HashMap<String, Integer>();
-		this.playerImages = new ArrayList<String>();
-		this.userNames = new ArrayList<String>();
+		this.playerImages = new HashMap<String, String>();
+		this.userNames = new HashMap<String, String>();
 	}
 
-	public String getPlayerImage(int index)
+	public String getPlayerImage(String user)
 	{
-		return playerImages.get(index);
+		return playerImages.get(user);
 	}
 	
-	public void addPlayerImage(String image)
+	public void addPlayerImage(String user, String image)
 	{
-		playerImages.add(image);
+		playerImages.put(user, image);
 	}
 	
-	public String getUserName(int index)
+	public String getUserName(String user)
 	{
-		return userNames.get(index);
+		return userNames.get(user);
 	}
 	
-	public void addUserName(String userName)
+	public void addUserName(String user, String userName)
 	{
-		userNames.add(userName);
+		userNames.put(user, userName);
 	}
 
 
@@ -156,11 +156,11 @@ public class Game implements Parcelable {
 		user2totalScore.put(user, 0);
 	}
 	
-	public ArrayList<String> getPlayerImages() {
+	public Map<String, String> getPlayerImages() {
 		return playerImages;
 	}
 
-	public void setPlayerImages(ArrayList<String> playerImages) {
+	public void setPlayerImages(Map<String, String> playerImages) {
 		this.playerImages = playerImages;
 	}
 
@@ -197,15 +197,17 @@ public class Game implements Parcelable {
         }
         final int imageListSize = playerImages.size();
         dest.writeInt(imageListSize);
-        for(int i=0; i<playerImages.size() ; i++)
+        for(Map.Entry<String, String> entry : playerImages.entrySet())
         {
-        	dest.writeString(playerImages.get(i));
+        	dest.writeString(entry.getKey());
+        	dest.writeString(entry.getValue());
         }
         final int usernameSize = userNames.size();
         dest.writeInt(usernameSize);
-        for(int i=0; i<userNames.size() ; i++)
+        for(Map.Entry<String, String> entry : userNames.entrySet())
         {
-        	dest.writeString(userNames.get(i));
+        	dest.writeString(entry.getKey());
+        	dest.writeString(entry.getValue());
         }
 	}
 	
@@ -228,18 +230,20 @@ public class Game implements Parcelable {
             user2totalScore.put(user, score);
         }
 		int imageListSize = parcel.readInt();
-	    playerImages = new ArrayList<String>();
+	    playerImages = new HashMap<String, String>();
 	    for(int i=0; i<imageListSize ; i++)
 	    {
+	       String user = parcel.readString();
 	       String image = parcel.readString();
-	       playerImages.add(image);
+	       playerImages.put(user, image);
 	    }
 	    int userNamesSize = parcel.readInt();
-	    userNames = new ArrayList<String>();
+	    userNames = new HashMap<String, String>();
 	    for(int i=0; i<userNamesSize ; i++)
 	    {
-	       String image = parcel.readString();
-	       userNames.add(image);
+	    	String user = parcel.readString();
+		    String userName = parcel.readString();
+		    userNames.put(user, userName);
 	    }
 		
 	}

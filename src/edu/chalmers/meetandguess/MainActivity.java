@@ -81,8 +81,6 @@ public class MainActivity extends ActionBarActivity implements
 		
 		initViews();
 		 
-		//resetApp();
-
 		// Access the user name
 		SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF,
 				MODE_PRIVATE);
@@ -262,6 +260,9 @@ public class MainActivity extends ActionBarActivity implements
 					byte[] bitmapData = Base64.decode(userProfile.getImage(), Base64.DEFAULT);
 					Bitmap bm = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
 					profilePicture = BitmapDecoder.getCircleBitmap(bm);
+					
+					TextView scoreView = (TextView) findViewById(R.id.drawer_score_display);
+					scoreView.setText(String.valueOf(userProfile.getScore()));
 				}
 			} catch (JsonSyntaxException e) {
 				// TODO Auto-generated catch block

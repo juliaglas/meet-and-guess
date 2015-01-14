@@ -15,6 +15,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -22,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import edu.chalmers.qdnetworking.NetworkingEventHandler;
 import edu.chalmers.qdnetworking.NetworkingManager;
@@ -34,6 +36,8 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 	private static final String USER_TO_SCORE_KEY = "userToScore";
 	private static final String USER_TO_TOTAL_SCORE_KEY = "userToTotalScore";
 	private static final String SHARED_PREF = "edu.chalmers.meetandguess.save_app_state";
+	private static final String GAME_MANAGER_USER = "gameManager";
+	private static final String ACTIVE_GAMES_KEY = "activeGames";
 	private String userName;
 	private String imgData;
 	private NetworkingManager manager;
@@ -71,8 +75,28 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
     }
 	
 	@Override
-	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {
-		
+	public void savedValueForKeyOfUser(JSONObject json, String key, String user) {	
+		if(key.equals(ACTIVE_GAMES_KEY)) {
+			manager.unlockKeyOfUser(key, user);
+			// Intent to Main Activity for Owner 
+			Intent intent = new Intent(this, MainActivity.class);
+			intent.putExtra("game", game);
+			this.startActivity(intent);
+		}		
+		else if(key.equals("profile")){
+
+			// Owner removes game from active game list
+			if(game.getOwner().equals(this.userName)) 
+			{
+				manager.lockKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER);
+			}
+			else
+			{
+		      Intent intent = new Intent(this, MainActivity.class);
+		      intent.putExtra("game", game);
+		      this.startActivity(intent);
+			}
+		}
 	}
 
 	@Override
@@ -89,17 +113,15 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 					userToScore = new HashMap<String, Integer>();
 					Log.d(TAG_ERROR,"No Score");
 				}
-				int i = 0;
 				Map<String, Integer> userToTotalScore = game.getUser2totalScore();
 				for(String userId : userToScore.keySet()) 
 				{
 					int currentScore = userToScore.get(userId);
 				
 					game.increaseScoreForUser(userId, currentScore);
-					Score score = new Score(game.getPlayerImage(i), game.getUserName(i), currentScore, userToTotalScore.get(userId));
+					Score score = new Score(game.getPlayerImage(userId), game.getUserName(userId), currentScore, userToTotalScore.get(userId));
 					scoreList.add(score);
 					adapter.notifyDataSetChanged();
-					i++;
 				}
 				
 				// Load total score map from server
@@ -116,69 +138,48 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 				e.printStackTrace();
 			}
 		}
-		// Loaded Total Score
-		/*else if(key.equals(USER_TO_TOTAL_SCORE_KEY)) 
+		else if(key.equals("profile"))
 		{
 			try {
 				Gson gson = new Gson();
-				// Load total score map from server
-				userToTotalScore = gson.fromJson(json.getString("value"), new TypeToken<Map<String, Integer>>(){}.getType());
-				// If Total Score is empty, fill it with current score values
-				if(userToTotalScore == null) 
-				{
-					userToTotalScore = new HashMap<String, Integer>(userToScore);
-					game.setUser2TotalScore(userToScore);
-					int i = 0;
-					// Add users to game total score map and update it
-					for(Map.Entry<String, Integer> entry : userToTotalScore.entrySet())
-					{
-				      //game.addUser(entry.getKey());
-					  //game.increaseScoreForUser(userName, entry.getValue());
-					 
-					  Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
-					  scoreList.add(score);
-					  i++;
-					}
+				player = gson.fromJson(json.getString("value"), Player.class);
+				// Update players profile score
+				if (player != null) {
+					player.setScore(player.getScore()+game.getUser2totalScore().get(this.userName));
 				}
-				// Else update it
-				else
-				{
-					int i=0;
-					// Adds new users retrieved from current score Map
-					for(Map.Entry<String, Integer> entry : userToScore.entrySet())
-					{
-						if(!game.getUser2totalScore().containsKey(entry.getKey()))
-							game.addUser(entry.getKey());					
-					
-						// Updates Score
-						game.increaseScoreForUser(entry.getKey(), entry.getValue());
-						
-						Score score = new Score(game.getPlayerImage(i),entry.getKey(),entry.getValue(),entry.getValue());
-						scoreList.add(score);
-						adapter.notifyDataSetChanged();
-						i++;
-					}
-				}
-				
-				// If user is the owner, saves total Score in the Server
-				if(userName == game.getOwner())
-				{
-					// Saves total Score Map on the Server
-					String userToTotalScoreJson = gson.toJson(game.getUser2totalScore());
-					manager.saveValueForKeyOfUser(USER_TO_TOTAL_SCORE_KEY, user, userToTotalScoreJson);
-				}
-			
-			}catch (JsonSyntaxException e) {
-				Log.d(TAG_ERROR, "JsonSyntaxException while parsing: " + json.toString());
+				String playerJson = gson.toJson(this.player);
+				manager.saveValueForKeyOfUser("profile", this.userName, playerJson);
+			} catch (JsonSyntaxException e) {
+				Log.d(TAG_ERROR,
+						"JsonSyntaxException while parsing: " + json.toString());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			
 		
-			
-		}*/
+		}
+		// Owner removes game from active game list
+		else if(key.equals(ACTIVE_GAMES_KEY)) {
+			Gson gson = new Gson();
+			try {
+				LinkedList<Game> gameList = gson.fromJson(json.getString("value"),
+						new TypeToken<LinkedList<Game>>() {
+						}.getType());
+				if(gameList == null) {
+					gameList = new LinkedList<Game>();
+				}
+				gameList.removeFirst();
+				String gameListString = gson.toJson(gameList);
+				manager.saveValueForKeyOfUser(key, user, gameListString);
+			} catch (JsonSyntaxException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		
 	}
 
@@ -209,7 +210,8 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 
 	@Override
 	public void lockedKeyofUser(JSONObject json, String key, String user) {
-	
+		if(key.equals(ACTIVE_GAMES_KEY))
+			manager.loadValueForKeyOfUser(key, user);
 	}
 
 	@Override
@@ -228,11 +230,10 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 		   finish();	
 		}
 		else
-		{   	
-			// Owner has to remove it from the active list
-			
-			// Intent to Main Activity
-			
+		{   
+			// Load user profile to update score
+			manager.loadValueForKeyOfUser("profile", this.userName);
+
 		}
 
 	}

@@ -237,6 +237,11 @@ public class ProfileActivity extends ActionBarActivity implements
 			EditText countryValue = (EditText) findViewById(R.id.country_edit);
 			countryValue.setText(player.getCountry());
 		}
+		// Display score
+		if(player.getScore() != -1) {
+			EditText scoreValue = (EditText) findViewById(R.id.score_display);
+			scoreValue.setText(String.valueOf(player.getScore()));
+		}
 	}
 	
 	private void savePlayer() {
