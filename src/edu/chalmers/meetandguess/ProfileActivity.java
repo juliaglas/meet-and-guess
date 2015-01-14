@@ -78,8 +78,8 @@ public class ProfileActivity extends ActionBarActivity implements
 		} else { // create profile of a new user
 			getSupportActionBar().setDisplayHomeAsUpEnabled(false); // Hide back button
 			EditText firstNameValue = (EditText) findViewById(R.id.firstname_edit);
-			enableEditing();
 			firstNameValue.requestFocus();
+			enableEditing();
 			this.manager = new NetworkingManager(this, GROUP, GAME_MANAGER_USER);
 			this.manager.loadValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER);
 		}
@@ -262,6 +262,10 @@ public class ProfileActivity extends ActionBarActivity implements
 			String country = countryValue.getText().toString();
 			if (this.player == null) { // new user
 				this.player = new Player(userId, firstName, age, city, country, this.imgData);
+				boolean demoSetUp = true;
+				if(demoSetUp) {
+					this.player.setScore(23);
+				}
 				SharedPreferences sharedPref = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.putString("username", userId);

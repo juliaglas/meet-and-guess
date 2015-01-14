@@ -1,9 +1,18 @@
 package edu.chalmers.meetandguess;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.json.JSONObject;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.graphics.drawable.Drawable;
+import android.util.Base64;
 
 import com.google.gson.Gson;
 
@@ -73,6 +82,33 @@ public class ServerReset implements NetworkingEventHandler {
 		Gson gson = new Gson();
 		String questionJson = gson.toJson(questionList);
 		manager.saveValueForKeyOfUser(QUESTION_LIST_KEY, GAME_DATA_USER, questionJson);
+	}
+	
+	public void setUpServer(Context context) {
+		resetQuestionList();
+		manager.saveValueForKeyOfUser(USER_ID_KEY, GAME_MANAGER_USER, "U1");
+		manager.saveValueForKeyOfUser(GAME_ID_KEY, GAME_MANAGER_USER, "M14");
+				
+		// set up active games
+		List<Game> activeGames = new LinkedList<Game>();
+		
+		Bitmap bm = BitmapFactory.decodeResource(context.getResources(), R.drawable.male);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		bm.compress(CompressFormat.JPEG, 100, bos);
+		byte[] byteImageData = bos.toByteArray();
+		String imgData = Base64.encodeToString(byteImageData, Base64.DEFAULT);
+		activeGames.add(new Game("x", "Landvetter", "I am at Gate 10 next to the small kiosk. I am wearing a red shirt and black jeans.", null, null, "John", imgData));
+		
+		Bitmap bm2 = BitmapFactory.decodeResource(context.getResources(), R.drawable.female);
+		ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+		bm2.compress(CompressFormat.JPEG, 100, bos2);
+		byte[] byteImageData2 = bos2.toByteArray();
+		String imgData2 = Base64.encodeToString(byteImageData2, Base64.DEFAULT);
+		activeGames.add(new Game("y", "Landvetter", "I am at Gate 28. I am wearing a black shirt and I am probably reading a book.", null, null, "Lisa", imgData2));
+
+		Gson gson = new Gson();
+		String gameJson = gson.toJson(activeGames);
+		manager.saveValueForKeyOfUser(ACTIVE_GAMES_KEY, GAME_MANAGER_USER, gameJson);
 	}
 
 	@Override
