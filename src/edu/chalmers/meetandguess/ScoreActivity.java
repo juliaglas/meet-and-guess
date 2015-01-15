@@ -168,7 +168,7 @@ public class ScoreActivity extends ActionBarActivity implements NetworkingEventH
 				if(gameList == null) {
 					gameList = new LinkedList<Game>();
 				}
-				gameList.removeFirst();
+				gameList.remove(game);
 				String gameListString = gson.toJson(gameList);
 				manager.saveValueForKeyOfUser(key, user, gameListString);
 			} catch (JsonSyntaxException e) {

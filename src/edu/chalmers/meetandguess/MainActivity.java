@@ -78,7 +78,7 @@ public class MainActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		boolean setUpDemoServer = true;
+		boolean setUpDemoServer = false;
 		if(setUpDemoServer) {
 			ServerReset sr = new ServerReset();
 			sr.setUpServer(this);

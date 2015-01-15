@@ -34,6 +34,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class ProfileActivity extends ActionBarActivity implements
 		NetworkingEventHandler {
@@ -239,7 +240,7 @@ public class ProfileActivity extends ActionBarActivity implements
 		}
 		// Display score
 		if(player.getScore() != -1) {
-			EditText scoreValue = (EditText) findViewById(R.id.score_display);
+			TextView scoreValue = (TextView) findViewById(R.id.score_display);
 			scoreValue.setText(String.valueOf(player.getScore()));
 		}
 	}
@@ -262,7 +263,7 @@ public class ProfileActivity extends ActionBarActivity implements
 			String country = countryValue.getText().toString();
 			if (this.player == null) { // new user
 				this.player = new Player(userId, firstName, age, city, country, this.imgData);
-				boolean demoSetUp = true;
+				boolean demoSetUp = false;
 				if(demoSetUp) {
 					this.player.setScore(23);
 				}
